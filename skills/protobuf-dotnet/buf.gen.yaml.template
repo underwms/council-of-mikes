@@ -1,0 +1,24 @@
+# Buf code generation configuration for C# / gRPC.
+# Copy to your repository root and replace placeholders:
+#   {YOUR_PROJECT}    → Core project name (e.g. )
+#   {YOUR_NAMESPACE}  → Base C# namespace matching the project (e.g. )
+#
+# Commands:
+#   buf generate  — generate C# models into the configured output directory
+#
+# Generated files go to src/{YOUR_PROJECT}/Generated/ and should be committed to git.
+# NEVER edit generated files — use extension methods or partial classes instead.
+version: v2
+managed:
+  enabled: true
+plugins:
+  # C# protobuf message classes
+  - remote: buf.build/protocolbuffers/csharp
+    out: src/{YOUR_PROJECT}/Generated
+    opt: base_namespace={YOUR_NAMESPACE}
+  # gRPC service stubs (remove if not using gRPC)
+  - remote: buf.build/grpc/csharp
+    out: src/{YOUR_PROJECT}/Generated
+    opt: base_namespace={YOUR_NAMESPACE}
+inputs:
+  - directory: proto

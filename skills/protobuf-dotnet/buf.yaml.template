@@ -1,0 +1,27 @@
+# Buf module configuration for .NET protobuf projects.
+# Copy to your repository root and replace placeholders:
+#   {YOUR_NAMESPACE}  → dotted namespace matching your proto directory (e.g. )
+#   {CONTEXT}         → domain context name (e.g. order, payment, inventory)
+#
+# Commands:
+#   buf lint                              — verify schema follows protobuf best practices
+#   buf breaking --against .git#branch=main — detect backward-incompatible changes
+#   buf dep update                        — refresh buf.lock after adding/changing deps
+version: v2
+modules:
+  - path: proto
+deps:
+  - buf.build/googleapis/googleapis
+  - buf.build/protocolbuffers/wellknowntypes
+lint:
+  use:
+    - STANDARD
+  # Required when proto directories use dot-separated names (e.g. /)
+  # Add one entry per versioned domain context directory
+  ignore_only:
+    PACKAGE_DIRECTORY_MATCH:
+      - "proto/{YOUR_NAMESPACE}/domain/{CONTEXT}/v1"
+      # - "proto/{YOUR_NAMESPACE}/domain/{ANOTHER_CONTEXT}/v1"
+breaking:
+  use:
+    - FILE

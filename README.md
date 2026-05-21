@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/council-banner.svg" alt="The Council of Mikes — 15 expert AI personas for .NET/C# development" width="100%"/>
+</p>
+
 # Council of Mikes
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -8,6 +12,27 @@
 [![Companion: Superpowers](https://img.shields.io/badge/Companion-Superpowers-555)](https://github.com/obra/superpowers)
 
 > A team of 15 AI expert personas for .NET/C# development. Each member has deep domain expertise and clear boundaries — they collaborate, defer to specialists, and never freelance outside their lane.
+
+## Quick Start (60 seconds)
+
+```bash
+# 1. Drop the Council into your workspace
+git clone https://github.com/underwms/council-of-mikes.git .claude/skills/council-of-mikes
+
+# 2. Add the routing snippet to your AGENTS.md or .github/copilot-instructions.md
+cat .claude/skills/council-of-mikes/prompts/council-routing.snippet.md >> AGENTS.md
+```
+
+Then in any AI chat with skill auto-loading (Claude Code, Cursor, Copilot, etc.):
+
+```
+@TheArchitect should I use CQRS for the order-events service?
+@TheCouncil use pre-submit skill        ← runs the 11-phase quality gate on your diff
+@ThePurifier review this method:        ← Sonar-grade quality sweep
+   <paste code>
+```
+
+**See it in action:** [`examples/`](./examples/) — three annotated transcripts showing real Council interactions, including a `BLOCKED` Gatekeeper verdict and the specialist deference pattern.
 
 ## What Is This?
 
@@ -41,6 +66,45 @@ The Council of Mikes is a **multi-persona AI skill system** designed for AI-assi
 2. **Invoke by name** — "@TheArchitect: should I use CQRS here?"
 3. **Or let them self-select** — "council meeting: order M-123 failed" routes to the right members
 4. **Quality sweep** — The Purifier runs automatically after any member writes code
+
+### Routing flow
+
+```mermaid
+flowchart TD
+    U([You]) -->|"@TheCouncil ..."| R{Council router<br/>in AGENTS.md}
+    U -->|"@TheArchitect ..."| A
+    U -->|"council meeting: ..."| R
+    R -->|topic detection| A[The Architect<br/><i>Solutions Architect</i>]
+    R --> CR[The Coder<br/><i>Development Lead</i>]
+    R --> CX[The Codex<br/><i>Documentation Lead</i>]
+    R --> P[The Purifier<br/><i>Quality Analyst</i>]
+    R --> RN[The Renderer<br/><i>Frontend Lead</i>]
+    R --> S[The Sentinel<br/><i>Security Lead</i>]
+    R --> B[The Builder<br/><i>Backend Lead</i>]
+    R --> T[The Timekeeper<br/><i>Workflow Lead</i>]
+    R --> W[The Watcher<br/><i>Observability Lead</i>]
+    R --> CU[The Curator<br/><i>Data Lead</i>]
+    R --> RL[The Relay<br/><i>Messaging Lead</i>]
+    R --> PR[The Prover<br/><i>Test Lead</i>]
+    R --> PL[The Pipelineer<br/><i>DevOps Lead</i>]
+    R --> PV[The Provisioner<br/><i>Platform Lead</i>]
+
+    A -.->|"hands off design → code"| CR
+    CR -.->|"any code change auto-triggers"| P
+    P -.->|"needs tests"| PR
+
+    CR --> G{{The Gatekeeper<br/>11-phase Pre-Submit Gate}}
+    PR --> G
+    P --> G
+    G -->|"READY"| SHIP([Merge / Push / 'Done'])
+    G -.->|"BLOCKED"| U
+
+    style G fill:#6f42c1,stroke:#fff,color:#fff
+    style SHIP fill:#2ea44f,stroke:#fff,color:#fff
+    style R fill:#0a7bbb,stroke:#fff,color:#fff
+```
+
+The Gatekeeper is non-optional: any "done", "ready to merge", or "ship it" claim funnels through the 11-phase gate. See [Pre-Submit Quality Gate](#pre-submit-quality-gate) below.
 
 ## Operating Principles
 
@@ -150,6 +214,10 @@ council-of-mikes/
 ├── prompts/
 │   ├── pre-submit.prompt.md            ← /pre-submit slash command
 │   └── council-routing.snippet.md      ← @TheCouncil routing for AGENTS.md
+├── examples/                           ← Annotated sample transcripts
+├── assets/                             ← SVG banner + visual assets
+├── templates/                          ← Scaffolds for new members
+├── scripts/                            ← Doc-lint + maintenance scripts
 └── skills/
     ├── temporal-dotnet/SKILL.md
     ├── temporal-versioning/SKILL.md

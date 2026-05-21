@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-label="The Council of Mikes — 15 expert AI personas for .NET/C# development">
+  <title>The Council of Mikes</title>
+  <desc>Banner listing all 15 Council members and their role labels.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#161b22"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6f42c1"/>
+      <stop offset="100%" stop-color="#0a7bbb"/>
+    </linearGradient>
+    <style><![CDATA[
+      .title       { font: 700 36px ui-sans-serif, system-ui, "Segoe UI", sans-serif; fill: #f0f6fc; letter-spacing: 2px; }
+      .subtitle    { font: 400 14px ui-sans-serif, system-ui, "Segoe UI", sans-serif; fill: #8b949e; letter-spacing: 1px; }
+      .chip-name   { font: 600 13px ui-sans-serif, system-ui, "Segoe UI", sans-serif; fill: #f0f6fc; }
+      .chip-role   { font: 400 11px ui-sans-serif, system-ui, "Segoe UI", sans-serif; fill: #8b949e; }
+      .seal        { font: 700 11px ui-sans-serif, system-ui, "Segoe UI", sans-serif; fill: #6f42c1; letter-spacing: 4px; }
+    ]]></style>
+    <symbol id="chip" viewBox="0 0 220 56">
+      <rect x="0.5" y="0.5" width="219" height="55" rx="8" ry="8"
+            fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <rect x="0.5" y="0.5" width="4" height="55" rx="2" ry="2" fill="#6f42c1"/>
+    </symbol>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1200" height="4" fill="url(#accent)"/>
+
+  <g transform="translate(60,46)">
+    <text class="seal">⚜  COUNCIL  ⚜</text>
+    <text class="title" y="40">THE COUNCIL OF MIKES</text>
+    <text class="subtitle" y="64">15 expert AI personas · one engineering team · gated by the 11-phase Pre-Submit SOP</text>
+  </g>
+
+  <!-- Row 1 -->
+  <g transform="translate(60,140)">
+    <use href="#chip" x="0"   y="0" width="220" height="56"/>
+    <text class="chip-name" x="20"  y="22">The Architect</text>
+    <text class="chip-role" x="20"  y="40">Solutions Architect</text>
+
+    <use href="#chip" x="240" y="0" width="220" height="56"/>
+    <text class="chip-name" x="260" y="22">The Coder</text>
+    <text class="chip-role" x="260" y="40">Development Lead</text>
+
+    <use href="#chip" x="480" y="0" width="220" height="56"/>
+    <text class="chip-name" x="500" y="22">The Codex</text>
+    <text class="chip-role" x="500" y="40">Documentation Lead</text>
+
+    <use href="#chip" x="720" y="0" width="220" height="56"/>
+    <text class="chip-name" x="740" y="22">The Purifier</text>
+    <text class="chip-role" x="740" y="40">Quality Analyst</text>
+
+    <use href="#chip" x="960" y="0" width="220" height="56"/>
+    <text class="chip-name" x="980" y="22">The Renderer</text>
+    <text class="chip-role" x="980" y="40">Frontend Lead</text>
+  </g>
+
+  <!-- Row 2 -->
+  <g transform="translate(60,210)">
+    <use href="#chip" x="0"   y="0" width="220" height="56"/>
+    <text class="chip-name" x="20"  y="22">The Sentinel</text>
+    <text class="chip-role" x="20"  y="40">Security Lead</text>
+
+    <use href="#chip" x="240" y="0" width="220" height="56"/>
+    <text class="chip-name" x="260" y="22">The Builder</text>
+    <text class="chip-role" x="260" y="40">Backend Lead</text>
+
+    <use href="#chip" x="480" y="0" width="220" height="56"/>
+    <text class="chip-name" x="500" y="22">The Timekeeper</text>
+    <text class="chip-role" x="500" y="40">Workflow Lead</text>
+
+    <use href="#chip" x="720" y="0" width="220" height="56"/>
+    <text class="chip-name" x="740" y="22">The Watcher</text>
+    <text class="chip-role" x="740" y="40">Observability Lead</text>
+
+    <use href="#chip" x="960" y="0" width="220" height="56"/>
+    <text class="chip-name" x="980" y="22">The Curator</text>
+    <text class="chip-role" x="980" y="40">Data Lead</text>
+  </g>
+
+  <!-- Row 3 -->
+  <g transform="translate(60,280)">
+    <use href="#chip" x="0"   y="0" width="220" height="56"/>
+    <text class="chip-name" x="20"  y="22">The Relay</text>
+    <text class="chip-role" x="20"  y="40">Messaging Lead</text>
+
+    <use href="#chip" x="240" y="0" width="220" height="56"/>
+    <text class="chip-name" x="260" y="22">The Prover</text>
+    <text class="chip-role" x="260" y="40">Test Lead</text>
+
+    <use href="#chip" x="480" y="0" width="220" height="56"/>
+    <text class="chip-name" x="500" y="22">The Pipelineer</text>
+    <text class="chip-role" x="500" y="40">DevOps Lead</text>
+
+    <use href="#chip" x="720" y="0" width="220" height="56"/>
+    <text class="chip-name" x="740" y="22">The Provisioner</text>
+    <text class="chip-role" x="740" y="40">Platform Lead</text>
+
+    <use href="#chip" x="960" y="0" width="220" height="56"/>
+    <text class="chip-name" x="980" y="22">The Gatekeeper</text>
+    <text class="chip-role" x="980" y="40">Pre-Submit Gate</text>
+  </g>
+</svg>

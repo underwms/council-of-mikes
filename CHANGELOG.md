@@ -14,7 +14,21 @@ All notable changes to the Council of Mikes are documented here. This project fo
 ## [Unreleased]
 
 ### Added
-- Initial `CHANGELOG.md` adopting Keep a Changelog format.
+- Future tier-4 visual / onboarding work goes here.
+
+---
+
+## [1.2.0] — 2026-05-21
+
+### Added
+- **`examples/` folder** with three annotated transcripts demonstrating real Council interactions:
+  - `01-architect-design-review.md` — The Architect leading a multi-specialist design before any code is written.
+  - `02-purifier-quality-sweep.md` — The Purifier catching real issues (null-safety, contract gaps, domain question) the original "looks fine" code missed.
+  - `03-gatekeeper-presubmit-gate.md` — The Gatekeeper issuing a `BLOCKED` verdict on a "tests-pass-therefore-ship" change. The canonical example of why Phase 8 exists.
+- **Quick Start section** in `README.md` — 60-second install + first invocation path.
+- **Mermaid routing-flow diagram** in `README.md` showing `@TheCouncil` → topic detection → member → Gatekeeper → ship/block.
+- **SVG banner** (`assets/council-banner.svg`) embedded at top of README — all 15 members with role labels, version-controllable, renders inline on GitHub.
+- Directory-structure block in README updated to include `examples/`, `assets/`, `templates/`, `scripts/`.
 
 ---
 
@@ -61,6 +75,7 @@ First public release of the Council of Mikes.
 
 ---
 
-[Unreleased]: https://github.com/underwms/council-of-mikes/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/underwms/council-of-mikes/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/underwms/council-of-mikes/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/underwms/council-of-mikes/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/underwms/council-of-mikes/releases/tag/v1.0.0

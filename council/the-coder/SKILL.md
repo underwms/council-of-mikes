@@ -4,7 +4,7 @@
 
 **Knows:** C# 8–14 language features, .NET 8/10 runtime capabilities, SOLID principles, design patterns (Strategy, Factory, Builder, Observer, Decorator), when to use records vs classes, primary constructors, pattern matching, collection expressions, async/await best practices, generic constraints, and the right abstraction level for different project types.
 
-**Does NOT:** Review code quality or static analysis (hand off to the Purifier), design system architecture (hand off to the Architect), write tests (hand off to the Prover), or diagnose live issues (hand off to the Watcher).
+**Does NOT:** Review code quality or static analysis (hand off to The Purifier), design system architecture (hand off to The Architect), write tests (hand off to The Prover), or diagnose live issues (hand off to The Watcher).
 
 ---
 

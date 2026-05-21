@@ -14,11 +14,13 @@ The unit test, integration test, and regression test patterns in your workspace 
 
 If the existing pattern looks limiting, **say so out loud and ask** — do not silently introduce a new style.
 
-### 2. The Purifier runs after every member, every time
+### 2. The Purifier runs after every member, every time, and The Gatekeeper has the final word
 
 [The Purifier](./the-purifier/SKILL.md) sweeps **any code produced by any other member or any model** before the work is declared done. It catches the small things AI-generated code constantly trips on — trailing newlines, `async` without `await`, `throw ex;`, missing `Async` suffix, magic-string config, and formatting drift that trips your organization's quality gate after the real work is already correct.
 
 The Purifier does **not** invent or rewrite design intent. It scrubs.
+
+Before any change is declared "done", [The Gatekeeper](./the-gatekeeper/SKILL.md) runs the 11-phase Pre-Submit Gate (see [`procedures/code-change-pre-submit-sop.md`](../procedures/code-change-pre-submit-sop.md)). No "ready to PR" without a `Verdict: READY` from The Gatekeeper.
 
 ### 3. Regression coverage is part of the deliverable
 
@@ -30,24 +32,25 @@ If a question crosses into another member's domain, **call them in** instead of 
 
 ---
 
-## Members (14)
+## Members (15)
 
 | Member | Role | Best invoked when... |
 |--------|------|----------------------|
 | [**The Architect**](./the-architect/SKILL.md) | Solutions Architect | You need architecture decisions, system design, or domain context |
-| [**The Coder**](./the-coder/SKILL.md) | Senior C# Developer | You need idiomatic C#, SOLID guidance, or .NET pattern selection |
-| [**The Codex**](./the-codex/SKILL.md) | Documentation Overseer | You need docs updated, comments reviewed, or diagrams generated |
-| [**The Purifier**](./the-purifier/SKILL.md) | Utility Cleaner | Any AI or LLM-produced code needs a final sweep before it ships |
-| [**The Renderer**](./the-renderer/SKILL.md) | Senior UI/UX Engineer | Anything frontend — frameworks, SignalR, Swagger, CSS, design |
-| [**The Sentinel**](./the-sentinel/SKILL.md) | Senior InfoSec & Compliance | Security review, PCI/PII compliance, auth flows, redaction |
-| [**The Builder**](./the-builder/SKILL.md) | Senior Backend Engineer | API design, GraphQL, scripting, microservice decomposition |
-| [**The Timekeeper**](./the-timekeeper/SKILL.md) | Senior Temporal Engineer | Workflow code, determinism, Temporal tests, Nexus, replay |
-| [**The Watcher**](./the-watcher/SKILL.md) | Observability Architect | Investigations, traces, log coverage gaps, alerting |
-| [**The Curator**](./the-curator/SKILL.md) | Data Engineer | Cosmos DB, Redis, SQL Server, EF Core, data modeling |
-| [**The Relay**](./the-relay/SKILL.md) | Distributed Messaging Architect | Kafka, Service Bus, Event Grid, Event Hubs |
-| [**The Prover**](./the-prover/SKILL.md) | Test & Quality Engineer | Unit tests, integration tests, load tests, regression |
-| [**The Pipelineer**](./the-pipelineer/SKILL.md) | DevOps & Infrastructure Engineer | CI/CD pipelines, Terraform, GitHub governance |
-| [**The Provisioner**](./the-provisioner/SKILL.md) | Azure Platform Engineer | App Services, Functions, networking, ARM/Bicep |
+| [**The Coder**](./the-coder/SKILL.md) | Development Lead | You need idiomatic C#, SOLID guidance, or .NET pattern selection |
+| [**The Codex**](./the-codex/SKILL.md) | Documentation Lead | You need docs updated, comments reviewed, or diagrams generated |
+| [**The Purifier**](./the-purifier/SKILL.md) | Quality Analyst | Any AI or LLM-produced code needs a final sweep before it ships |
+| [**The Renderer**](./the-renderer/SKILL.md) | Frontend Lead | Anything frontend — frameworks, SignalR, Swagger, CSS, design |
+| [**The Sentinel**](./the-sentinel/SKILL.md) | Security Lead | Security review, PCI/PII compliance, auth flows, redaction |
+| [**The Builder**](./the-builder/SKILL.md) | Backend Lead | API design, GraphQL, scripting, microservice decomposition |
+| [**The Timekeeper**](./the-timekeeper/SKILL.md) | Workflow Lead | Workflow code, determinism, Temporal tests, Nexus, replay |
+| [**The Watcher**](./the-watcher/SKILL.md) | Observability Lead | Investigations, traces, log coverage gaps, alerting |
+| [**The Curator**](./the-curator/SKILL.md) | Data Lead | Cosmos DB, Redis, SQL Server, EF Core, data modeling |
+| [**The Relay**](./the-relay/SKILL.md) | Messaging Lead | Kafka, Service Bus, Event Grid, Event Hubs |
+| [**The Prover**](./the-prover/SKILL.md) | Test Lead | Unit tests, integration tests, load tests, regression |
+| [**The Pipelineer**](./the-pipelineer/SKILL.md) | DevOps Lead | CI/CD pipelines, Terraform, GitHub governance |
+| [**The Provisioner**](./the-provisioner/SKILL.md) | Platform Lead | App Services, Functions, networking, ARM/Bicep |
+| [**The Gatekeeper**](./the-gatekeeper/SKILL.md) | Pre-Submit Quality Gate | Final pre-submit review — runs the 11-phase gate before any change is declared "done" |
 
 ---
 
@@ -159,6 +162,9 @@ If a question crosses into another member's domain, **call them in** instead of 
 | "Do I need a patch or versioning strategy for this workflow change?" | The Timekeeper |
 | "Sweep this file before I commit" | The Purifier |
 | "This `.cs` file fails CI but compiles locally" | The Purifier |
+| "Run the pre-submit gate on this change" | The Gatekeeper |
+| "Am I actually ready to PR this?" | The Gatekeeper |
+| "Review this diff like Copilot would" | The Gatekeeper |
 
 ---
 
@@ -234,6 +240,11 @@ If a question crosses into another member's domain, **call them in** instead of 
 - *"Deploy this to Azure App Service."*
 - *"Set up an Azure Function for [X]."*
 - *"What's the right hosting plan for this workload?"*
+
+### The Gatekeeper
+- *"Run the pre-submit gate on this change."*
+- *"Review this diff as a hostile Copilot reviewer."*
+- *"Am I actually ready to declare this done?"*
 
 ---
 

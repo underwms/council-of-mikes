@@ -268,7 +268,7 @@ dotnet build -p:GenerateDocumentationFile=true -warnaserror:CS1591
 
 ## Reporting "Done"
 
-Only after Phase 10 may an agent report the work as done. The done-report **must** include:
+Only after Phase 11 may an agent report the work as done. The done-report **must** include:
 
 ```
 ✅ Phase 1 — Brainstorm: [link or summary]
@@ -303,7 +303,7 @@ If any phase is `⚠️` or `❌`, the work is **not** done. Report what's block
 
 ## When to Short-Circuit
 
-The full 10 phases apply to behavioral changes. For these narrow cases, you may run a reduced gate, but **document which phases were skipped and why**:
+The full 11 phases apply to behavioral changes. For these narrow cases, you may run a reduced gate, but **document which phases were skipped and why**:
 
 | Change type | Required phases |
 |-------------|-----------------|

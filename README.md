@@ -12,33 +12,33 @@ The Council of Mikes is a **multi-persona AI skill system** designed for AI-assi
 
 | Member | Role | Best For |
 |--------|------|----------|
-| **Solutions Architect** | Architecture & domain | System design, trade-offs, architecture decisions |
-| **Development Lead** | Senior C# developer | Idiomatic C#, SOLID, .NET patterns |
-| **Documentation Lead** | Documentation overseer | XML docs, Mermaid diagrams, ADRs, SOPs |
-| **Quality Analyst** | Code quality sweep | SonarQube tripwires, complexity, modernization |
-| **Frontend Lead** | UI/UX engineer | React, Blazor, SignalR, CSS, accessibility |
-| **Security Lead** | InfoSec & compliance | PCI/PII, auth flows, redaction, Key Vault |
-| **Backend Lead** | Backend engineer | REST, GraphQL, PowerShell, microservices, K8s |
-| **Workflow Lead** | Temporal engineer | Workflow determinism, versioning, Nexus, testing |
-| **Observability Lead** | Observability architect | App Insights, OpenTelemetry, alerting, traces |
-| **Data Lead** | Data engineer | Cosmos DB, Redis, SQL Server, EF Core |
-| **Messaging Lead** | Messaging architect | Kafka, Service Bus, Event Grid, Event Hubs |
-| **Test Lead** | Test & quality engineer | xUnit, Moq, Testcontainers, load testing, ARTS |
-| **DevOps Lead** | DevOps & infrastructure | CI/CD, Terraform, Git workflows, pipelines |
-| **Platform Lead** | Azure platform engineer | App Services, Functions, networking, ARM/Bicep |
-| **Gatekeeper** | Pre-submit quality gate | 11-phase Pre-Submit SOP, Copilot PR-review simulation |
+| **The Architect** | Solutions Architect | System design, trade-offs, architecture decisions |
+| **The Coder** | Development Lead | Idiomatic C#, SOLID, .NET patterns |
+| **The Codex** | Documentation Lead | XML docs, Mermaid diagrams, ADRs, SOPs |
+| **The Purifier** | Quality Analyst | SonarQube tripwires, complexity, modernization |
+| **The Renderer** | Frontend Lead | React, Blazor, SignalR, CSS, accessibility |
+| **The Sentinel** | Security Lead | PCI/PII, auth flows, redaction, Key Vault |
+| **The Builder** | Backend Lead | REST, GraphQL, PowerShell, microservices, K8s |
+| **The Timekeeper** | Workflow Lead | Workflow determinism, versioning, Nexus, testing |
+| **The Watcher** | Observability Lead | App Insights, OpenTelemetry, alerting, traces |
+| **The Curator** | Data Lead | Cosmos DB, Redis, SQL Server, EF Core |
+| **The Relay** | Messaging Lead | Kafka, Service Bus, Event Grid, Event Hubs |
+| **The Prover** | Test Lead | xUnit, Moq, Testcontainers, load testing, ARTS |
+| **The Pipelineer** | DevOps Lead | CI/CD, Terraform, Git workflows, pipelines |
+| **The Provisioner** | Platform Lead | App Services, Functions, networking, ARM/Bicep |
+| **The Gatekeeper** | Pre-Submit Quality Gate | 11-phase Pre-Submit SOP, Copilot PR-review simulation |
 
 ## How It Works
 
 1. **Install** — Copy `council/` and `skills/` into your `.claude/skills/` directory
-2. **Invoke by name** — "Solutions Architect: should I use CQRS here?"
+2. **Invoke by name** — "@TheArchitect: should I use CQRS here?"
 3. **Or let them self-select** — "council meeting: order M-123 failed" routes to the right members
-4. **Quality sweep** — The Quality Analyst runs automatically after any member writes code
+4. **Quality sweep** — The Purifier runs automatically after any member writes code
 
 ## Operating Principles
 
 1. **Don't reinvent established patterns** — match existing test shapes, don't invent new ones
-2. **Quality Analyst runs after every member** — catches SonarQube tripwires before code ships
+2. **The Purifier runs after every member** — catches SonarQube tripwires before code ships
 3. **Regression coverage is part of the deliverable** — not a PR-time afterthought
 4. **Members defer to specialists** — cross-domain questions route to the expert
 
@@ -70,15 +70,15 @@ The `skills/` directory includes standalone skills that enhance specific Council
 
 | Skill | Enhances | Purpose |
 |-------|----------|---------|
-| `temporal-dotnet` | Workflow Lead | Temporal .NET SDK patterns, testing, Nexus |
-| `temporal-versioning` | Workflow Lead | Safe deployment of workflow changes |
-| `protobuf-dotnet` | Backend Lead | Protocol Buffers in .NET, buf CLI |
-| `arts-regression-testing` | Test Lead | Full ARTS reference architecture — assembly fixtures, golden files, CI/CD gating |
-| `aspire-local-testing` | Test Lead | E2E testing with .NET Aspire |
-| `aspire-apphost-setup` | Development Lead | Setting up Aspire orchestration |
-| `qa-expert` | Test Lead | Project-level QA strategy |
-| `composition-patterns` | Frontend Lead | React composition patterns (MIT/Vercel) |
-| `web-design-guidelines` | Frontend Lead | Web Interface Guidelines review (MIT/Vercel) |
+| `temporal-dotnet` | The Timekeeper | Temporal .NET SDK patterns, testing, Nexus |
+| `temporal-versioning` | The Timekeeper | Safe deployment of workflow changes |
+| `protobuf-dotnet` | The Builder | Protocol Buffers in .NET, buf CLI |
+| `arts-regression-testing` | The Prover | Full ARTS reference architecture — assembly fixtures, golden files, CI/CD gating |
+| `aspire-local-testing` | The Prover | E2E testing with .NET Aspire |
+| `aspire-apphost-setup` | The Coder | Setting up Aspire orchestration |
+| `qa-expert` | The Prover | Project-level QA strategy |
+| `composition-patterns` | The Renderer | React composition patterns (MIT/Vercel) |
+| `web-design-guidelines` | The Renderer | Web Interface Guidelines review (MIT/Vercel) |
 
 ## Works Best With: Superpowers
 
@@ -107,10 +107,10 @@ cp -r council-of-mikes/skills/* .claude/skills/
 
 The Council is a **template**. Each member's SKILL.md has placeholder sections for your domain:
 
-- **Solutions Architect** → Add your system map, domain glossary, service boundaries
-- **Observability Lead** → Add your `cloud_RoleName` map, alert queries
-- **Data Lead** → Add your database schemas, partition key strategies
-- **Messaging Lead** → Add your topic/consumer map, dead-letter patterns
+- **The Architect** → Add your system map, domain glossary, service boundaries
+- **The Watcher** → Add your `cloud_RoleName` map, alert queries
+- **The Curator** → Add your database schemas, partition key strategies
+- **The Relay** → Add your topic/consumer map, dead-letter patterns
 
 ## Directory Structure
 

@@ -96,7 +96,7 @@ The Council is designed to work alongside [obra/superpowers](https://github.com/
 
 ```bash
 # Clone into your workspace skills directory
-git clone https://github.com/TheCouncil/council-of-mikes.git .claude/skills/council-of-mikes
+git clone https://github.com/underwms/council-of-mikes.git .claude/skills/council-of-mikes
 
 # Or copy specific members/skills into your existing structure
 cp -r council-of-mikes/council/* .claude/skills/

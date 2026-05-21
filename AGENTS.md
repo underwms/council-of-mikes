@@ -75,7 +75,7 @@ There are two integration paths:
 
 ```bash
 cd <your-workspace>
-git submodule add https://github.com/TheCouncil/council-of-mikes.git council-of-mikes
+git submodule add https://github.com/underwms/council-of-mikes.git council-of-mikes
 ```
 
 Then paste the contents of `prompts/council-routing.snippet.md` into your workspace's `AGENTS.md` and/or `.github/copilot-instructions.md`. The routing block uses relative paths that work as soon as the submodule is present.

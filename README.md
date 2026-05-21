@@ -117,7 +117,10 @@ The Council is a **template**. Each member's SKILL.md has placeholder sections f
 ```
 council-of-mikes/
 ├── README.md
+├── AGENTS.md                       ← Drop-in agent guide (routing + hard rules)
 ├── LICENSE
+├── .github/
+│   └── copilot-instructions.md     ← Copilot auto-loaded instructions
 ├── council/
 │   ├── council.md              ← Cheat sheet, routing, operating principles
 │   ├── the-architect/SKILL.md
@@ -160,3 +163,4 @@ MIT — see [LICENSE](./LICENSE)
 - **Council concept & domain expertise:** Mike (TheCouncil)
 - **Composition Patterns & Web Design Guidelines:** [Vercel](https://github.com/vercel-labs) (MIT)
 - **Works best with:** [obra/superpowers](https://github.com/obra/superpowers) (MIT)
+- **Companion repo:** [MemoryForge](https://github.com/underwms/MemoryForge) — workspace orchestration, morning sync, repo onboarding, graph audit. MemoryForge handles *where context lives*; the Council handles *who does the work*.

@@ -1,0 +1,76 @@
+name: 🐛 Bug Report
+description: A Council member gives wrong guidance, a SOP step is broken, or a doc reference is incorrect.
+title: "[Bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug in the Council. Please give us enough context that a
+        future agent (human or AI) can reproduce the issue without asking follow-ups.
+
+        **Security issues?** Do not file them here. See [`SECURITY.md`](../../SECURITY.md).
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      description: Where does the bug live?
+      options:
+        - A Council member SKILL.md (council/the-*/SKILL.md)
+        - The Pre-Submit SOP (procedures/code-change-pre-submit-sop.md)
+        - A companion skill (skills/*/SKILL.md)
+        - Routing (AGENTS.md, copilot-instructions.md, prompts/)
+        - README / overview docs
+        - CI / doc-lint workflow
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: input
+    id: file
+    attributes:
+      label: File path(s)
+      description: e.g. `council/the-watcher/SKILL.md`
+      placeholder: council/the-…/SKILL.md
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: Describe the correct behavior or correct documentation.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened
+      description: Paste the misleading guidance, broken link, or wrong instruction.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: How would another contributor reproduce this? Include the prompt you used if it surfaced via an AI assistant.
+      placeholder: |
+        1. In Copilot / Claude / Cursor, invoke …
+        2. The Council loaded …
+        3. Result was …
+
+  - type: input
+    id: ai-host
+    attributes:
+      label: AI host
+      description: Which AI assistant surfaced this (if applicable)?
+      placeholder: GitHub Copilot CLI / Claude Code / Cursor / …
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      placeholder: Screenshots, logs, related issues.

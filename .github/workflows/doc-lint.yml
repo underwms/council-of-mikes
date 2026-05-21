@@ -1,0 +1,20 @@
+name: doc-lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate-council:
+    name: Validate Council documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run validate-council.ps1
+        shell: pwsh
+        run: ./scripts/validate-council.ps1

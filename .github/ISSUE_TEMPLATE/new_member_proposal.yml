@@ -1,0 +1,90 @@
+name: 🧙 New Council Member Proposal
+description: Propose a brand-new Council persona with its own SKILL.md.
+title: "[New Member] The "
+labels: ["new-member", "needs-design-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a new Council member is a non-trivial change — it affects routing, the
+        member count claims across docs, and every assistant that consumes the Council.
+        Please fill this out carefully. The Architect will be tagged for design review.
+
+        **Before filing:** confirm no existing member already owns this domain. The
+        Council prefers depth over breadth.
+
+  - type: input
+    id: persona-name
+    attributes:
+      label: Proposed persona name
+      description: "Must follow the `The X` pattern (Title Case, single noun)."
+      placeholder: e.g. The Cartographer
+    validations:
+      required: true
+
+  - type: input
+    id: role-label
+    attributes:
+      label: Proposed role label
+      description: "Short Lead-style label that pairs with the persona (e.g. `Schema Lead`, `Telemetry Lead`)."
+      placeholder: e.g. Schema Lead
+    validations:
+      required: true
+
+  - type: input
+    id: kebab-name
+    attributes:
+      label: Folder / skill name (kebab-case)
+      description: "Will become `council/<name>/SKILL.md` and the `name:` field in the frontmatter."
+      placeholder: the-cartographer
+    validations:
+      required: true
+
+  - type: textarea
+    id: domain
+    attributes:
+      label: Domain — what does this member know?
+      description: Concrete list of technologies, patterns, and questions this member answers.
+    validations:
+      required: true
+
+  - type: textarea
+    id: does-not
+    attributes:
+      label: What this member does NOT do
+      description: Hand-off list — for each adjacent member, state what gets handed off.
+      placeholder: |
+        - Production code → hand off to The Coder
+        - Test design → hand off to The Prover
+        - …
+    validations:
+      required: true
+
+  - type: textarea
+    id: overlap
+    attributes:
+      label: Overlap analysis with existing members
+      description: For each existing member whose domain touches this proposal, explain what's distinct.
+    validations:
+      required: true
+
+  - type: textarea
+    id: triggers
+    attributes:
+      label: Example invocations
+      description: "Three to five `@The<Name>` prompts that should route here."
+      placeholder: |
+        1. "@TheCartographer: review this Cosmos partition strategy"
+        2. ...
+
+  - type: checkboxes
+    id: surfaces
+    attributes:
+      label: Required updates (must all be addressed in the implementing PR)
+      options:
+        - label: README.md member table and count
+        - label: council/council.md member table, count, routing, Best Prompts
+        - label: AGENTS.md routing table
+        - label: .github/copilot-instructions.md (if hard rules apply)
+        - label: CHANGELOG.md Unreleased section
+        - label: scripts/validate-council.ps1 expected member count

@@ -1,0 +1,76 @@
+name: ✨ Feature Request / New Companion Skill
+description: Propose a new companion skill, routing improvement, or enhancement to an existing Council member.
+title: "[Feature] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for additive improvements that **do not** introduce a new
+        Council member persona. For new personas, use the
+        **"New Council Member Proposal"** template instead.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Feature kind
+      options:
+        - New companion skill (skills/<new-skill>/SKILL.md)
+        - Routing improvement (new phrase, better disambiguation)
+        - Existing Council member enhancement (new section in their SKILL.md)
+        - Pre-Submit SOP improvement
+        - Tooling / CI / doc-lint enhancement
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What's missing or painful today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What would you add or modify? Be specific — file names, content sketch, expected behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Has anyone routed around this with an existing member or skill? Why isn't that enough?
+
+  - type: dropdown
+    id: owning-member
+    attributes:
+      label: Most-likely owning Council member
+      description: Which member's domain does this fall into?
+      options:
+        - The Architect
+        - The Coder
+        - The Codex
+        - The Purifier
+        - The Renderer
+        - The Sentinel
+        - The Builder
+        - The Timekeeper
+        - The Watcher
+        - The Curator
+        - The Relay
+        - The Prover
+        - The Pipelineer
+        - The Provisioner
+        - The Gatekeeper
+        - Cross-cutting (specify in proposal)
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      placeholder: Links, references, prior art.

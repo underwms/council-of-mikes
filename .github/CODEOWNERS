@@ -1,0 +1,38 @@
+# Council of Mikes — Code Owners
+#
+# Lines later in the file take precedence over earlier ones.
+# A user must have write access to the repository to be listed here.
+#
+# Reference: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-customizations/customizing-your-repository/about-code-owners
+
+# Default catch-all — every change is reviewed by the maintainer.
+*                               @underwms
+
+# Council members — per-domain ownership (currently all routed to the maintainer;
+# split as the Council gains additional human contributors).
+/council/the-architect/         @underwms
+/council/the-coder/             @underwms
+/council/the-codex/             @underwms
+/council/the-purifier/          @underwms
+/council/the-renderer/          @underwms
+/council/the-sentinel/          @underwms
+/council/the-builder/           @underwms
+/council/the-timekeeper/        @underwms
+/council/the-watcher/           @underwms
+/council/the-curator/           @underwms
+/council/the-relay/             @underwms
+/council/the-prover/            @underwms
+/council/the-pipelineer/        @underwms
+/council/the-provisioner/       @underwms
+/council/the-gatekeeper/        @underwms
+
+# Procedures (Pre-Submit SOP, etc.) — Gatekeeper-owned by definition.
+/procedures/                    @underwms
+
+# Security policy + Sentinel-owned routing snippets.
+/SECURITY.md                    @underwms
+/council/the-sentinel/          @underwms
+
+# CI / workflows — owned by the DevOps surface (The Pipelineer's domain).
+/.github/workflows/             @underwms
+/scripts/                       @underwms

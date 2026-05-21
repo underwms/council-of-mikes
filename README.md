@@ -1,5 +1,12 @@
 # Council of Mikes
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Doc Lint](https://github.com/underwms/council-of-mikes/actions/workflows/doc-lint.yml/badge.svg)](https://github.com/underwms/council-of-mikes/actions/workflows/doc-lint.yml)
+[![Members: 15](https://img.shields.io/badge/Council%20Members-15-6f42c1)](./council/council.md)
+[![Pre-Submit Gate: 11-phase](https://img.shields.io/badge/Pre--Submit%20Gate-11--phase-2ea44f)](./procedures/code-change-pre-submit-sop.md)
+[![Works with: Copilot · Claude · Cursor](https://img.shields.io/badge/Works%20with-Copilot%20·%20Claude%20·%20Cursor-0a7bbb)](./AGENTS.md)
+[![Companion: Superpowers](https://img.shields.io/badge/Companion-Superpowers-555)](https://github.com/obra/superpowers)
+
 > A team of 15 AI expert personas for .NET/C# development. Each member has deep domain expertise and clear boundaries — they collaborate, defer to specialists, and never freelance outside their lane.
 
 ## What Is This?

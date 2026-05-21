@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔐 Report a security vulnerability
+    url: https://github.com/underwms/council-of-mikes/security/advisories/new
+    about: Use GitHub's private vulnerability reporting. See SECURITY.md for scope.
+  - name: 📖 Read the Pre-Submit SOP
+    url: https://github.com/underwms/council-of-mikes/blob/main/procedures/code-change-pre-submit-sop.md
+    about: The 11-phase gate The Gatekeeper enforces before any change ships.

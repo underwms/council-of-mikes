@@ -1,0 +1,30 @@
+labels: ['💭 idea']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea that's not quite a New Member Proposal? Brainstorm here.
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of change
+      options:
+        - New Council member
+        - Change to an existing member's lane
+        - Change to the Pre-Submit SOP
+        - New companion skill
+        - Tooling / CI / repo plumbing
+    validations:
+      required: true

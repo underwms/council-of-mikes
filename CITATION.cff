@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use the Council of Mikes in academic or published work, please cite it as below."
+title: "Council of Mikes: A skill library of 15 expert AI personas and an 11-phase pre-submit gate for AI-assisted .NET/C# development"
+abstract: >-
+  The Council of Mikes is a structured skill library that defines fifteen
+  domain-expert AI personas (architecture, implementation, quality, security,
+  observability, gatekeeping, etc.) and an eleven-phase Pre-Submit SOP that
+  acts as a quality gate before any code change is reported as complete. It
+  is designed to be skill-library compatible with GitHub Copilot, Claude
+  Code, and Cursor, and pairs with MemoryForge for context engineering.
+type: software
+authors:
+  - family-names: Underwood
+    given-names: Michael
+    alias: underwms
+url: "https://github.com/underwms/council-of-mikes"
+repository-code: "https://github.com/underwms/council-of-mikes"
+license: MIT
+version: "1.2.0"
+date-released: "2026-05-21"
+keywords:
+  - ai-coding-assistants
+  - github-copilot
+  - claude-code
+  - cursor
+  - skill-library
+  - code-review
+  - pre-submit-gate
+  - dotnet
+  - csharp
+  - quality-assurance

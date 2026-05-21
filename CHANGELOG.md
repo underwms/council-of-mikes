@@ -18,6 +18,19 @@ All notable changes to the Council of Mikes are documented here. This project fo
 
 ---
 
+## [1.2.1] — 2026-05-21
+
+### Fixed
+- **`SECURITY.md` Supported Versions table** — bumped to reflect v1.2.x as Active, v1.1.x as Critical-fixes-only, < 1.1 as Unsupported (was lagging the release).
+
+### Added
+- **`scripts/validate-council.ps1` check 5** — `[[wikilink]]` resolution against Council members, companion skills, and any markdown file in the repo. Previously the validator only checked `[text](url)` style links, so a typo in a wikilink could ship silently.
+- **`scripts/validate-council.ps1` check 6** — employer-specific fingerprint scan as a CI guardrail (currently clean; this prevents future regressions).
+- **`CITATION.cff`** — academic citation metadata for v1.2.0.
+- **`.github/DISCUSSION_TEMPLATE/`** — show-and-tell, idea, and q-and-a discussion templates.
+
+---
+
 ## [1.2.0] — 2026-05-21
 
 ### Added

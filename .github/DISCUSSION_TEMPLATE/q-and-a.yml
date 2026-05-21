@@ -1,0 +1,29 @@
+labels: ['❓ q-and-a']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Got a question that isn't a bug? Ask here. Check the [README Quick Start](../../README.md) and example transcripts in [`examples/`](../../examples/) first.
+  - type: input
+    id: version
+    attributes:
+      label: Council version / commit SHA
+    validations:
+      required: true
+  - type: input
+    id: tool
+    attributes:
+      label: AI tool you're using
+      placeholder: "Claude Code 1.x / Cursor 0.4x / Copilot CLI / Copilot in VS Code"
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you already tried?

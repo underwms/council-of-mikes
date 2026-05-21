@@ -13,9 +13,9 @@ This policy is curated by [The Sentinel](./council/the-sentinel/SKILL.md).
 
 | Version | Supported |
 |---------|-----------|
-| 1.1.x   | ✅ Active |
-| 1.0.x   | ⚠️ Critical fixes only |
-| < 1.0   | ❌ Unsupported |
+| 1.2.x   | ✅ Active |
+| 1.1.x   | ⚠️ Critical fixes only |
+| < 1.1   | ❌ Unsupported |
 
 ---
 

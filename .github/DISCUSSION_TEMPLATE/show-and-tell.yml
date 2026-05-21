@@ -1,0 +1,26 @@
+labels: ['💡 show-and-tell']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Show how you're using the Council — which members get invoked most, custom routing snippets you wrote, or war stories about the Gatekeeper saving (or annoying) you.
+  - type: input
+    id: stack
+    attributes:
+      label: Stack
+      description: Languages / frameworks / IDE / AI tool you pair the Council with.
+      placeholder: ".NET 9 + Aspire + Copilot in VS Code"
+    validations:
+      required: true
+  - type: textarea
+    id: how
+    attributes:
+      label: How you use it
+      description: Workflow, favorite member, routing customizations.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: A specific moment it helped (or didn't)
+      description: Anecdotes welcome. Even ones where the Council was wrong — those make the project better.

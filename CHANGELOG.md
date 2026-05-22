@@ -13,6 +13,11 @@ All notable changes to the Council of Mikes are documented here. This project fo
 
 ## [Unreleased]
 
+### Changed
+- **AGENTS.md** and **`prompts/council-routing.snippet.md`** — Added top-level **ALWAYS-ON GATEKEEPER** rule. The 11-phase Pre-Submit Gate now runs implicitly before every "done", `git commit`, `git push`, or PR — the user no longer needs to type `use pre-submit skill` to trigger it. Explicit invocation still works and behaves identically. Adopters who pasted the routing snippet inherit the new default automatically on their next pull/copy.
+- **Pre-Submit input modes documented** — clarified that the gate accepts both **task mode** (a TODO the Council performs end-to-end) and **audit mode** (existing code / diff / defect to review). Both end with the same `Gatekeeper Report`.
+- **Anti-rationalization list extended** — added "The user didn't ask for the gate this time", "It's just a doc change", and "It's just a rename".
+
 ### Added
 - Future tier-4 visual / onboarding work goes here.
 

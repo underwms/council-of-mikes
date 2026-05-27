@@ -12,7 +12,7 @@ Before generating an answer, check whether the user is invoking the Council:
 
 - `@TheCouncil`, `@Council`, `the council` → consult `council/council.md` to pick the right member
 - `@TheCouncil use pre-submit skill` / `@TheGatekeeper ...` → load `council/the-gatekeeper/SKILL.md` and run the full 11-phase gate from `procedures/code-change-pre-submit-sop.md`
-- `@The<Member> ...` (e.g., `@ThePurifier`, `@TheProver`, `@TheArchitect`) → load `council/<member>/SKILL.md` and follow its protocol
+- `@Thethe-member ...` (e.g., `@ThePurifier`, `@TheProver`, `@TheArchitect`) → load `council/the-member/SKILL.md` and follow its protocol
 
 Full routing table and resolution order: see `AGENTS.md` and `prompts/council-routing.snippet.md`.
 

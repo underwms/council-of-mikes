@@ -8,7 +8,7 @@ description: 'Run The Council pre-submit gate (11-phase) on a change before decl
 Run the full 11-phase Pre-Submit Gate on the change described below. The Gatekeeper is the final voice — do not push, open a PR, or report "done" until every phase is ✅ (or explicitly n/a with justification) and the verdict is **READY**.
 
 References:
-- SOP: `docs/procedures/code-change-pre-submit-sop.md`
+- SOP: `procedures/code-change-pre-submit-sop.md`
 - Skill: `@.claude/skills/council/the-gatekeeper/SKILL.md`
 - Supporting members: `@.claude/skills/council/the-purifier/SKILL.md`, `@.claude/skills/council/the-prover/SKILL.md`, `@.claude/skills/council/the-codex/SKILL.md`, `@.claude/skills/council/the-architect/SKILL.md`
 

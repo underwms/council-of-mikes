@@ -45,7 +45,7 @@ If any of these is true, the gate has not run:
 
 ## The 11-Phase Protocol
 
-Full procedure: `docs/procedures/code-change-pre-submit-sop.md`. The Gatekeeper enforces it.
+Full procedure: `procedures/code-change-pre-submit-sop.md`. The Gatekeeper enforces it.
 
 | # | Phase | Owner | Gatekeeper Action |
 |---|-------|-------|-------------------|
@@ -194,7 +194,7 @@ Only `READY` permits a push, PR, or "done" report.
 
 ## Cross-References
 
-- `docs/procedures/code-change-pre-submit-sop.md` — full SOP, mandatory reading
+- `procedures/code-change-pre-submit-sop.md` — full SOP, mandatory reading
 - [[the-purifier]] — Phases 3 & 4
 - [[the-prover]] — Phases 5–7, 9
 - [[the-architect]] — Phase 1

@@ -58,8 +58,8 @@ The Council is invoked by `@`-mention. When the user writes any of the phrases b
 
 **Skill resolution order** (for projects that adopt this Council elsewhere):
 
-1. `<workspace-root>/.claude/skills/council/<member>/SKILL.md`
-2. `<workspace-root>/council-of-mikes/council/<member>/SKILL.md`
+1. `<workspace-root>/.claude/skills/council/the-member/SKILL.md`
+2. `<workspace-root>/council-of-mikes/council/the-member/SKILL.md`
 
 If neither resolves, ask the user where the Council lives in this workspace.
 

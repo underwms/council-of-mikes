@@ -21,8 +21,8 @@ When the user invokes `@TheCouncil`, `@Council`, `the council`, or any direct me
 
 **Council skill location (resolution order):**
 
-1. `<workspace-root>/.claude/skills/council/<member>/SKILL.md`
-2. `<workspace-root>/council-of-mikes/council/<member>/SKILL.md`
+1. `<workspace-root>/.claude/skills/council/the-member/SKILL.md`
+2. `<workspace-root>/council-of-mikes/council/the-member/SKILL.md`
 
 If neither resolves, ask the user where the Council lives in this workspace.
 

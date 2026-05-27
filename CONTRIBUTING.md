@@ -68,7 +68,7 @@ Council errs toward depth, not breadth.
 
 4. **`## When to Invoke`** — bullet list of trigger phrases.
 
-5. **`## Collaboration Protocol`** — table of `Working with… | <member>'s job`.
+5. **`## Collaboration Protocol`** — table of `Working with… | the-member's job`.
 
 6. **`## Best Prompts`** — 3–5 example invocations.
 

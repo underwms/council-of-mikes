@@ -24,7 +24,8 @@
 
 [CmdletBinding()]
 param(
-    [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path,
+    [string]$FingerprintPattern
 )
 
 $ErrorActionPreference = 'Stop'
@@ -214,26 +215,38 @@ if ($failures.Count -eq $wlFails) {
 # ─── Check 6: No employer-specific fingerprints ──────────────────────────────
 Write-Host "`n[6/8] No employer-specific fingerprints"
 $fpFails = $failures.Count
-$fpPattern = 'meijer|payments-service|orders-shared|platform-infra|paymetric|aurus|3305041'
-# Files that are allowed to mention the pattern because they DOCUMENT the scan.
-$fpAllowlist = @(
-    (Join-Path $RepoRoot 'CONTRIBUTING.md'),
-    (Join-Path $RepoRoot 'SECURITY.md'),
-    (Join-Path $RepoRoot '.github\PULL_REQUEST_TEMPLATE.md'),
-    (Join-Path $RepoRoot '.github\workflows\doc-lint.yml'),
-    (Join-Path $RepoRoot 'scripts\validate-council.ps1')
-)
-$fpScan = Get-ChildItem -Path $RepoRoot -Recurse -File -Include *.md,*.ps1,*.yml,*.yaml |
-    Where-Object { $_.FullName -notmatch '\\\.git\\' -and $fpAllowlist -notcontains $_.FullName }
-foreach ($f in $fpScan) {
-    $matches = Select-String -Path $f.FullName -Pattern $fpPattern -CaseSensitive:$false
-    foreach ($m in $matches) {
-        $rel = $f.FullName -replace [regex]::Escape($RepoRoot + [IO.Path]::DirectorySeparatorChar), ''
-        Add-Failure "${rel}:$($m.LineNumber) → employer-specific fingerprint: $($m.Line.Trim())"
-    }
+# Configurable scan list. Override via -FingerprintPattern parameter or the
+# COUNCIL_FINGERPRINT_PATTERN env var with a regex matching the strings that
+# must never leak into your fork (e.g., 'acme|acme-internal|acme.com').
+# By default the check is disabled because there is no universal pattern that
+# is right for every adopter.
+if (-not $FingerprintPattern) {
+    $FingerprintPattern = $env:COUNCIL_FINGERPRINT_PATTERN
 }
-if ($failures.Count -eq $fpFails) {
-    Add-Pass "No employer-specific fingerprints found"
+if (-not $FingerprintPattern) {
+    Add-Pass "Skipped (no -FingerprintPattern set; export COUNCIL_FINGERPRINT_PATTERN to enable)"
+}
+else {
+    $fpPattern = $FingerprintPattern
+    $fpAllowlist = @(
+        (Join-Path $RepoRoot 'CONTRIBUTING.md'),
+        (Join-Path $RepoRoot 'SECURITY.md'),
+        (Join-Path $RepoRoot '.github\PULL_REQUEST_TEMPLATE.md'),
+        (Join-Path $RepoRoot '.github\workflows\doc-lint.yml'),
+        (Join-Path $RepoRoot 'scripts\validate-council.ps1')
+    )
+    $fpScan = Get-ChildItem -Path $RepoRoot -Recurse -File -Include *.md,*.ps1,*.yml,*.yaml |
+        Where-Object { $_.FullName -notmatch '\\\.git\\' -and $fpAllowlist -notcontains $_.FullName }
+    foreach ($f in $fpScan) {
+        $matches = Select-String -Path $f.FullName -Pattern $fpPattern -CaseSensitive:$false
+        foreach ($m in $matches) {
+            $rel = $f.FullName -replace [regex]::Escape($RepoRoot + [IO.Path]::DirectorySeparatorChar), ''
+            Add-Failure "${rel}:$($m.LineNumber) → employer-specific fingerprint: $($m.Line.Trim())"
+        }
+    }
+    if ($failures.Count -eq $fpFails) {
+        Add-Pass "No employer-specific fingerprints found (pattern: $fpPattern)"
+    }
 }
 
 # ─── Check 7: @.claude/skills/... references resolve ─────────────────────────

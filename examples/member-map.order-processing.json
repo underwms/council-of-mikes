@@ -1,0 +1,18 @@
+{
+  "_comment": "Example member-map: rename generic Council members to a domain-specific brand. Used with install-council.ps1 -MemberMap. Members not listed retain their original directory name. Pair with -CouncilName \"Your Council Name\" and (optionally) -RewriteReferences to also update cross-refs inside copied SKILL.md files.",
+  "the-architect": "solutions-architect",
+  "the-coder": "development-lead",
+  "the-codex": "documentation-lead",
+  "the-purifier": "quality-analyst",
+  "the-renderer": "frontend-lead",
+  "the-sentinel": "security-lead",
+  "the-builder": "backend-lead",
+  "the-timekeeper": "workflow-lead",
+  "the-watcher": "observability-lead",
+  "the-curator": "data-lead",
+  "the-relay": "messaging-lead",
+  "the-prover": "test-lead",
+  "the-pipelineer": "devops-lead",
+  "the-provisioner": "platform-lead",
+  "the-gatekeeper": "gatekeeper"
+}

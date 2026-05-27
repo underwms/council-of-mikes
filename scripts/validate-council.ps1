@@ -140,10 +140,14 @@ $linkFails = $failures.Count
 $mdFiles = Get-ChildItem -Path $RepoRoot -Filter '*.md' -Recurse -File |
     Where-Object { $_.FullName -notmatch '\\\.git\\' }
 
-$linkPattern = '(?<![\\])\[[^\]]+\]\((?<target>[^)]+)\)(?!)'
+$linkPattern = '\[[^\]]+\]\((?<target>[^)]+)\)'
 foreach ($md in $mdFiles) {
     $text = Get-Content -Path $md.FullName -Raw
-    foreach ($match in [regex]::Matches($text, $linkPattern)) {
+    # Strip fenced code blocks and inline-code spans so example link syntax
+    # in prose (e.g., `[text](url)`) doesn't get treated as a real link.
+    $stripped = [regex]::Replace($text, '(?s)```.*?```', '')
+    $stripped = [regex]::Replace($stripped, '`[^`\n]*`', '')
+    foreach ($match in [regex]::Matches($stripped, $linkPattern)) {
         $target = $match.Groups['target'].Value.Trim()
         if ($target -match '^(https?:|mailto:|#)') { continue }
         if ($target -match '^<.*>$') { continue }

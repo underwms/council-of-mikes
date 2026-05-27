@@ -1,0 +1,18 @@
+{
+  "_comment": "Example member-map for install-council.ps1 -MemberMap. Keys are the generic Council member directory names; values are the names you want them installed as in your workspace. Members not listed retain their original directory name. Pair with -CouncilName \"Your Council Name\" and (optionally) -RewriteReferences to also update cross-refs inside copied SKILL.md files. The mapping below is illustrative; adopt whatever job-title scheme matches your team.",
+  "the-gatekeeper": "release-gatekeeper",
+  "the-architect": "solutions-architect",
+  "the-coder": "engineering-lead",
+  "the-codex": "documentation-lead",
+  "the-purifier": "quality-engineer",
+  "the-prover": "test-engineer",
+  "the-renderer": "frontend-lead",
+  "the-builder": "backend-lead",
+  "the-sentinel": "security-engineer",
+  "the-timekeeper": "workflow-engineer",
+  "the-watcher": "observability-engineer",
+  "the-curator": "data-engineer",
+  "the-relay": "messaging-engineer",
+  "the-pipelineer": "devops-engineer",
+  "the-provisioner": "platform-engineer"
+}

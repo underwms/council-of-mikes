@@ -23,8 +23,8 @@
   If omitted, the script auto-discovers it.
 
 .PARAMETER CouncilName
-  Display name of the council (e.g., "Order Processing Council"). Used to derive the
-  skills subfolder slug (e.g., `order-processing-council`) and, when `-RewriteReferences`
+  Display name of the council (e.g., "Platform Council"). Used to derive the
+  skills subfolder slug (e.g., `platform-council`) and, when `-RewriteReferences`
   is set, used to substitute "The Council" in copied content.
   Defaults to "Council" (slug: `council`).
 
@@ -56,8 +56,8 @@
   ./install-council.ps1
 
 .EXAMPLE
-  # Rebrand as "Order Processing Council" with member rename map
-  ./install-council.ps1 -CouncilName "Order Processing Council" -MemberMap ./op-member-map.json -RewriteReferences -Backup
+  # Rebrand as "Platform Council" with a custom member rename map
+  ./install-council.ps1 -CouncilName "Platform Council" -MemberMap ./examples/member-map.example.json -RewriteReferences -Backup
 #>
 [CmdletBinding()]
 param(

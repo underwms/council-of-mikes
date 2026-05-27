@@ -9,6 +9,12 @@
          .github/copilot-instructions.md match the actual SKILL.md file count.
       3. The Pre-Submit SOP uses "11-phase" consistently (no "10-phase" stragglers).
       4. Internal Markdown links resolve to real files.
+      5. [[wikilinks]] resolve to a Council member, companion skill, or .md file.
+      6. No employer-specific fingerprints leak into adopter-facing files.
+      7. `@.claude/skills/...` paths used in prompts/AGENTS/copilot-instructions
+         resolve to real source files (council/<member>/ or skills/<name>/).
+      8. Backtick-wrapped `procedures/*.md` and `skills/*/SKILL.md` references
+         resolve to real files (catches refs that aren't formatted as MD links).
 
     Run locally before pushing; CI runs the same script via doc-lint workflow.
 
@@ -40,7 +46,7 @@ Write-Host "Repo: $RepoRoot"
 Write-Host ""
 
 # ─── Check 1: SKILL.md frontmatter ───────────────────────────────────────────
-Write-Host "[1/6] SKILL.md frontmatter"
+Write-Host "[1/8] SKILL.md frontmatter"
 $councilSkills = Get-ChildItem -Path (Join-Path $RepoRoot 'council') -Filter 'SKILL.md' -Recurse
 foreach ($skill in $councilSkills) {
     $content = Get-Content -Path $skill.FullName -Raw
@@ -74,7 +80,7 @@ if ($failures.Count -eq $companionFails) {
 }
 
 # ─── Check 2: Member-count consistency ───────────────────────────────────────
-Write-Host "`n[2/6] Member-count consistency"
+Write-Host "`n[2/8] Member-count consistency"
 $expectedCount = $councilSkills.Count
 $countFails = $failures.Count
 
@@ -113,7 +119,7 @@ if ($failures.Count -eq $countFails) {
 }
 
 # ─── Check 3: Pre-Submit phase count consistency ─────────────────────────────
-Write-Host "`n[3/6] Pre-Submit phase-count consistency (must be 11-phase)"
+Write-Host "`n[3/8] Pre-Submit phase-count consistency (must be 11-phase)"
 $phaseFails = $failures.Count
 $sopFiles = @(
     'procedures/code-change-pre-submit-sop.md',
@@ -135,7 +141,7 @@ if ($failures.Count -eq $phaseFails) {
 }
 
 # ─── Check 4: Internal Markdown links ────────────────────────────────────────
-Write-Host "`n[4/6] Internal Markdown link resolution"
+Write-Host "`n[4/8] Internal Markdown link resolution"
 $linkFails = $failures.Count
 $mdFiles = Get-ChildItem -Path $RepoRoot -Filter '*.md' -Recurse -File |
     Where-Object { $_.FullName -notmatch '\\\.git\\' }
@@ -170,7 +176,7 @@ if ($failures.Count -eq $linkFails) {
 }
 
 # ─── Check 5: Wikilink resolution ────────────────────────────────────────────
-Write-Host "`n[5/6] Wikilink resolution"
+Write-Host "`n[5/8] Wikilink resolution"
 $wlFails = $failures.Count
 
 # Build an index of resolvable wikilink targets.
@@ -206,7 +212,7 @@ if ($failures.Count -eq $wlFails) {
 }
 
 # ─── Check 6: No employer-specific fingerprints ──────────────────────────────
-Write-Host "`n[6/6] No employer-specific fingerprints"
+Write-Host "`n[6/8] No employer-specific fingerprints"
 $fpFails = $failures.Count
 $fpPattern = 'meijer|payments-service|orders-shared|platform-infra|paymetric|aurus|3305041'
 # Files that are allowed to mention the pattern because they DOCUMENT the scan.
@@ -228,6 +234,59 @@ foreach ($f in $fpScan) {
 }
 if ($failures.Count -eq $fpFails) {
     Add-Pass "No employer-specific fingerprints found"
+}
+
+# ─── Check 7: @.claude/skills/... references resolve ─────────────────────────
+# Adopter-facing docs use `@.claude/skills/council/the-X/SKILL.md` and
+# `@.claude/skills/<companion>/SKILL.md` to describe where files land in a
+# consumer workspace. Map those back to source paths and verify they exist.
+Write-Host "`n[7/8] @.claude/skills/... reference resolution"
+$atFails = $failures.Count
+$atPattern = '@\.claude/skills/(?<rest>[A-Za-z0-9_./\-]+)'
+foreach ($md in $mdFiles) {
+    $text = Get-Content -Path $md.FullName -Raw
+    $stripped = [regex]::Replace($text, '(?s)```.*?```', '')
+    foreach ($match in [regex]::Matches($stripped, $atPattern)) {
+        $rest = $match.Groups['rest'].Value.TrimEnd('.',',',';',':',')')
+        # council/<member>/... → <member>/... under council/
+        # <other>/...          → <other>/... under skills/
+        if ($rest -match '^council/(.+)$') {
+            $sourceRel = Join-Path 'council' $Matches[1]
+        } else {
+            $sourceRel = Join-Path 'skills' $rest
+        }
+        $sourcePath = Join-Path $RepoRoot $sourceRel
+        if (-not (Test-Path -LiteralPath $sourcePath)) {
+            $rel = $md.FullName -replace [regex]::Escape($RepoRoot + [IO.Path]::DirectorySeparatorChar), ''
+            Add-Failure "${rel} → @.claude/skills/$rest does not resolve to $sourceRel"
+        }
+    }
+}
+if ($failures.Count -eq $atFails) {
+    Add-Pass "All @.claude/skills/... references resolve to source files"
+}
+
+# ─── Check 8: backtick-wrapped procedure / skill references ──────────────────
+# Catches refs like `procedures/code-change-pre-submit-sop.md` and
+# `council/the-X/SKILL.md` that aren't formatted as Markdown links and would
+# slip past Check 4.
+Write-Host "`n[8/8] Backtick-wrapped path references"
+$btFails = $failures.Count
+$btPattern = '`(?<path>(?:procedures|council|skills)/[A-Za-z0-9_./\-]+\.md)`'
+foreach ($md in $mdFiles) {
+    $text = Get-Content -Path $md.FullName -Raw
+    $stripped = [regex]::Replace($text, '(?s)```.*?```', '')
+    foreach ($match in [regex]::Matches($stripped, $btPattern)) {
+        $p = $match.Groups['path'].Value
+        $full = Join-Path $RepoRoot $p
+        if (-not (Test-Path -LiteralPath $full)) {
+            $rel = $md.FullName -replace [regex]::Escape($RepoRoot + [IO.Path]::DirectorySeparatorChar), ''
+            Add-Failure "${rel} → backtick path does not resolve: $p"
+        }
+    }
+}
+if ($failures.Count -eq $btFails) {
+    Add-Pass "All backtick-wrapped procedure/skill refs resolve"
 }
 
 # ─── Summary ─────────────────────────────────────────────────────────────────

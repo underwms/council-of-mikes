@@ -69,11 +69,16 @@ Write-Host "  [OK] Host directory tree provisioned" -ForegroundColor Green
 # 3. Install 15 Council V2 Specialist Skills
 Write-Host ""
 Write-Host "[2/6] Installing 15 Council V2 Specialist Skills..." -ForegroundColor Yellow
-$specialistsSource = Join-Path $WorkspaceRoot ".gemini\specialists"
+$specialistsSource = Join-Path $WorkspaceRoot "council"
+if (-not (Test-Path $specialistsSource)) {
+    $specialistsSource = Join-Path $WorkspaceRoot ".gemini\specialists"
+}
 $specialistsDest = Join-Path $GeminiHome "skills"
 
 if (Test-Path $specialistsSource) {
-    Copy-Item -Path "$specialistsSource\*" -Destination $specialistsDest -Recurse -Force
+    Get-ChildItem -Path $specialistsSource -Directory | Where-Object { $_.Name -like 'the-*' } | ForEach-Object {
+        Copy-Item -Path $_.FullName -Destination $specialistsDest -Recurse -Force
+    }
     $installed = (Get-ChildItem -Path $specialistsDest -Directory).Count
     Write-Host "  [OK] Installed $installed Council V2 specialist skill packages to $specialistsDest" -ForegroundColor Green
 } else {
@@ -136,43 +141,45 @@ if (Test-Path $tier1Src) {
 Write-Host ""
 Write-Host "[5/6] Configuring ~/.gemini/settings.json hooks..." -ForegroundColor Yellow
 $settingsFile = Join-Path $GeminiHome "settings.json"
-$settings = @{}
+$hookScript = Join-Path $GeminiHome "scripts\heartbeat_hook.py"
 
-if (Test-Path $settingsFile) {
-    try {
-        $rawJson = Get-Content -Path $settingsFile -Raw
-        $settings = $rawJson | ConvertFrom-Json -AsHashtable
-    } catch {
-        $settings = @{}
-    }
-}
+$mergePy = @"
+import json, os
 
-if (-not $settings.ContainsKey("hooks")) {
-    $settings["hooks"] = @{}
-}
+p = r'$settingsFile'
+hook_cmd = 'python ' + r'$hookScript'
 
-$hookCmd = "python " + (Join-Path $GeminiHome "scripts\heartbeat_hook.py")
-$settings["hooks"]["AfterAgent"] = @(
-    @{
-        "matcher" = "*"
-        "hooks" = @(
-            @{
-                "name" = "memoryforge-heartbeat"
-                "type" = "command"
-                "command" = $hookCmd
-                "timeout" = 5000
-                "description" = "Deterministic MemoryForge heartbeat bridge across sessions"
+d = {}
+if os.path.exists(p):
+    try:
+        with open(p, 'r', encoding='utf-8') as f:
+            d = json.load(f)
+    except Exception:
+        d = {}
+
+hooks = d.setdefault('hooks', {})
+hooks['AfterAgent'] = [
+    {
+        'matcher': '*',
+        'hooks': [
+            {
+                'name': 'memoryforge-heartbeat',
+                'type': 'command',
+                'command': hook_cmd,
+                'timeout': 5000,
+                'description': 'Deterministic MemoryForge heartbeat bridge across sessions'
             }
-        )
+        ]
     }
-)
+]
 
-if (-not $settings.ContainsKey("general")) {
-    $settings["general"] = @{ "preferredEditor" = "vscode" }
-}
+d.setdefault('general', {})['preferredEditor'] = 'vscode'
 
-$updatedJson = $settings | ConvertTo-Json -Depth 10
-Set-Content -Path $settingsFile -Value $updatedJson -Encoding utf8
+with open(p, 'w', encoding='utf-8') as f:
+    json.dump(d, f, indent=2)
+"@
+
+python -c "$mergePy"
 Write-Host "  [OK] Configured AfterAgent heartbeat hook in $settingsFile" -ForegroundColor Green
 
 # 7. Run Verification Audit

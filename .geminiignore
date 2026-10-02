@@ -1,0 +1,36 @@
+# Workspace Indexing Exclusions
+# Prevents Gemini CLI from scanning build artifacts, dependency directories, and IDE caches
+
+# IDE & Editor Caches
+.vs/
+.idea/
+.vscode/
+.vscode-shared/
+
+# .NET Build Artifacts & Binaries
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+**/TestResults/
+
+# JavaScript, TypeScript & Deno Dependencies
+**/node_modules/
+**/.deno/
+
+# Python Tooling & Test Caches
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.venv/
+**/venv/
+
+# Ephemeral Traces, Dumps & Logs
+**/.gemini/tmp/
+**/*.log
+**/*.har
+**/*.tmp
+
+# OS & Environment Files
+Thumbs.db
+desktop.ini

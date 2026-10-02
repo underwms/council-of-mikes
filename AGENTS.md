@@ -53,7 +53,7 @@ The Council is invoked by `@`-mention. When the user writes any of the phrases b
 | `@TheRelay ...` | `council/the-relay/SKILL.md` |
 | `@TheRenderer ...` | `council/the-renderer/SKILL.md` |
 | `@TheSentinel ...` | `council/the-sentinel/SKILL.md` |
-| `@TheTimekeeper ...` | `council/the-timekeeper/SKILL.md` |
+| `@TheTimekeeper ...` | `council/the-coordinator/SKILL.md` |
 | `@TheWatcher ...` | `council/the-watcher/SKILL.md` |
 
 **Skill resolution order** (for projects that adopt this Council elsewhere):

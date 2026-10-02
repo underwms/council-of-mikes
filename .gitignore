@@ -53,3 +53,19 @@ Desktop.ini
 *~
 *.swp
 *.swo
+
+# Python & Caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+ENV/
+
+# Temporary & Ephemeral Cache
+tmp/
+.gemini/tmp/

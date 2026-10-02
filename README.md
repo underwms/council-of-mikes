@@ -50,15 +50,15 @@ The Council of Mikes is a **multi-persona AI skill system** designed for AI-assi
 | **The Purifier** | Quality Analyst | SonarQube tripwires, complexity, modernization |
 | **The Renderer** | Frontend Lead | React, Blazor, SignalR, CSS, accessibility |
 | **The Sentinel** | Security Lead | PCI/PII, auth flows, redaction, Key Vault |
-| **The Builder** | Backend Lead | REST, GraphQL, PowerShell, microservices, K8s |
-| **The Timekeeper** | Workflow Lead | Workflow determinism, versioning, Nexus, testing |
-| **The Watcher** | Observability Lead | App Insights, OpenTelemetry, alerting, traces |
-| **The Curator** | Data Lead | Cosmos DB, Redis, SQL Server, EF Core |
-| **The Relay** | Messaging Lead | Kafka, Service Bus, Event Grid, Event Hubs |
-| **The Prover** | Test Lead | xUnit, Moq, Testcontainers, load testing, ARTS |
-| **The Pipelineer** | DevOps Lead | CI/CD, Terraform, Git workflows, pipelines |
-| **The Provisioner** | Platform Lead | App Services, Functions, networking, ARM/Bicep |
-| **The Gatekeeper** | Pre-Submit Quality Gate | 11-phase Pre-Submit SOP, Copilot PR-review simulation |
+| **The Builder** | Backend Lead | REST, Minimal APIs, Scalar OpenAPI, PowerShell, scripting |
+| **The Coordinator** | Agile Delivery Lead | JIRA lifecycles, sprint backlogs, INVEST stories, DoD/DoR verification |
+| **The Watcher** | Observability Lead | App Insights, OpenTelemetry, Serilog, Grafana Loki, traces |
+| **The Curator** | Data Lead | PostgreSQL, strict EF Core 10, schema migrations, indexing |
+| **The Relay** | Messaging Lead | Kafka, CloudEvents, topic partitions, event streams |
+| **The Prover** | Test Lead | MSTest.Sdk, NSubstitute, .NET Aspire Testing, Testcontainers |
+| **The Pipelineer** | DevOps Lead | CI/CD, TeamCity, Octopus Deploy, Git workflows, pipelines |
+| **The Provisioner** | Platform Lead | Google Kubernetes Engine (GKE), manifests, HPA autoscaling |
+| **The Gatekeeper** | Pre-Submit Quality Gate | 11-phase Pre-Submit SOP, PR review simulation |
 
 ## How It Works
 
@@ -81,7 +81,7 @@ flowchart TD
     R --> RN[The Renderer<br/><i>Frontend Lead</i>]
     R --> S[The Sentinel<br/><i>Security Lead</i>]
     R --> B[The Builder<br/><i>Backend Lead</i>]
-    R --> T[The Timekeeper<br/><i>Workflow Lead</i>]
+    R --> CO[The Coordinator<br/><i>Agile Delivery Lead</i>]
     R --> W[The Watcher<br/><i>Observability Lead</i>]
     R --> CU[The Curator<br/><i>Data Lead</i>]
     R --> RL[The Relay<br/><i>Messaging Lead</i>]
@@ -120,7 +120,7 @@ Before any code change is declared "done" — push, PR, or "done" report — the
 Phases (owners in parentheses):
 
 1. Brainstorm (Architect / Coder)
-2. Implement (Coder / Builder / Timekeeper / Renderer)
+2. Implement (Coder / Builder / Coordinator / Renderer)
 3. Purify (Purifier)
 4. Static analysis — zero new lints (Purifier)
 5. Unit tests (Prover)
@@ -201,7 +201,7 @@ council-of-mikes/
 │   ├── the-renderer/SKILL.md
 │   ├── the-sentinel/SKILL.md
 │   ├── the-builder/SKILL.md
-│   ├── the-timekeeper/SKILL.md
+│   ├── the-coordinator/SKILL.md
 │   ├── the-watcher/SKILL.md
 │   ├── the-curator/SKILL.md
 │   ├── the-relay/SKILL.md
@@ -209,6 +209,10 @@ council-of-mikes/
 │   ├── the-pipelineer/SKILL.md
 │   ├── the-provisioner/SKILL.md
 │   └── the-gatekeeper/SKILL.md
+├── docs/
+│   └── The-Council-Structure.md        ← Full AI-friendly architectural blueprint
+├── tools/
+│   └── council/                        ← Autonomous LangGraph orchestration engine
 ├── procedures/
 │   └── code-change-pre-submit-sop.md   ← 11-phase pre-submit gate
 ├── prompts/

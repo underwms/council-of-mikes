@@ -26,7 +26,7 @@ If any phase fails, **stop and fix before moving forward.** Do not paper over a 
 | Phase | Owning Council Member |
 |------|------------------------|
 | 1. Brainstorm | [[the-architect]] + [[the-coder]] (whoever owns the design space) |
-| 2. Implement | [[the-coder]] / [[the-builder]] / [[the-timekeeper]] / [[the-renderer]] |
+| 2. Implement | [[the-coder]] / [[the-builder]] / [[the-coordinator]] / [[the-renderer]] |
 | 3. Purify | [[the-purifier]] |
 | 4. Static Analysis | [[the-purifier]] |
 | 5. Unit Tests | [[the-prover]] |
@@ -324,4 +324,4 @@ Anything that touches a method body, a test, or a public API runs the **full** g
 - [[the-architect|The Architect]] — Phase 1
 - [[the-codex|The Codex]] — Phase 11
 - [[the-sentinel|The Sentinel]] — Pulled in for auth/PII/payment changes
-- [[the-timekeeper|The Timekeeper]] — Pulled in for workflow/temporal changes
+- [[the-coordinator|The Coordinator]] — Pulled in for story decomposition & DoD verification

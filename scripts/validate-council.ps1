@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Validates the Council of Mikes documentation for structural consistency.
 
@@ -24,9 +24,17 @@
 
 [CmdletBinding()]
 param(
-    [string]$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path,
+    [string]$RepoRoot,
     [string]$FingerprintPattern
 )
+
+if ([string]::IsNullOrEmpty($RepoRoot)) {
+    if (-not [string]::IsNullOrEmpty($PSScriptRoot)) {
+        $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    } else {
+        $RepoRoot = (Get-Location).Path
+    }
+}
 
 $ErrorActionPreference = 'Stop'
 $failures = New-Object System.Collections.Generic.List[string]

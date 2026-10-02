@@ -12,8 +12,8 @@
 [![Engine: LangGraph](https://img.shields.io/badge/Engine-LangGraph%20Autonomous-orange)](./tools/council/)
 [![Works with: Gemini CLI · Claude Code · Copilot](https://img.shields.io/badge/Works%20with-Gemini%20CLI%20·%20Claude%20Code%20·%20Copilot-0a7bbb)](./AGENTS.md)
 
-> **An autonomous multi-agent engineering team and persona framework for modern enterprise .NET / C# ecosystems.**  
-> 15 specialized leads operate with deep domain doctrine, inviolable boundaries, and mutual deference—orchestrated by an autonomous LangGraph state engine and guarded by an uncompromising 11-phase pre-submit quality gate.
+> A team of 15 AI expert personas and autonomous multi-agent engineering framework for modern enterprise .NET / C# ecosystems.  
+> Each specialized lead operates with deep domain doctrine, inviolable boundaries, and mutual deference—orchestrated by an autonomous LangGraph state engine and guarded by an uncompromising 11-phase pre-submit quality gate.
 
 ---
 
@@ -62,7 +62,7 @@ Each member is an opinionated domain lead with deep doctrine, explicit decision 
 
 ---
 
-## 👥 The 15 Council Specialists
+## Members (15)
 
 | Specialist & Role | Domain Focus | 2026 Enterprise Doctrine & Stack |
 | :--- | :--- | :--- |

@@ -43,7 +43,7 @@ If a question crosses into another member's domain, **call them in** instead of 
 | [**The Renderer**](./the-renderer/SKILL.md) | Frontend Lead | Anything frontend — frameworks, SignalR, Swagger, CSS, design |
 | [**The Sentinel**](./the-sentinel/SKILL.md) | Security Lead | Security review, PCI/PII compliance, auth flows, redaction |
 | [**The Builder**](./the-builder/SKILL.md) | Backend Lead | API design, GraphQL, scripting, microservice decomposition |
-| [**The Timekeeper**](./the-timekeeper/SKILL.md) | Workflow Lead | Workflow code, determinism, Temporal tests, Nexus, replay |
+| [**The Coordinator**](./the-coordinator/SKILL.md) | Agile Delivery Lead | JIRA lifecycles, sprint backlogs, INVEST stories, DoD/DoR verification |
 | [**The Watcher**](./the-watcher/SKILL.md) | Observability Lead | Investigations, traces, log coverage gaps, alerting |
 | [**The Curator**](./the-curator/SKILL.md) | Data Lead | Cosmos DB, Redis, SQL Server, EF Core, data modeling |
 | [**The Relay**](./the-relay/SKILL.md) | Messaging Lead | Kafka, Service Bus, Event Grid, Event Hubs |
@@ -86,7 +86,7 @@ If a question crosses into another member's domain, **call them in** instead of 
 |---|---|---|
 | API | The Builder | REST design, GraphQL schema, HTTP semantics |
 | Scripting | The Builder | PowerShell, Python — automation and tooling |
-| Workflow | The Timekeeper + The Builder | Workflow design, hosting, deployment, contracts |
+| Delivery & Stories | The Coordinator | Sprint backlog, INVEST stories, DoD/DoR verification |
 | Microservices | The Builder + The Provisioner | Service decomposition, communication boundaries, runtime hosting |
 
 ### Data Committee
@@ -158,8 +158,8 @@ If a question crosses into another member's domain, **call them in** instead of 
 | "This PowerShell script is broken" | The Builder |
 | "Review this PR" | The Purifier + domain-specific members |
 | "Add regression coverage for this change" | The Prover + The Architect |
-| "Will this workflow change break determinism or increase cost?" | The Timekeeper |
-| "Do I need a patch or versioning strategy for this workflow change?" | The Timekeeper |
+| "Decompose this epic into sprint stories" | The Coordinator |
+| "Does this user story satisfy the Definition of Ready?" | The Coordinator |
 | "Sweep this file before I commit" | The Purifier |
 | "This `.cs` file fails CI but compiles locally" | The Purifier |
 | "Run the pre-submit gate on this change" | The Gatekeeper |
@@ -206,10 +206,10 @@ If a question crosses into another member's domain, **call them in** instead of 
 - *"Write a GraphQL resolver for this."*
 - *"Fix this PowerShell script."*
 
-### The Timekeeper
-- *"Review this workflow — is there a determinism problem?"*
-- *"I changed the workflow — do I need replay coverage or versioning?"*
-- *"Where should retries, timers, and compensation live in this workflow?"*
+### The Coordinator
+- *"Decompose Epic ORDER-101 into sprint-ready developer stories."*
+- *"Review these user stories against the INVEST criteria and Definition of Ready."*
+- *"Write Gherkin acceptance criteria (Given/When/Then) for this feature."*
 
 ### The Watcher
 - *"What happened to transaction X-123?"*

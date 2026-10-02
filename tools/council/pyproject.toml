@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "council-orchestrator"
+version = "0.1.0"
+description = "Autonomous Multi-Specialist Council Orchestration Engine for Crate & Barrel microservices"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=0.2.0",
+    "pydantic>=2.0.0",
+    "rich>=13.0.0",
+    "langchain>=0.3.0",
+    "langchain-core>=0.3.0",
+    "langchain-google-genai>=2.0.0",
+    "langchain-anthropic>=0.2.0",
+    "langchain-openai>=0.2.0",
+    "python-dotenv>=1.0.0"
+]
+
+[project.scripts]
+council = "council.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

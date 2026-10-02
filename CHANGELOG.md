@@ -11,15 +11,20 @@ All notable changes to the Council of Mikes are documented here. This project fo
 
 ---
 
-## [Unreleased]
-
-### Changed
-- **AGENTS.md** and **`prompts/council-routing.snippet.md`** — Added top-level **ALWAYS-ON GATEKEEPER** rule. The 11-phase Pre-Submit Gate now runs implicitly before every "done", `git commit`, `git push`, or PR — the user no longer needs to type `use pre-submit skill` to trigger it. Explicit invocation still works and behaves identically. Adopters who pasted the routing snippet inherit the new default automatically on their next pull/copy.
-- **Pre-Submit input modes documented** — clarified that the gate accepts both **task mode** (a TODO the Council performs end-to-end) and **audit mode** (existing code / diff / defect to review). Both end with the same `Gatekeeper Report`.
-- **Anti-rationalization list extended** — added "The user didn't ask for the gate this time", "It's just a doc change", and "It's just a rename".
+## [2.2.0] — 2026-10-02
 
 ### Added
-- Future tier-4 visual / onboarding work goes here.
+- **Autonomous Orchestration Engine (`tools/council/`)**: Production-grade LangGraph compiled state graph multi-agent orchestrator with Gate 1 & Gate 2 human-in-the-loop approvals, automated test-repair retry loops, SQLite persistent checkpoints, and 11 automated unit test suites.
+- **The Coordinator (`the-coordinator`)**: Promoted to core 15th member of The Council, specializing in JIRA lifecycles, sprint backlogs, INVEST user stories, Definition of Ready (DoR), and Definition of Done (DoD).
+- **Core Workflow Superpowers (`skills/`)**: Integrated 9 formal operational workflows (`brainstorming`, `writing-plans`, `handoff`, `test-driven-development`, `systematic-debugging`, `the-council-orchestration`, `using-superpowers`, `verification-before-completion`, `repo-documentation`).
+- **One-Click Provisioner (`scripts/setup-council.ps1`)**: Turnkey machine setup script provisioning `~/.gemini/` directories, specialist skills, host lifecycle hooks, and verifying environment health.
+- **Universal Workspace Validator (`scripts/validate_workspace.py`)**: Zero-dependency cross-platform 5-phase integrity validator.
+- **AI-Friendly Architecture Specification (`docs/The-Council-Structure.md`)**: Full file-level directory structure, artifact routing taxonomy matrix, and helpful copy-paste prompts.
+
+### Changed
+- **Modernized 2026 Stack Across All Specialists**: Refactored all 15 members to modern enterprise standards: PostgreSQL, strict Entity Framework Core 10, .NET Aspire Testing with real containers, Scalar OpenAPI 3.0, Okta preview OIDC token flows, and React Router 7 / Deno runtime.
+- **Restored Full-Fidelity Personas**: Re-injected rich engineering decision matrices (Records vs Classes, HTTP status codes, Testing Pyramid, CQRS trade-offs) and distinctive senior lead behavioral profiles across all 15 members.
+- **Line Ending Normalization**: Added `.gitattributes` enforcing automated LF normalization across all code and text assets.
 
 ---
 

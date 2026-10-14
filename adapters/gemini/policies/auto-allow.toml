@@ -1,0 +1,59 @@
+# User policy for autonomous tool execution across sessions
+
+# 1. Global baseline allow for non-sensitive tools
+[[rule]]
+toolName = "*"
+decision = "allow"
+priority = 100
+allowRedirection = true
+
+# 2. PowerShell Cmdlets (direct execution)
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "\\s*(Get-|Set-|Stop-|Start-|Test-|Restart-|New-|Remove-|Select-|Where-|ForEach-|Format-|Out-|Copy-|Move-|Resolve-|Split-|Join-|Clear-|Add-|Invoke-|Write-|Convert-|Measure-|Compare-)[A-Za-z0-9]+"
+decision = "allow"
+priority = 999
+allowRedirection = true
+
+# 3. PowerShell Cmdlets (with chcp prefix)
+[[rule]]
+toolName = "run_shell_command"
+commandRegex = "chcp [0-9]+ >\\$null;\\s*(Get-|Set-|Stop-|Start-|Test-|Restart-|New-|Remove-|Select-|Where-|ForEach-|Format-|Out-|Copy-|Move-|Resolve-|Split-|Join-|Clear-|Add-|Invoke-|Write-|Convert-|Measure-|Compare-)[A-Za-z0-9]+"
+decision = "allow"
+priority = 999
+allowRedirection = true
+
+# 4. Core Developer CLI Toolchains & Runtimes
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = [
+  "git",
+  "docker",
+  "docker-compose",
+  "podman",
+  "dotnet",
+  "deno",
+  "node",
+  "npm",
+  "npx",
+  "pnpm",
+  "yarn",
+  "bun",
+  "python",
+  "py",
+  "pip",
+  "pwsh",
+  "powershell",
+  "cmd",
+  "where",
+  "winget",
+  "curl",
+  "tar",
+  "chcp",
+  "&",
+  ".\\",
+  "./"
+]
+decision = "allow"
+priority = 999
+allowRedirection = true

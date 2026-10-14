@@ -1,0 +1,9 @@
+# Runtime dependencies tested for this engine release.
+langgraph==1.2.15
+langgraph-checkpoint-sqlite==3.1.2
+pydantic==2.14.1
+rich==15.0.0
+langchain-core==1.6.10
+langchain-google-genai==4.4.1
+langchain-anthropic==1.7.6
+langchain-openai==1.7.1

@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools==84.0.0", "wheel==0.48.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "council-orchestrator"
+version = "0.2.0"
+description = "Workspace-scoped multi-provider Council orchestration with durable approval gates"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph==1.2.15",
+    "langgraph-checkpoint-sqlite==3.1.2",
+    "pydantic==2.14.1",
+    "rich==15.0.0",
+    "langchain-core==1.6.10",
+    "langchain-google-genai==4.4.1",
+    "langchain-anthropic==1.7.6",
+    "langchain-openai==1.7.1"
+]
+
+[project.scripts]
+council = "council.cli:main"
+
+[tool.setuptools]
+packages = ["council", "council.tools"]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+council = "."
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

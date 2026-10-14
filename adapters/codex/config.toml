@@ -1,0 +1,4 @@
+# Council-owned user defaults, activated by the Council installer.
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+sandbox_mode = "workspace-write"

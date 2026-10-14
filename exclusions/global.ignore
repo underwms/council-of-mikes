@@ -1,0 +1,41 @@
+# Workspace Indexing Exclusions
+# Canonical host-level exclusions; adapters translate supported indexing settings.
+
+# IDE & Editor Caches
+.vs/
+.idea/
+.vscode/
+.vscode-shared/
+
+# .NET Build Artifacts & Binaries
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+**/TestResults/
+
+# JavaScript, TypeScript & Deno Dependencies
+**/node_modules/
+**/.deno/
+
+# Python Tooling & Test Caches
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/.venv/
+**/venv/
+
+# Ephemeral Traces, Dumps & Logs
+**/.gemini/tmp/
+**/.codex/tmp/
+**/.council/work/
+**/.council/temp/
+**/.council/memory/
+**/.council/backups/
+**/*.log
+**/*.har
+**/*.tmp
+
+# OS & Environment Files
+Thumbs.db
+desktop.ini

@@ -1,0 +1,127 @@
+{
+  "skills": [
+    "brainstorming",
+    "handoff",
+    "repo-documentation",
+    "systematic-debugging",
+    "test-driven-development",
+    "the-architect",
+    "the-builder",
+    "the-coder",
+    "the-codex",
+    "the-coordinator",
+    "the-council-orchestration",
+    "the-curator",
+    "the-gatekeeper",
+    "the-pipelineer",
+    "the-prover",
+    "the-provisioner",
+    "the-purifier",
+    "the-relay",
+    "the-renderer",
+    "the-sentinel",
+    "the-watcher",
+    "using-superpowers",
+    "verification-before-completion",
+    "writing-plans"
+  ],
+  "source": "Shared Council definitions; one canonical installed root",
+  "scope": "user profile; Codex, Gemini CLI, Claude Code",
+  "schema_version": 1,
+  "name": "The Council",
+  "version": "3.0.0-alpha.3",
+  "default_profile": "fulfillment",
+  "specialists": [
+    "the-architect",
+    "the-builder",
+    "the-coder",
+    "the-codex",
+    "the-coordinator",
+    "the-curator",
+    "the-gatekeeper",
+    "the-pipelineer",
+    "the-prover",
+    "the-provisioner",
+    "the-purifier",
+    "the-relay",
+    "the-renderer",
+    "the-sentinel",
+    "the-watcher"
+  ],
+  "workflows": [
+    "brainstorming",
+    "handoff",
+    "repo-documentation",
+    "systematic-debugging",
+    "test-driven-development",
+    "the-council-orchestration",
+    "using-superpowers",
+    "verification-before-completion",
+    "writing-plans"
+  ],
+  "paths": {
+    "skills": "skills",
+    "shared": "instructions/shared.md",
+    "host_rules": "rules/global.md",
+    "workspace_rules": "rules/workspace.md",
+    "exclusions": "exclusions/global.ignore"
+  },
+  "profiles": {
+    "fulfillment": "profiles/fulfillment/profile.json"
+  },
+  "adapters": {
+    "codex": "adapters/codex.json",
+    "gemini": "adapters/gemini.json",
+    "claude": "adapters/claude.json"
+  },
+  "execution": {
+    "scope": "user",
+    "routine_development": "allow_without_prompt",
+    "respect_existing_authorization": true
+  },
+  "engine": {
+    "status": "bundled",
+    "runtime": "python",
+    "path": "council",
+    "real_execution": true
+  },
+  "memory": {
+    "root": "memory",
+    "default_scope": "legacy-shared",
+    "available_scopes": [
+      "legacy-shared",
+      "workspace-session"
+    ],
+    "session_scope": "explicit opt-in; all models use the same workspace/session identity"
+  },
+  "source_roots": [
+    "skills",
+    "instructions",
+    "rules",
+    "profiles",
+    "adapters",
+    "scripts",
+    "exclusions",
+    "council"
+  ],
+  "source_files": [
+    "manifest.json",
+    "README.md",
+    "setup-council.ps1",
+    "docs/catalog.md",
+    "docs/code-change-pre-submit-sop.md",
+    "docs/setup.md",
+    "docs/structure.md",
+    "docs/source-contract.md",
+    ".gitignore",
+    "council.ps1",
+    "docs/architecture-flow.md"
+  ],
+  "distribution": {
+    "kind": "lean",
+    "project_cleanup": false,
+    "import_private_memory": false,
+    "platform": "Windows",
+    "path_templates": true
+  }
+}

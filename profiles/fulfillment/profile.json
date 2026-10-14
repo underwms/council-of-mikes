@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "id": "fulfillment",
+  "description": "Current Sourcing & Fulfillment contracts; previous catalog technology guidance is superseded.",
+  "rules": "rules.md",
+  "corporate_rules": "corporate-architecture-rules.md",
+  "stack": {
+    "backend": ".NET 10 / C#",
+    "persistence": "EF Core 10 / PostgreSQL",
+    "forbidden": [
+      "Redis",
+      "Dapper"
+    ],
+    "unit_tests": "MSTest.Sdk / NSubstitute",
+    "integration_tests": "Aspire / Testcontainers / PostgreSQL",
+    "acceptance_tests": "Reqnroll / Gherkin",
+    "frontend": "React / TypeScript / Deno",
+    "messaging": "Kafka / CloudEvents"
+  },
+  "workspace_root": null,
+  "artifact_root": null,
+  "memory_root": null,
+  "repository_topology": "independent-child-repositories",
+  "verification_commands": [
+    "node scripts/council-source.mjs check",
+    "node scripts/council-codex.mjs validate",
+    "& scripts/validate-workspace.ps1"
+  ],
+  "workspace_resolution": "explicit CLI argument, then installation.json.workspaceRoot",
+  "memory_resolution": "central memory; optional explicit workspace-session selection"
+}

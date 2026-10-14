@@ -13,7 +13,7 @@ Detect and fix stale architecture documentation across the multi-repo workspace.
 
 ## Cross-Skill References
 
-- **REQUIRED:** `repo-management` — Repo manifest (local folder, GitHub owner/repo, default branch, repo type). Use for pre-flight branch checks and `git fetch`.
+- **OPTIONAL:** `repo-management` — Repo manifest (local folder, GitHub owner/repo, default branch, repo type). Use for pre-flight branch checks and `git fetch`.
 - **REQUIRED (when available):** `dispatching-parallel-agents` — Dispatch one subagent per repo for parallel operations (pre-flight, staleness detection, per-repo doc updates). Read this skill before any "update all" invocation.
 - **RECOMMENDED:** a PR-creation skill — use after completing doc updates if the user wants to open a PR.
 
@@ -94,8 +94,8 @@ When invoked by `reconciliation`, the caller passes the following typed inputs d
 
 ## Prerequisites
 
-- **REQUIRED SKILL:** Read `repo-management` for repo manifest and branch status operations
-- Repos must be cloned and on a clean branch (use `repo-management` to verify)
+- Inspect the configured repository manifest and native Git status; optionally use repo-management when installed.
+- Repos must be cloned and on a clean branch (verify using native Git, optionally with repo-management)
 - For "update all" mode: read `dispatching-parallel-agents` (if available) for subagent dispatch patterns
 
 ## Phase 1 — Pre-flight
@@ -229,7 +229,7 @@ Coordinated by `the-builder`, `the-sentinel`, and `the-relay`.
 *   **Subheader 2**: `## 2. API Authorization & JWT Scopes` (`the-sentinel`)
     *   *Content*: Okta/OIDC scopes, client credentials policies, mock token variables for BDD tests, and secret hygiene practices.
 *   **Subheader 3**: `## 3. High-Integrity Write & Transaction Workflows` (`the-coder` / `the-curator`)
-    *   *Content*: Logical Command Command/Write handler pipelines, dapper persistence isolation, separate reader/writer pooling, and Redis sliding expiration invalidate calls.
+    *   *Content*: Command/write handler pipelines, EF Core transaction boundaries, PostgreSQL query ownership, and cancellation-safe persistence. Redis and Dapper are prohibited by the current profile.
 *   **Subheader 4**: `## 4. Message Queue & Event Contracts` (`the-relay`)
     *   *Content*: Kafka events, GCP Pub/Sub topics, schema formats, retry/dead-letter setups, and sequence flow diagrams.
 
@@ -241,7 +241,7 @@ Coordinated by `the-architect`, `the-coder`, and `the-prover`.
     *   *Content*: Visual inward-pointing reference diagrams, namespaces, and solution project filter (`.slnx`) setups.
 *   **Subheader 2**: `## 2. Assembly Boundaries & Layer Responsibilities` (`the-coder`)
     *   *Content*: Assembly layers (e.g. `.Core`, `.Data`, `.Api`). Rigorously enforce that the pure `.Core` assembly contains zero physical SQL/Dapper or Redis/caching NuGet package dependencies.
-*   **Subheader 3**: `## 3. In-Memory, Integration & Spec Test Suites` (`the-prover`)
+*   **Subheader 3**: `## 3. Unit, Integration & Spec Test Suites` (`the-prover`)
     *   *Content*: MSTest/NSubstitute directories, Arrange/Act/Assert boundaries, Gherkin Reqnroll specs, and Testcontainers.
 
 #### 3. `tech-stack.md` Template Blueprint
@@ -250,8 +250,8 @@ Coordinated by `the-purifier`, `the-curator`, `the-watcher`, and `the-pipelineer
 *   **Header**: `# Technical Stack — {Solution-Name}`
 *   **Subheader 1**: `## 1. Runtime Frameworks & Core Libraries` (`the-purifier` / `the-architect`)
     *   *Content*: Core runtime versions (e.g. .NET 10.0), primary framework libraries, and centralized package management props.
-*   **Subheader 2**: `## 2. Low-Latency Database Persistences & Caching` (`the-curator`)
-    *   *Content*: PostgreSQL ANSI ANSI syntax, vertical alignments for schema columns/constraints, and Redis caching topologies.
+*   **Subheader 2**: `## 2. PostgreSQL Persistence & EF Core Mapping` (`the-curator`)
+    *   *Content*: PostgreSQL ANSI syntax, lower_snake_case schema columns and constraints, EF Core mapping, migrations, and indexing.
 *   **Subheader 3**: `## 3. Distributed Telemetry & Structured Logging` (`the-watcher`)
     *   *Content*: Serilog structure formats, OpenTelemetry span metrics, Grafana Loki exporter setups, and alerts.
 *   **Subheader 4**: `## 4. CI/CD Pipelines & Container Release Specifications` (`the-pipelineer` / `the-provisioner`)

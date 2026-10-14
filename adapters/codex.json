@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "codex",
+  "version": "0.3.0",
+  "instructions": "codex.md",
+  "skill_installation": "junctions to canonical skills; never model-specific copies",
+  "execution_scope": "user",
+  "indexing_scope": "user",
+  "native_runtime": "unverified until fresh-session checks",
+  "policy_fragment": "codex/config.toml",
+  "policy_destination": "~/.codex/config.toml",
+  "workspace_write_roots": [
+    "council-root"
+  ],
+  "indexing": "instruction-guided explicit searches; native global indexing parity not claimed"
+}

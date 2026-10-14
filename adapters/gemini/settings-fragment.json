@@ -1,0 +1,10 @@
+{
+  "context": {
+    "fileFiltering": {
+      "respectGeminiIgnore": true,
+      "customIgnoreFilePaths": [
+        "__COUNCIL_ROOT__\\exclusions\\global.ignore"
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "id": "gemini",
+  "version": "0.2.0",
+  "instructions": "gemini.md",
+  "skill_installation": "junctions to canonical skills; never model-specific copies",
+  "execution_scope": "user",
+  "indexing_scope": "user",
+  "native_runtime": "unverified until fresh-session checks",
+  "policy_fragment": "gemini/policies/auto-allow.toml",
+  "policy_destination": "~/.gemini/policies via existing canonical junction",
+  "indexing": "user settings customIgnoreFilePaths fragment"
+}

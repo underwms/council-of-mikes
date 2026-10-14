@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "id": "claude",
+  "version": "0.2.0",
+  "instructions": "claude.md",
+  "skill_installation": "junctions to canonical skills; never model-specific copies",
+  "execution_scope": "user",
+  "indexing_scope": "user",
+  "native_runtime": "unverified until fresh-session checks",
+  "indexing": "instruction-guided explicit searches; native ignore mapping remains adapter-specific"
+}

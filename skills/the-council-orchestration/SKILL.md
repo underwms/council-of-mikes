@@ -20,16 +20,10 @@ The Council is convened whenever the user employs ceremonial phrasing in chat:
 ### Dual Execution Modes
 1. **Interactive Session Orchestration Mode (Default in Chat)**:
    - `[THE ARCHITECT]` assumes the floor, ingests the prompt, and presents the task decomposition table at **Gate 1 (Plan Approval)**.
-   - Upon developer confirmation, coordinates execution using specialized subagents or Python file tools.
+   - Upon developer confirmation, coordinates execution using the available native delegation and filesystem tools. Explicitly read and bind the assigned specialist skill and references in each dispatched task. If delegation is unavailable, apply the specialist skills inline and state that limitation.
    - Automatically executes test repair loops (up to 3 retries) with compiler error feedback.
    - Hands off to `[THE GATEKEEPER]` at **Gate 2 (Pre-Submit Approval)** with the 11-Phase Done checklist.
-2. **Autonomous Engine Mode (Standalone CLI / CI)**:
-   - Invoked directly in terminal or batch jobs:
-     ```bash
-     python scripts/convene.py "I would like to convene the Council to address: <task>"
-     python scripts/convene.py --story temp/userstories/sprint3/ORDER-185.md
-     python scripts/convene.py --auto-approve
-     ```
+2. **Standalone LangGraph engine**: The optional installed Council council.ps1 launcher uses council/ with a private Python runtime, real providers, SQLite checkpoints, and explicit plan/final approval gates. Read council/README.md before invoking it; configure local credentials and exact model IDs. Native chat delegation remains the default for this skill. The previous workspace engine under legacy/ is an inactive archive.
 
 ---
 
@@ -72,15 +66,17 @@ You MUST create and complete these tasks in sequence:
 ### Phase 3: Specialist Execution & Test-Repair Loop
 For each task in the plan:
 1. Dispatch specialist persona binding the relevant instructions from:
-   `%USERPROFILE%\.gemini\skills\<specialist>\SKILL.md`
-2. Apply surgical changes using sandboxed file tools.
-3. Run tests via `[THE PROVER]`. If tests fail, feed compiler diagnostics back to the specialist for up to 3 repair loops.
+   `__COUNCIL_ROOT__/skills\<specialist>\SKILL.md`
+2. Include the assigned skill path, relevant reference paths, scope, and permitted file ownership in the active product's native delegation task. Independent tasks may run in parallel; dependent changes remain sequential. For Codex, do not substitute separate task/thread tools for native subagents unless the user requests a new task.
+3. Apply surgical changes using sandboxed file tools.
+4. Run tests via `[THE PROVER]`. If tests fail, feed compiler diagnostics back to the specialist for up to 3 repair loops.
 
 ### Phase 4: Quality Gate & Validation (Gate 2: Pre-Submit Approval)
 1. **Validate Workspace Integrity**:
    - Universal Python runner: `python scripts/validate_workspace.py`
-   - PowerShell runner: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-workspace.ps1`
+   - PowerShell runner: `& .\scripts\validate-workspace.ps1`
    - Must achieve 100% green PASS with 0 errors and 0 warnings.
+   - Also run `node "__COUNCIL_ROOT__/scripts/council-codex.mjs" validate --workspace "__WORKSPACE_ROOT__"`; a static placement/lifecycle PASS does not verify native command startup or trusted hook execution.
 2. **Execute Pre-Submit SOP**: Compile the 11-Phase checklist from `docs/procedures/code-change-pre-submit-sop.md`.
 3. **Present Gate 2 Report**: Present the compliance summary for final developer sign-off.
 
@@ -88,5 +84,5 @@ For each task in the plan:
 
 ## Anti-Patterns
 * ❌ **Proceeding without Gate 1 approval**: Always confirm the plan before modifying files unless `--auto-approve` is explicitly requested.
-* ❌ **Guessing specialist rules**: Always bind the target specialist's package under `~/.gemini/skills/<specialist>/SKILL.md`.
+* ❌ **Guessing specialist rules**: Always bind the target specialist's package under `__COUNCIL_ROOT__/skills/<specialist>/SKILL.md`.
 * ❌ **Skipping the workspace validator**: A task is never finished until `validate_workspace.py` returns 100% PASS.

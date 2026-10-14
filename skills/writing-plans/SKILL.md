@@ -13,9 +13,9 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-**Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
+**Context:** If isolation is needed, inspect the independent repository state and create a worktree through the active adapter native tools. Do not require an execution skill absent from the installed manifest.
 
-**Save plans to:** `workspace_root/docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md` (MUST be written to `workspace_root/docs/superpowers/plans/`; NEVER write into a child repository)
+**Save plans to:** `{artifact_root}/plans/YYYY-MM-DD-<feature-name>.md` (MUST be written to `{artifact_root}/plans/`; NEVER write into a child repository)
 - (User preferences for plan location override this default)
 
 ## Scope Check
@@ -49,7 +49,7 @@ This structure informs the task decomposition. Each task should produce self-con
 ```markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** Follow the active adapter and execute checked tasks in dependency order. Use native delegation only when authorized and available; otherwise execute inline. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** [One sentence describing what this builds]
 
@@ -133,20 +133,6 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 ## Execution Handoff
 
-After saving the plan, offer execution choice:
+After saving the plan, report its path and the next concrete task. If existing authorization covers implementation, continue within that scope without a redundant execution-choice approval. Execute inline unless the user or applicable workflow requests delegation. Bind the installed specialist contract for delegated work and review each result before dependent changes. Use available task tracking and verification checkpoints for inline execution.
 
-**"Plan complete and saved to `workspace_root/docs/superpowers/plans/<filename>.md`. Two execution options:**
-
-**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
-
-**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
-
-**Which approach?"**
-
-**If Subagent-Driven chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
-- Fresh subagent per task + two-stage review
-
-**If Inline Execution chosen:**
-- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
-- Batch execution with checkpoints for review
+Ask about execution mode only when it materially affects scope or constraints. Use the active adapter question tools and permissions. An unavailable tool or missing external workflow does not prevent authorized work that can be completed inline.

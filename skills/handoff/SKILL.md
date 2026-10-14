@@ -6,14 +6,14 @@ description: Expertise in session memory management, checkpoint generation, and 
 # Handoff - Session Memory Management
 
 ## Overview
-This skill governs the generation of incremental checkpoint summaries and final developer handoffs to prevent context loss and maintain token efficiency between Gemini CLI sessions.
+This skill governs the generation of incremental checkpoint summaries and final developer handoffs to prevent context loss and maintain token efficiency between Codex sessions.
 
 ---
 
 ## 1. Local Cache Target Path
 When generating a handoff or session checkpoint, the AI MUST write the summary exclusively to:
-- **Local Workstation Cache (Ingested on startup by onboard.py)**: 
-  `%USERPROFILE%\.gemini\tmp\%USERNAME%\memory\active_handoff.md`
+- **Local Workstation Cache (Read explicitly at session onboarding)**:
+  `__COUNCIL_ROOT__/memory/active_handoff.md`
 
 ---
 
@@ -26,9 +26,9 @@ When generating a handoff or session checkpoint, the AI MUST write the summary e
 
 ## 3. Dynamic Session Heartbeat (Rolling Log)
 To guard against abrupt CLI terminal closures (such as clicking the `[X]` button), the AI should maintain a background **Rolling Session Heartbeat** file:
-*   **Path**: `%USERPROFILE%\.gemini\tmp\%USERNAME%\memory\active_session_backlog.md`
-*   **Action**: Every time a file is modified, a test runs, or an API is successfully validated, the AI MUST write a single chronological line describing the action to this file. 
-*   **Onboarding Integration**: If Gemini is closed abruptly, `onboard.py` will read this backlog file to reconstruct the session progress.
+*   **Path**: `__COUNCIL_ROOT__/memory/active_session_backlog.md`
+*   **Action**: Every time a file is modified, a test runs, or an API is successfully validated, the AI MUST write a single chronological line describing the action to this file.
+*   **Onboarding Integration**: At Codex session onboarding, read this backlog file to reconstruct the session progress.
 
 ---
 
@@ -58,4 +58,11 @@ The generated `active_handoff.md` file MUST adhere strictly to the following str
 ---
 
 ## 5. Write Verification
-After writing the handoff file, the AI MUST run `validate-workspace.ps1` to ensure no broken relative links or wikilinks were introduced in the markdown files, guaranteeing 100% environment health.
+Read back the saved handoff to confirm the intended content. Run the workspace validator directly and the Codex audit; report their actual results. A prior PASS or a successful write does not establish current environment health.
+
+## 6. Model lifecycle integration
+All products share one private cache and handler. Read the active adapter: Codex uses SessionStart/Stop/Interrupt/PostToolUse, Gemini uses SessionStart/AfterAgent, and Claude uses SessionStart/Stop. SessionStart loads bounded handoff and backlog context. Heartbeats record lifecycle events and confirmed generic tool outcomes; they do not infer a semantic checkpoint or a test result from assistant prose.
+
+Write the handoff yourself using the format above. Record concise milestones when their facts are known. If the cache is not writable under the current permission profile, report that limitation and do not save private state into a repository. Do not bypass the protected path through another tool.
+
+For manual recovery with a working native shell, use `node "__COUNCIL_ROOT__/scripts/council-codex.mjs" onboard --workspace "__WORKSPACE_ROOT__"`. Do not parse Codex private databases or treat its transcript format as a stable API.

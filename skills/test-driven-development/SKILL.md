@@ -267,7 +267,7 @@ Tests-first force edge case discovery before implementing. Tests-after verify yo
 | "Test hard = design unclear" | Listen to test. Hard to test = hard to use. |
 | "TDD will slow me down" | TDD faster than debugging. Pragmatic = test-first. |
 | "Manual test faster" | Manual doesn't prove edge cases. You'll re-test every change. |
-| "Existing code has no tests" | You're improving it. Add tests for existing code. |
+| "Existing code has no tests" | Verify new code and requested changes. Pre-existing untested code does not create a blanket retroactive coverage task. |
 
 ## Red Flags - STOP and Start Over
 

@@ -2,7 +2,7 @@
 
 **Last Updated:** 2026-10-12
 **Owner:** The Council (enforced by [[the-gatekeeper]])
-**Applies To:** Every AI agent (Council member, GitHub Copilot, Claude Code, custom subagent) that produces or modifies code in this workspace.
+**Applies To:** Every AI agent (Council member, GitHub Copilot, custom subagent) that produces or modifies code in this workspace.
 
 ---
 
@@ -220,7 +220,7 @@ For every change, walk the documentation surface and update what is now stale:
 - **`docs/architecture/`** — if the change touches module boundaries, public contracts, message flows, data models, partition keys, or external dependencies, update the relevant architecture snapshot.
 - **`docs/procedures/`** — if a new recurring task was introduced or an existing procedure changed, create or update the SOP.
 - **`docs/decisions/`** — if a non-trivial design choice was made (or a prior choice reversed), record it as a decision / ADR. Include lessons learned.
-- **`AGENTS.md` / `copilot-instructions.md` / `CLAUDE.md`** — if agent-facing conventions, commands, or guardrails changed, update the agent instructions so future sessions inherit them.
+- **`AGENTS.md` / `copilot-instructions.md`** — if agent-facing conventions, commands, or guardrails changed, update the agent instructions so future sessions inherit them.
 - **`CHANGELOG.md`** — if the repo maintains one, add the entry under the correct version / unreleased section.
 - **XML doc comments** — public types, methods, and parameters that changed signature or contract get their `<summary>`, `<param>`, `<returns>`, and `<exception>` tags updated.
 - **Diagrams** — if Mermaid / PlantUML diagrams in the docs reference a renamed component, new flow, or removed dependency, regenerate them.

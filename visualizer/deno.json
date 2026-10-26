@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "deno.ns",
+      "esnext"
+    ],
+    "strict": true
+  },
+  "tasks": {
+    "check": "npm.cmd run check && deno check --no-config server/main.ts",
+    "test": "deno test --config deno.json --node-modules-dir=manual --import-map=tests/import_map.json -A tests/",
+    "build": "npm.cmd run build",
+    "dev": "npm.cmd run dev",
+    "serve": "npm.cmd run serve",
+    "live": "deno run --no-config -A server/main.ts"
+  }
+}

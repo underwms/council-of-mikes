@@ -3,6 +3,7 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from council.boundaries import WorkspaceBoundaryError
 
 
 def _within(path: Path, root: Path) -> bool:
@@ -46,12 +47,12 @@ class RuntimeContext:
     def workspace_path(self, path='.', *, allow_absolute=False):
         candidate = Path(path)
         if candidate.is_absolute() and not allow_absolute:
-            raise PermissionError('Workspace paths must be relative')
+            raise WorkspaceBoundaryError('PATH_ABSOLUTE')
         if '..' in candidate.parts:
-            raise PermissionError('Parent traversal is not permitted')
+            raise WorkspaceBoundaryError('PATH_PARENT_TRAVERSAL')
         resolved = (self.workspace_root/candidate).resolve()
         if not _within(resolved, self.workspace_root) or _within(resolved, self.council_root):
-            raise PermissionError('Path escapes selected workspace')
+            raise WorkspaceBoundaryError('PATH_OUTSIDE_WORKSPACE')
         return resolved
 
 

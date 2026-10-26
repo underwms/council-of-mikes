@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "react": "npm:react@19.2.0",
+    "react-dom/server": "npm:react-dom@19.2.0/server",
+    "react-dom/client": "npm:react-dom@19.2.0/client",
+    "jsdom": "npm:jsdom@26.1.0"
+  }
+}

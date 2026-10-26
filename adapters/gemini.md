@@ -1,8 +1,8 @@
 # gemini adapter
 
-Canonical Council: __COUNCIL_ROOT__.
+Canonical Council: C:\Users\munderwood\.council.
 
-Gemini CLI loads profile .gemini/GEMINI.md and its pointer to the shared instructions. User skills use profile .gemini/skills or .agents/skills aliases, all linked to the same canonical packages under __COUNCIL_ROOT__\skills. Use activate_skill and the native delegation tools actually available. Hooks register in profile .gemini/settings.json. SessionStart and AfterAgent map to the common memory handler; Gemini timeout values are milliseconds. Never reuse a Codex hook schema or Gemini auto-allow policy in another product.
+Gemini CLI loads profile .gemini/GEMINI.md and its pointer to the shared instructions. User skills use profile .agents/skills aliases (natively discovered by Gemini CLI), all linked to the same canonical packages under C:\Users\munderwood\.council\skills. Redundant .gemini/skills junctions are eliminated to prevent duplicate skill override warnings on startup. Use activate_skill and the native delegation tools actually available. Hooks register in profile .gemini/settings.json. SessionStart and AfterAgent map to the common memory handler; Gemini timeout values are milliseconds. Never reuse a Codex hook schema or Gemini auto-allow policy in another product.
 
 ## Operational doctrine & tool boundaries
 

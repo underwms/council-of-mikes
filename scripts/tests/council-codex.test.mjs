@@ -35,6 +35,13 @@ export async function runTests() {
     return options;
   }
   const codexDefaults = 'approval_policy = "on-request"\napprovals_reviewer = "auto_review"\nsandbox_mode = "workspace-write"\n';
+  await test('Install_RegistersOnlySupportedNativeClients', async () => {
+    const o = await fixture();
+    await installCouncil(o);
+    assert.deepEqual((await fs.readdir(o.homeDir)).filter(name => name.startsWith('.')).sort(), ['.agents', '.codex', '.council', '.gemini']);
+    assert.throws(() => buildHooks({ ...o, actor: 'unsupported' }), /Unknown Council model adapter/);
+    assert.deepEqual(await handleHook({ hook_event_name: 'SessionStart', cwd: o.workspaceRoot }, { ...o, actor: 'unsupported' }), {});
+  });
   await test('Install_DeploysEngineAndLauncher_WithoutGeneratedArtifacts', async () => {
     const o = await fixture();
     await fs.mkdir(path.join(o.payloadRoot, 'council/__pycache__'), { recursive: true });
@@ -42,6 +49,8 @@ export async function runTests() {
     await fs.writeFile(path.join(o.payloadRoot, 'council/cli.py'), '# engine source');
     await fs.writeFile(path.join(o.payloadRoot, 'council/__pycache__/cli.pyc'), 'local compiled artifact');
     await fs.writeFile(path.join(o.payloadRoot, 'council/build/private.txt'), 'local build artifact');
+    await fs.mkdir(path.join(o.payloadRoot, 'visualizer/dist'), { recursive: true });
+    await fs.writeFile(path.join(o.payloadRoot, 'visualizer/dist/index.html'), '<main>Viewer</main>');
     await fs.writeFile(path.join(o.payloadRoot, 'council.ps1'), '# engine launcher');
     await fs.writeFile(path.join(o.payloadRoot, 'setup-council.ps1'), '# deployment entry point');
     await fs.writeFile(path.join(o.payloadRoot, '.gitignore'), 'runtime/\n');
@@ -49,6 +58,7 @@ export async function runTests() {
     await installCouncil(o);
 
     assert.equal(await fs.readFile(path.join(o.councilRoot, 'council/cli.py'), 'utf8'), '# engine source');
+    assert.equal(await fs.readFile(path.join(o.councilRoot, 'visualizer/dist/index.html'), 'utf8'), '<main>Viewer</main>');
     assert.equal(await fs.readFile(path.join(o.councilRoot, 'council.ps1'), 'utf8'), '# engine launcher');
     assert.equal(await fs.readFile(path.join(o.councilRoot, '.gitignore'), 'utf8'), 'runtime/\n');
     await assert.rejects(fs.stat(path.join(o.councilRoot, 'council/__pycache__')), { code: 'ENOENT' });
@@ -151,8 +161,8 @@ export async function runTests() {
     assert.equal(await fs.readFile(path.join(o.councilRoot, 'project-instructions/service.md'), 'utf8'), 'Service-specific instruction.\n');
     await assert.rejects(fs.stat(path.join(o.workspaceRoot, 'service/.agents')), { code: 'ENOENT' });
     assert((await fs.readFile(path.join(o.homeDir, '.codex/AGENTS.md'), 'utf8')).includes(o.workspaceRoot));
-    for (const folder of ['.agents', '.gemini', '.claude']) assert.equal((await fs.realpath(path.join(o.homeDir, folder, 'skills/example'))).toLowerCase(), (await fs.realpath(path.join(o.councilRoot, 'skills/example'))).toLowerCase());
-    for (const file of ['.gemini/GEMINI.md', '.claude/CLAUDE.md']) assert((await fs.readFile(path.join(o.homeDir, file), 'utf8')).includes(o.councilRoot));
+    for (const folder of ['.agents']) assert.equal((await fs.realpath(path.join(o.homeDir, folder, 'skills/example'))).toLowerCase(), (await fs.realpath(path.join(o.councilRoot, 'skills/example'))).toLowerCase());
+    for (const file of ['.gemini/GEMINI.md']) assert((await fs.readFile(path.join(o.homeDir, file), 'utf8')).includes(o.councilRoot));
     assert.equal(await fs.readFile(path.join(o.workspaceRoot, 'AGENTS.md'), 'utf8'), 'Personal workspace instruction.\n');
     const hooks = JSON.parse(await fs.readFile(path.join(o.homeDir, '.codex/hooks.json'), 'utf8'));
     assert.deepEqual(hooks.custom, { retain: true });
@@ -262,6 +272,8 @@ export async function runTests() {
   await test('HookConfig_DoesNotRegisterApprovalOrBlockingHandlers', async () => {
     const o = await fixture(); const config = buildHooks({ ...o, nodePath: 'C:/Program Files/nodejs/node.exe' });
     assert.deepEqual(Object.keys(config.hooks).sort(), ['Interrupt', 'PostToolUse', 'SessionStart', 'Stop']);
+    for (const event of ['SessionStart', 'Stop', 'PostToolUse']) assert.equal(config.hooks[event][0].hooks[0].timeout, 10);
+    assert.equal(config.hooks.Interrupt[0].hooks[0].timeout, 3);
     for (const groups of Object.values(config.hooks)) for (const g of groups) for (const h of g.hooks) { assert.equal(h.type, 'command'); assert(h.commandWindows.startsWith('powershell.exe ')); assert(h.commandWindows.includes("& 'C:/Program Files/nodejs/node.exe'")); }
   });
   await test('CLI_ReportsFailedValidation_AndRejectsUnknownOptions', async () => {
@@ -380,7 +392,8 @@ export async function runTests() {
     await fs.writeFile(path.join(legacy, 'SKILL.md'), original);
     await fs.writeFile(path.join(o.payloadRoot, 'legacy-fingerprints.json'), JSON.stringify({ profiles: { '.gemini': { example: { 'SKILL.md': createHash('sha256').update(original).digest('hex') } } } }));
     const installed = await installCouncil(o);
-    assert.equal((await fs.realpath(legacy)).toLowerCase(), (await fs.realpath(path.join(o.councilRoot, 'skills/example'))).toLowerCase());
+    assert.equal((await fs.realpath(path.join(o.homeDir, '.agents/skills/example'))).toLowerCase(), (await fs.realpath(path.join(o.councilRoot, 'skills/example'))).toLowerCase());
+    await assert.rejects(fs.stat(legacy), { code: 'ENOENT' });
     assert.equal(await fs.readFile(path.join(installed.backupRoot, 'legacy-skills/.gemini/example/SKILL.md'), 'utf8'), original);
   });
   await test('Hooks_UseModelSpecificSchemas_AndShareOnlyOneMemoryDirectory', async () => {
@@ -389,21 +402,18 @@ export async function runTests() {
     assert.equal(Object.hasOwn(restored.hookSpecificOutput, 'hookEventName'), false);
     const gemini = buildHooks({ ...o, actor: 'gemini' });
     assert(gemini.hooks.AfterAgent); assert.equal(gemini.hooks.AfterAgent[0].hooks[0].timeout, 3000);
-    const claude = buildHooks({ ...o, actor: 'claude' });
-    assert(claude.hooks.Stop); assert.equal(claude.hooks.Stop[0].hooks[0].timeout, 3);
     await handleHook({ hook_event_name: 'AfterAgent', timestamp: '2026-10-12T12:00:00Z', session_id: 's', cwd: o.workspaceRoot, prompt_response: 'PRIVATE_REPLY' }, { ...o, actor: 'gemini' });
-    await handleHook({ hook_event_name: 'Stop', prompt_id: 'prompt', session_id: 's', cwd: o.workspaceRoot, last_assistant_message: 'PRIVATE_REPLY' }, { ...o, actor: 'claude' });
     const dir = memoryRoot(o.homeDir, o.username);
     const log = await fs.readFile(path.join(dir, 'active_session_backlog.md'), 'utf8');
-    assert.equal(log.trim().split('\n').length, 2); assert(!log.includes('PRIVATE_REPLY'));
-    assert.equal(JSON.parse(await fs.readFile(path.join(dir, 'heartbeat_state.json'), 'utf8')).last_actor, 'claude');
+    assert.equal(log.trim().split('\n').length, 1); assert(!log.includes('PRIVATE_REPLY'));
+    assert.equal(JSON.parse(await fs.readFile(path.join(dir, 'heartbeat_state.json'), 'utf8')).last_actor, 'gemini');
   });
-  await test('Validate_DetectsAChangedClaudeHook_AndProfileLinksReadLiveCanonicalEdits', async () => {
+  await test('Validate_DetectsAChangedGeminiHook_AndProfileLinksReadLiveCanonicalEdits', async () => {
     const o = await fixture(); await installCouncil(o);
-    await fs.writeFile(path.join(o.homeDir, '.claude/settings.json'), JSON.stringify({ hooks: {} }));
+    await fs.writeFile(path.join(o.homeDir, '.gemini/settings.json'), JSON.stringify({ hooks: {} }));
     assert.equal((await validateCouncil(o)).lifecycle.status, 'fail');
-    await fs.writeFile(path.join(o.homeDir, '.claude/skills/example/SKILL.md'), 'One shared update');
-    for (const folder of ['.agents', '.gemini']) assert.equal(await fs.readFile(path.join(o.homeDir, folder, 'skills/example/SKILL.md'), 'utf8'), 'One shared update');
+    await fs.writeFile(path.join(o.homeDir, '.agents/skills/example/SKILL.md'), 'One shared update');
+    for (const folder of ['.agents']) assert.equal(await fs.readFile(path.join(o.homeDir, folder, 'skills/example/SKILL.md'), 'utf8'), 'One shared update');
   });
   await test('Install_ImportsLegacyMemory_WithoutOverwritingCanonicalNotes', async () => {
     const o = await fixture(); const old = path.join(o.homeDir, '.gemini/tmp', o.username, 'memory');
@@ -445,8 +455,8 @@ export async function runTests() {
     assert.equal(canonical.placement.status, 'pass', JSON.stringify(canonical));
   });
   await test('InvalidSettings_DoNotExposePrivateJSON_InErrorMessages', async () => {
-    const o = await fixture(); await fs.mkdir(path.join(o.homeDir, '.claude'), { recursive: true });
-    await fs.writeFile(path.join(o.homeDir, '.claude/settings.json'), 'PRIVATE_SETTINGS_MARKER invalid JSON');
+    const o = await fixture(); await fs.mkdir(path.join(o.homeDir, '.gemini'), { recursive: true });
+    await fs.writeFile(path.join(o.homeDir, '.gemini/settings.json'), 'PRIVATE_SETTINGS_MARKER invalid JSON');
     try { await installCouncil(o); assert.fail('Expected malformed settings rejection'); }
     catch (error) { assert(!error.message.includes('PRIVATE_SETTINGS_MARKER')); assert(error.message.includes('Invalid JSON configuration')); }
   });
@@ -536,6 +546,27 @@ export async function runTests() {
     const report2 = await validateCouncil(o);
     assert.equal(report2.placement.status, 'fail');
     assert(report2.placement.errors.some(e => e.includes('Profile skill junction/link mismatch')));
+  });
+  await test('Validate_RejectsCopiedGeminiSkillWithCanonicalName', async () => {
+    const o = await fixture();
+    await installCouncil(o);
+    const duplicate = path.join(o.homeDir, '.gemini/skills/example');
+    await fs.mkdir(duplicate, { recursive: true });
+    await fs.writeFile(path.join(duplicate, 'SKILL.md'), '---\nname: example\ndescription: local copy\n---\n');
+    const report = await validateCouncil(o);
+    assert.equal(report.placement.status, 'fail');
+    assert(report.placement.errors.some(e => e.includes('Duplicate Gemini skill discovery path')));
+    assert.equal(await fs.readFile(path.join(duplicate, 'SKILL.md'), 'utf8'), '---\nname: example\ndescription: local copy\n---\n');
+  });
+  await test('Install_RejectsCopiedGeminiSkillBeforeWritingProfileLinks', async () => {
+    const o = await fixture();
+    const duplicate = path.join(o.homeDir, '.gemini/skills/example');
+    await fs.mkdir(duplicate, { recursive: true });
+    const content = '---\nname: example\ndescription: personal skill\n---\n';
+    await fs.writeFile(path.join(duplicate, 'SKILL.md'), content);
+    await assert.rejects(() => installCouncil(o), /Gemini skill discovery conflict/);
+    await assert.rejects(fs.lstat(path.join(o.homeDir, '.agents/skills/example')), { code: 'ENOENT' });
+    assert.equal(await fs.readFile(path.join(duplicate, 'SKILL.md'), 'utf8'), content);
   });
 
   for (const base of fixtures) {

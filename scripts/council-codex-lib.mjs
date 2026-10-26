@@ -49,13 +49,13 @@ async function readOptional(file) {
   try { return await fs.readFile(file, 'utf8'); } catch (error) { if (error.code === 'ENOENT') return ''; throw error; }
 }
 
-async function files(root) {
+async function files(root, { includeDist = false } = {}) {
   const result = [];
   for (const entry of await fs.readdir(root, { withFileTypes: true })) {
-    if (['__pycache__', '.pytest_cache', 'node_modules', '.venv', 'runtime', 'build', 'dist'].includes(entry.name) || entry.name.endsWith('.egg-info') || entry.name.endsWith('.pyc')) continue;
+    if (['__pycache__', '.pytest_cache', 'node_modules', '.venv', 'runtime', 'build'].includes(entry.name) || (!includeDist && entry.name === 'dist') || entry.name.endsWith('.egg-info') || entry.name.endsWith('.pyc')) continue;
     const full = path.join(root, entry.name);
     if (entry.isSymbolicLink()) throw new Error('Payload links are not supported: ' + full);
-    if (entry.isDirectory()) result.push(...await files(full));
+    if (entry.isDirectory()) result.push(...await files(full, { includeDist }));
     else if (entry.isFile()) result.push(full);
   }
   return result;
@@ -114,9 +114,9 @@ async function model(input) {
   const geminiCompatibility = path.join(o.scriptRoot, 'gemini-compat.mjs');
   if (await exists(geminiCompatibility)) writes.push({ target: path.join(o.councilRoot, 'scripts/gemini-compat.mjs'), content: await fs.readFile(geminiCompatibility) });
 
-  for (const directory of ['docs', 'adapters', 'profiles', 'exclusions', 'project-instructions', 'project-skills', 'legacy', 'scripts/tests', 'council']) {
+  for (const directory of ['docs', 'adapters', 'profiles', 'exclusions', 'project-instructions', 'project-skills', 'legacy', 'scripts/tests', 'council', 'visualizer']) {
     const source = path.join(o.payloadRoot, directory);
-    if (await exists(source)) for (const file of await files(source)) {
+    if (await exists(source)) for (const file of await files(source, { includeDist: directory === 'visualizer' })) {
       const content = await fs.readFile(file);
       writes.push({ target: path.join(o.councilRoot, directory, path.relative(source, file)), content: renderContent(file, content) });
     }
@@ -126,9 +126,8 @@ async function model(input) {
   const instructions = [
     { target: path.join(o.homeDir, '.codex/AGENTS.md'), body: scope + 'Read ' + sharedPath + ' and the Codex adapter at ' + path.join(o.councilRoot, 'adapters/codex.md') + ' explicitly; Codex does not expand @file imports.' },
     { target: path.join(o.homeDir, '.gemini/GEMINI.md'), body: scope + 'Read ' + sharedPath + ' and the Gemini adapter at ' + path.join(o.councilRoot, 'adapters/gemini.md') + ' explicitly.' },
-    { target: path.join(o.homeDir, '.claude/CLAUDE.md'), body: scope + '@' + sharedPath.replaceAll('\\', '/').replaceAll(' ', '\\ ') + '\nRead the Claude Code adapter at ' + path.join(o.councilRoot, 'adapters/claude.md') + '.' }
   ];
-  const profileLinks = ['.agents', '.gemini', '.claude'].flatMap(folder => manifest.skills.map(name => ({ folder, name, link: path.join(o.homeDir, folder, 'skills', name), canonical: path.join(o.councilRoot, 'skills', name) })));
+  const profileLinks = ['.agents'].flatMap(folder => manifest.skills.map(name => ({ folder, name, link: path.join(o.homeDir, folder, 'skills', name), canonical: path.join(o.councilRoot, 'skills', name) })));
   const legacyText = await readOptional(path.join(o.payloadRoot, 'legacy-fingerprints.json'));
   const legacy = legacyText ? JSON.parse(legacyText) : {};
   if (legacyText) writes.push({ target: path.join(o.councilRoot, 'legacy-fingerprints.json'), content: Buffer.from(legacyText) });
@@ -169,7 +168,7 @@ function owner(o) { return 'Council MemoryForge ' + createHash('sha256').update(
 export function buildHooks(input) {
   const o = options(input);
   const actor = input.actor || 'codex';
-  if (!['codex', 'gemini', 'claude'].includes(actor)) throw new Error('Unknown Council model adapter');
+  if (!['codex', 'gemini'].includes(actor)) throw new Error('Unknown Council model adapter');
   if (!o.nodePath) throw new Error('Node executable path is required for hook installation');
   const argumentsList = [o.nodePath, path.join(o.councilRoot, 'scripts/council-codex.mjs'), 'hook', '--workspace', o.workspaceRoot, '--home', o.homeDir, '--username', o.username, '--model', actor];
   const command = argumentsList.map(quote).join(' ');
@@ -179,15 +178,12 @@ export function buildHooks(input) {
     const handler = { type: 'command', command: os.platform() === 'win32' ? commandWindows : command, timeout: 3000, name: owner(o) };
     return { hooks: { SessionStart: [{ hooks: [{ ...handler }] }], AfterAgent: [{ hooks: [{ ...handler }] }] } };
   }
-  if (actor === 'claude') {
-    const handler = { type: 'command', command: os.platform() === 'win32' ? commandWindows : command, timeout: 3, statusMessage: owner(o) };
-    return { hooks: { SessionStart: [{ hooks: [{ ...handler }] }], Stop: [{ hooks: [{ ...handler }] }] } };
-  }
-  const handler = { type: 'command', command, commandWindows, timeout: 3, statusMessage: owner(o) };
+  // Allow for Windows shell startup and bounded MemoryForge lock contention.
+  const handler = { type: 'command', command, commandWindows, timeout: 10, statusMessage: owner(o) };
   return { hooks: {
     SessionStart: [{ matcher: 'startup|resume|clear|compact', hooks: [{ ...handler, additionalContextLimit: 12000 }] }],
     Stop: [{ hooks: [{ ...handler }] }],
-    Interrupt: [{ hooks: [{ ...handler }] }],
+    Interrupt: [{ hooks: [{ ...handler, timeout: 3 }] }],
     PostToolUse: [{ matcher: '^(Bash|exec_command|apply_patch)$', hooks: [{ ...handler }] }]
   } };
 }
@@ -329,9 +325,27 @@ async function planLegacyRetirement(m) {
 }
 
 async function preflight(m) {
-  const { o, instructions, profileLinks, legacy } = m;
+  const { o, instructions, profileLinks, legacy, manifest } = m;
   m.adoptions = [];
   m.retirements = await planLegacyRetirement(m);
+  for (const name of manifest.skills) {
+    const duplicate = path.join(o.homeDir, '.gemini/skills', name);
+    let stat;
+    try { stat = await fs.lstat(duplicate); }
+    catch (error) {
+      if (error.code === 'ENOENT') continue;
+      throw new Error('Gemini skill discovery conflict: ' + duplicate);
+    }
+    const fingerprint = legacy.profiles?.['.gemini']?.[name];
+    if (stat.isDirectory() && !stat.isSymbolicLink() && fingerprint && await matchesFingerprint(duplicate, fingerprint)) continue;
+    if (!stat.isSymbolicLink()) throw new Error('Gemini skill discovery conflict: ' + duplicate);
+    let target;
+    try { target = await fs.realpath(duplicate); }
+    catch { throw new Error('Gemini skill discovery conflict: ' + duplicate); }
+    if (path.resolve(target).toLowerCase() !== path.resolve(path.join(o.councilRoot, 'skills', name)).toLowerCase()) {
+      throw new Error('Gemini skill discovery conflict: ' + duplicate);
+    }
+  }
   const oldPolicy = path.join(o.homeDir, '.gemini/policies');
   const canonicalPolicy = path.join(o.councilRoot, 'adapters/gemini/policies');
   if (legacy.profilePolicies && await exists(oldPolicy)) {
@@ -351,6 +365,19 @@ async function preflight(m) {
     const current = await readOptional(instruction.target);
     const prepared = instruction.target === path.join(o.homeDir, '.gemini/GEMINI.md') ? stripLegacyGeminiContext(current, legacy, '.gemini/GEMINI.md') : current;
     mergeManagedBlock(prepared, instruction.body);
+  }
+  for (const [folder, profiles] of Object.entries(legacy.profiles || {})) {
+    if (folder === '.agents') continue;
+    for (const [name, fingerprint] of Object.entries(profiles || {})) {
+      const link = path.join(o.homeDir, folder, 'skills', name);
+      if (await exists(link)) {
+        const stat = await fs.lstat(link);
+        if (stat.isSymbolicLink() && path.resolve(await fs.realpath(link)).toLowerCase() === path.resolve(path.join(o.councilRoot, 'skills', name)).toLowerCase()) continue;
+        if (!stat.isDirectory() || stat.isSymbolicLink() || !(await matchesFingerprint(link, fingerprint))) throw new Error('Profile skill path conflicts: ' + link);
+        await assertWritableTarget(link, [o.homeDir]);
+        m.adoptions.push({ link, folder, name });
+      }
+    }
   }
   for (const { link, canonical, folder, name } of profileLinks) {
     if (await exists(link)) {
@@ -399,6 +426,15 @@ export async function validateCouncil(input = {}) {
       if (!(await fs.lstat(link)).isSymbolicLink() || (await fs.realpath(link)).toLowerCase() !== (await fs.realpath(canonical)).toLowerCase()) placement.errors.push('Profile skill junction/link mismatch: ' + link);
     } catch { placement.errors.push('Missing/broken profile skill link: ' + link); }
   }
+  for (const name of manifest.skills) {
+    const redundant = path.join(o.homeDir, '.gemini/skills', name);
+    try {
+      await fs.lstat(redundant);
+      placement.errors.push('Duplicate Gemini skill discovery path: ' + redundant);
+    } catch (error) {
+      if (error.code !== 'ENOENT') placement.errors.push('Cannot inspect Gemini skill discovery path: ' + redundant);
+    }
+  }
   for (const repo of repos) {
     if ((await readOptional(path.join(repo, 'AGENTS.md'))).includes(BEGIN)) placement.errors.push('Legacy Council project instruction remains: ' + repo);
     for (const name of manifest.skills) if (await exists(path.join(repo, '.agents/skills', name))) placement.errors.push('Project skill artifact remains: ' + repo + '/' + name);
@@ -414,7 +450,7 @@ export async function validateCouncil(input = {}) {
     const installed = JSON.parse(await fs.readFile(path.join(o.councilRoot, 'installation.json'), 'utf8'));
     if (installed.workspaceRoot !== o.workspaceRoot || installed.homeDir !== o.homeDir || installed.username !== o.username || installed.councilRoot !== o.councilRoot) throw new Error('Installation metadata belongs to another location');
     if (!(await exists(installed.nodePath)) || !(await fs.stat(installed.nodePath)).isFile()) lifecycle.errors.push('Configured Node executable is missing');
-    for (const actor of ['codex', 'gemini', 'claude']) {
+    for (const actor of ['codex', 'gemini']) {
       const expected = buildHooks({ ...o, nodePath: installed.nodePath, actor });
       const settings = actor === 'codex' ? '.codex/hooks.json' : '.' + actor + '/settings.json';
       const actual = parseConfiguration(await fs.readFile(path.join(o.homeDir, settings), 'utf8'), actor + ' hooks');
@@ -496,7 +532,7 @@ export async function installCouncil(input = {}) {
     const merged = mergeCodexWorkspaceRoots(mergeCodexDefaults(await readOptional(target), m.codexDefaults), m.codexWorkspaceRoots);
     pending.push({ target, content: Buffer.from(merged) });
   }
-  for (const actor of ['gemini', 'claude']) {
+  for (const actor of ['gemini']) {
     const settingsPath = path.join(o.homeDir, '.' + actor, 'settings.json');
     const current = await readOptional(settingsPath);
     const actorOptions = { ...o, actor };
@@ -552,6 +588,20 @@ export async function installCouncil(input = {}) {
     await fs.mkdir(path.dirname(link), { recursive: true });
     await fs.symlink(canonical, link, 'junction');
     changed.push(link);
+  }
+  for (const name of manifest.skills) {
+    const redundant = path.join(o.homeDir, '.gemini/skills', name);
+    if (await exists(redundant)) {
+      const stat = await fs.lstat(redundant);
+      if (stat.isSymbolicLink() && path.resolve(await fs.realpath(redundant)).toLowerCase() === path.resolve(path.join(o.councilRoot, 'skills', name)).toLowerCase()) {
+        await fs.unlink(redundant);
+        changed.push(redundant);
+      }
+    }
+  }
+  const geminiSkillsDir = path.join(o.homeDir, '.gemini/skills');
+  if (await exists(geminiSkillsDir) && !(await fs.lstat(geminiSkillsDir)).isSymbolicLink() && (await fs.readdir(geminiSkillsDir)).length === 0) {
+    await fs.rmdir(geminiSkillsDir);
   }
   if (m.policyAdoption) {
     const { source, destination } = m.policyAdoption;

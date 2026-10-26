@@ -108,7 +108,7 @@ async function record(payload, options, message) {
 }
 
 export async function handleHook(payload, options) {
-  if (!['codex', 'gemini', 'claude'].includes(options.actor || 'codex')) return {};
+  if (!['codex', 'gemini'].includes(options.actor || 'codex')) return {};
   if (!payload || typeof payload !== 'object' || !insideWorkspace(payload.cwd, options.workspaceRoot)) return {};
   // Real paths prevent a workspace junction from capturing another workspace's events.
   const [cwd, workspace] = await Promise.all([fs.realpath(payload.cwd), fs.realpath(options.workspaceRoot)]);
@@ -120,7 +120,6 @@ export async function handleHook(payload, options) {
   }
   const actor = options.actor || 'codex';
   if (actor === 'gemini' && payload.hook_event_name === 'AfterAgent') payload = { ...payload, hook_event_name: 'Stop', turn_id: payload.timestamp };
-  if (actor === 'claude' && !payload.turn_id) payload = { ...payload, turn_id: payload.prompt_id };
   const message = milestone(payload);
   if (message) await record(payload, options, message);
   return actor === 'gemini' ? { decision: 'allow' } : {};

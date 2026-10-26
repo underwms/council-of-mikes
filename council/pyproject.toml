@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "council-orchestrator"
-version = "0.2.0"
-description = "Workspace-scoped multi-provider Council orchestration with durable approval gates"
+version = "0.2.57"
+description = "Workspace-scoped multi-provider Council orchestration with autonomous plan review"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -15,7 +15,6 @@ dependencies = [
     "rich==15.0.0",
     "langchain-core==1.6.10",
     "langchain-google-genai==4.4.1",
-    "langchain-anthropic==1.7.6",
     "langchain-openai==1.7.1"
 ]
 
@@ -25,6 +24,9 @@ council = "council.cli:main"
 [tool.setuptools]
 packages = ["council", "council.tools"]
 include-package-data = false
+
+[tool.setuptools.package-data]
+council = ["templates/*.md"]
 
 [tool.setuptools.package-dir]
 council = "."

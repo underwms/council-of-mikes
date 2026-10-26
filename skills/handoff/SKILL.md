@@ -13,7 +13,7 @@ This skill governs the generation of incremental checkpoint summaries and final 
 ## 1. Local Cache Target Path
 When generating a handoff or session checkpoint, the AI MUST write the summary exclusively to:
 - **Local Workstation Cache (Read explicitly at session onboarding)**:
-  `__COUNCIL_ROOT__/memory/active_handoff.md`
+  `C:\Users\munderwood\.council/memory/active_handoff.md`
 
 ---
 
@@ -26,7 +26,7 @@ When generating a handoff or session checkpoint, the AI MUST write the summary e
 
 ## 3. Dynamic Session Heartbeat (Rolling Log)
 To guard against abrupt CLI terminal closures (such as clicking the `[X]` button), the AI should maintain a background **Rolling Session Heartbeat** file:
-*   **Path**: `__COUNCIL_ROOT__/memory/active_session_backlog.md`
+*   **Path**: `C:\Users\munderwood\.council/memory/active_session_backlog.md`
 *   **Action**: Every time a file is modified, a test runs, or an API is successfully validated, the AI MUST write a single chronological line describing the action to this file.
 *   **Onboarding Integration**: At Codex session onboarding, read this backlog file to reconstruct the session progress.
 
@@ -65,4 +65,4 @@ All products share one private cache and handler. Read the active adapter: Codex
 
 Write the handoff yourself using the format above. Record concise milestones when their facts are known. If the cache is not writable under the current permission profile, report that limitation and do not save private state into a repository. Do not bypass the protected path through another tool.
 
-For manual recovery with a working native shell, use `node "__COUNCIL_ROOT__/scripts/council-codex.mjs" onboard --workspace "__WORKSPACE_ROOT__"`. Do not parse Codex private databases or treat its transcript format as a stable API.
+For manual recovery with a working native shell, use `node "C:\Users\munderwood\.council/scripts/council-codex.mjs" onboard --workspace "C:\Users\munderwood\workspace_root"`. Do not parse Codex private databases or treat its transcript format as a stable API.

@@ -34,12 +34,6 @@ if (-not $ValidateOnly -and -not $NativeOnly) {
 $command = if ($ValidateOnly) { 'validate' } else { 'install' }
 & $NodePath (Join-Path $SourceRoot 'scripts/council-codex.mjs') $command --workspace $WorkspaceRoot --home $HomeRoot --payload $SourceRoot --node $NodePath
 if ($LASTEXITCODE -ne 0) { throw 'Council static installation verification failed.' }
-if (-not $ValidateOnly -and -not $SkipGeminiOptimization) {
-    $optimizerScript = Join-Path $CouncilRoot 'scripts/optimize-gemini-cli.ps1'
-    if (Test-Path -LiteralPath $optimizerScript -PathType Leaf) {
-        & $optimizerScript -NodePath $NodePath
-    }
-}
 if (-not $NativeOnly) {
     & (Join-Path $CouncilRoot 'scripts/install-engine-runtime.ps1') -CouncilRoot $CouncilRoot -WorkspaceRoot $WorkspaceRoot -PythonPath $PythonPath -ValidateOnly:$ValidateOnly
 }

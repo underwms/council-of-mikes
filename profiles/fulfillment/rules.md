@@ -4,6 +4,12 @@
 > **Workspace Scope:** `workspace_root\` (Cross-cutting microservices: `orderapi`, `inventoryservice`, `warehouseapi`, `paymentservice`, etc.)  
 > **Pod Lead:** Pod Architectural Lead
 
+## Applicability to feature work
+
+These rules govern newly introduced code and the changes requested by the task. Existing code, mappings, APIs, dependencies, and layouts are integration context, including pre-existing deviations. Preserve the existing contracts needed by the feature. Do not require migrations, renames, refactoring, framework replacement, or unrelated cleanup to reconcile inherited code with these rules. Touching a file does not make all its existing code part of the task. Apply naming rules to identifiers being created, while using existing mapped identifiers exactly as they exist.
+
+Corporate rules supplied or confirmed by the user are authoritative within their stated scope; accepting them does not require ADR links, external verification, or proof of provenance. A pre-existing deviation alone is not a review blocker. Evaluate the requested change and concrete correctness problems it introduces.
+
 ---
 
 ## 1. Clean / Onion Architecture Boundaries
@@ -23,8 +29,8 @@
    - Entity Framework Core is the **exclusive ORM** for all data reads, writes, transactions, and relational queries.
    - Raw SQL queries via Dapper or manual `DbConnection` queries are **strictly prohibited**.
 2. **Zero Redis Caching**:
-   - Redis caching decorators, distributed cache layers, and in-memory cache synchronization mechanisms have been completely purged from the architecture.
-   - All state, rating matrices, and lookups are stored and queried natively in PostgreSQL.
+   - New work must not introduce Redis caching decorators, distributed cache layers, or in-memory cache synchronization mechanisms. Existing deviations remain integration context under the scope rule above.
+   - New state, rating matrices, and lookups use PostgreSQL persistence within the requested scope; do not migrate inherited storage merely to reconcile it with this rule.
 3. **ANSI PostgreSQL Standards**:
    - All database schemas, tables, columns, indexes, constraints, and query parameters MUST strictly adhere to ANSI standard `lower_snake_case`.
 
@@ -36,10 +42,12 @@
    - Framework: MSTest using modern `MSTest.Sdk`.
    - Mocking: `NSubstitute` is the pod-wide mocking library.
 2. **Integration Testing**:
-   - Framework: Native .NET Aspire Testing (`Aspire.Hosting.Testing`) and Testcontainers.
-   - Zero Mock DBs: Never use in-memory database providers (e.g., InMemory EF provider or fake repositories) for integration tests; all tests must execute against real containerized PostgreSQL instances.
-3. **Behavioral Testing**:
-   - All feature-level acceptance tests must use Reqnroll with Gherkin `.feature` specifications.
+   - Select test tooling and fixtures appropriate to the feature's agreed verification requirements and the relevant repository suite.
+   - Aspire, Testcontainers, and real PostgreSQL fixtures are optional. Do not require adopting them, replacing existing fixtures, or migrating a test suite as a blanket completion gate.
+   - Describe what the selected tests actually exercise; do not claim real-database or integration evidence from a substitute that does not exercise that behavior.
+3. **Acceptance and Behavioral Testing**:
+   - Use the repository's established test tools and the feature's explicitly agreed verification requirements.
+   - Reqnroll and Gherkin are optional. Do not require a BDD framework, `.feature` files, or a test-framework migration as a condition of feature completion. Use them only when explicitly requested or already established for the relevant suite.
 4. **Pre-Submit Gate (SOP)**:
    - For all code changes, execute the 11-Phase Pre-Submit Gate SOP defined in the central docs/code-change-pre-submit-sop.md.
    - Run the configured workspace checks and shared Council source audit before completion. Report failures and skipped checks accurately.

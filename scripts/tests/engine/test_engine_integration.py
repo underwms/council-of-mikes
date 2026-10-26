@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import pytest
 from langchain_core.messages import AIMessage, ToolMessage
 from langgraph.types import Command
+from graph_fixtures import lifecycle  # Explicit version-one compatibility alias.
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
@@ -28,15 +29,21 @@ class ScriptedProvider:
         self.contents = contents or {}
         self.attempts = {}
 
-    def with_structured_output(self, schema):
-        return SimpleNamespace(invoke=lambda messages: self.plan)
+    def with_structured_output(self, schema, **kwargs):
+        response = {'raw': AIMessage(content=''), 'parsed': self.plan, 'parsing_error': None} if kwargs.get('include_raw') else self.plan
+        return SimpleNamespace(invoke=lambda messages: response)
 
     def bind_tools(self, tools):
+        self.allowed_tools = {tool.name for tool in tools}
+        if 'write_workspace_file' not in self.allowed_tools:
+            return SimpleNamespace(invoke=lambda messages: AIMessage(content='Repository inspection complete.'))
         return self
 
     def invoke(self, messages):
         if isinstance(messages, str):
             return AIMessage(content="Inspect the actual subprocess exit code and repair its target.")
+        if 'write_workspace_file' not in getattr(self, 'allowed_tools', set()):
+            return AIMessage(content='Repository inspection complete.')
         if messages and isinstance(messages[-1], ToolMessage):
             return AIMessage(content="Task work finished; run the declared verification command.")
         text = " ".join(str(getattr(item, "content", item)) for item in messages)
@@ -51,47 +58,6 @@ class ScriptedProvider:
                         "rel_path": task.target_files[0], "content": content},
                     "id": f"{task.id}-{attempt}", "type": "tool_call"}])
         return AIMessage(content="No tools required.")
-
-
-@pytest.fixture
-def lifecycle(tmp_path):
-    from council.runtime_context import RuntimeContext
-    from council.state import CouncilState, MultiSpecialistPlan, TaskItem
-
-    council_root = tmp_path / "installed council"
-    workspace = tmp_path / "developer workspace"
-    memory = council_root / "memory"
-    workspace.mkdir()
-    memory.mkdir(parents=True)
-    (council_root / "manifest.json").write_text(json.dumps({"specialists": []}), encoding="utf-8")
-    skill = council_root / "skills" / "the-coder"
-    skill.mkdir(parents=True)
-    (skill / "SKILL.md").write_text("---\nname: the-coder\ndescription: Coding\n---\n# [THE CODER]\nPerform declared task.\n", encoding="utf-8")
-    context = RuntimeContext(council_root, workspace, memory)
-    scripts = workspace / "scripts"
-    scripts.mkdir()
-    (scripts / "validate_workspace.py").write_text(
-        "import argparse\nfrom pathlib import Path\n"
-        "parser=argparse.ArgumentParser()\nparser.add_argument('workspace')\n"
-        "args=parser.parse_args()\nassert Path(args.workspace).resolve() == Path.cwd().resolve()\n"
-        "print('Fixture workspace audit passed')\n", encoding="utf-8")
-    (workspace / "verify.py").write_text(
-        "from pathlib import Path\nimport sys\n"
-        "valid = Path(sys.argv[1]).read_text() == 'valid'\n"
-        "print('Passed: 1 Failed: 0' if valid else 'Passed: 0 Failed: 1')\n"
-        "sys.exit(0 if valid else 7)\n", encoding="utf-8")
-    tasks = [TaskItem(id=f"task-{number}", specialist="the-coder",
-        description=f"Implement unique integration target {number}",
-        target_files=[f"target-{number}.txt"], acceptance_criteria=["Verification exits zero"],
-        test_commands=[[sys.executable, "verify.py", f"target-{number}.txt"]],
-        working_directory=".") for number in (1, 2)]
-    plan = MultiSpecialistPlan(title="Integration lifecycle", architecture_summary="Two independent tasks", tasks=tasks)
-    state = CouncilState(run_id="integration-run", task_input="Implement the two fixture targets",
-                         thread_id="integration-run", max_steps=100,
-                         workspace_root=str(workspace.resolve()), council_root=str(council_root.resolve()),
-                         memory_root=str(memory.resolve()))
-    return SimpleNamespace(context=context, workspace=workspace, plan=plan, state=state,
-                           db=memory / "integration.sqlite", config={"configurable": {"thread_id": state.thread_id}, "recursion_limit": 100})
 
 
 def open_graph(fixture, provider):
@@ -272,7 +238,9 @@ def test_file_tool_exception_cannot_report_success(lifecycle):
         assert result["status"] == "FAILED"
         assert result["test_result"] is None
         assert not (lifecycle.workspace.parent / "escaped.txt").exists()
-        assert result["tool_call_history"] == []
+        assert result["tool_call_history"] == [{"tool": "write_workspace_file", "succeeded": False,
+            "tool_failure": {"tool": "write_workspace_file", "tool_index": 1, "reason": "PERMISSION_DENIED"}}]
+        assert result["diagnostic"]["code"] == "PERMISSION_DENIED"
 
 
 def test_graph_step_limit_terminates_before_worker(lifecycle):
@@ -371,7 +339,9 @@ def test_failed_patch_tool_cannot_be_recorded_as_success(lifecycle):
         assert_gate(graph.invoke(lifecycle.state.model_dump(), lifecycle.config), "GATE_1_PLAN_APPROVAL")
         result = graph.invoke(Command(resume={"approved": True}), lifecycle.config)
         assert result["status"] == "FAILED", "A patch with no matching text is a failed operation"
-        assert result["tool_call_history"] == []
+        assert result["tool_call_history"] == [{"tool": "patch_workspace_file", "succeeded": False,
+            "tool_failure": {"tool": "patch_workspace_file", "tool_index": 1, "reason": "TOOL_ERROR"}}]
+        assert result["diagnostic"]["code"] == "TOOL_EXECUTION_FAILED"
         assert result["test_result"] is None
 
 
@@ -429,9 +399,13 @@ def test_missing_investigator_diagnosis_stops_repair(lifecycle):
         assert provider.attempts["task-1"] == 1
 
 
-def test_escalation_provider_is_selected_only_after_second_failure(lifecycle, monkeypatch):
+def test_legacy_repaired_tasks_keep_the_original_two_roles(lifecycle):
     from council.graph import build_council_graph
-    monkeypatch.setenv("COUNCIL_ENABLE_ESCALATION", "true")
+    role = {'provider': 'gpt', 'model': 'gpt-legacy', 'settings': {
+        'use_responses_api': True, 'include_response_headers': True,
+        'base_url': 'https://api.openai.com/v1'}}
+    lifecycle.state.model_configuration = {'version': 2, 'roles': {
+        'orchestrator': role.copy(), 'investigator': role.copy()}}
     provider = ScriptedProvider(lifecycle.plan, {"task-1": ["broken", "broken", "valid"]})
     roles = []
     def factory(role):
@@ -442,7 +416,7 @@ def test_escalation_provider_is_selected_only_after_second_failure(lifecycle, mo
         graph.invoke(lifecycle.state.model_dump(), lifecycle.config)
         result = graph.invoke(Command(resume={"approved": True}), lifecycle.config)
         assert_gate(result, "GATE_2_PRE_SUBMIT_APPROVAL")
-        assert roles == ["orchestrator", "orchestrator", "investigator", "orchestrator", "investigator", "escalation", "orchestrator"]
+        assert roles == ["orchestrator", "orchestrator", "investigator", "orchestrator", "investigator", "orchestrator", "orchestrator"]
         assert [entry["exit_code"] for entry in result["test_results"]] == [7, 7, 0, 0]
 
 

@@ -3,7 +3,7 @@
     "fileFiltering": {
       "respectGeminiIgnore": true,
       "customIgnoreFilePaths": [
-        "__COUNCIL_ROOT__\\exclusions\\global.ignore"
+        "C:\\Users\\munderwood\\.council\\exclusions\\global.ignore"
       ]
     }
   }

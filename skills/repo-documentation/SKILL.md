@@ -242,7 +242,7 @@ Coordinated by `the-architect`, `the-coder`, and `the-prover`.
 *   **Subheader 2**: `## 2. Assembly Boundaries & Layer Responsibilities` (`the-coder`)
     *   *Content*: Assembly layers (e.g. `.Core`, `.Data`, `.Api`). Rigorously enforce that the pure `.Core` assembly contains zero physical SQL/Dapper or Redis/caching NuGet package dependencies.
 *   **Subheader 3**: `## 3. Unit, Integration & Spec Test Suites` (`the-prover`)
-    *   *Content*: MSTest/NSubstitute directories, Arrange/Act/Assert boundaries, Gherkin Reqnroll specs, and Testcontainers.
+    *   *Content*: The repository's actual unit, integration, and acceptance suites, including MSTest/NSubstitute and Testcontainers where used. Describe Reqnroll/Gherkin only when the repository already uses it; the documentation template does not require adopting it.
 
 #### 3. `tech-stack.md` Template Blueprint
 Coordinated by `the-purifier`, `the-curator`, `the-watcher`, and `the-pipelineer`.

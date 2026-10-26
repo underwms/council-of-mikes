@@ -54,14 +54,25 @@ try { $sourceHash = [BitConverter]::ToString($hasher.ComputeHash([Text.Encoding]
 finally { $hasher.Dispose() }
 $runtimePython = Join-Path $runtimeRoot 'Scripts/python.exe'
 $markerPath = Join-Path $runtimeRoot 'council-runtime.json'
+$markerHelper = Join-Path $engineRoot 'runtime_marker.py'
+$projectMetadata = Join-Path $engineRoot 'pyproject.toml'
 Assert-LocalPath $runtimePython
 Assert-LocalPath $markerPath
+Assert-LocalPath $markerHelper
+Assert-LocalPath $projectMetadata
 $marker = $null
 if (Test-Path -LiteralPath $markerPath) {
     try { $marker = Get-Content -LiteralPath $markerPath -Raw | ConvertFrom-Json }
     catch { if ($ValidateOnly) { throw 'Council runtime marker is invalid.' } }
 }
 $current = $marker -and $marker.sourceHash -eq $sourceHash -and (Test-Path -LiteralPath $runtimePython)
+if (Test-Path -LiteralPath $runtimePython) {
+    $versionResult = & $runtimePython -I $markerHelper verify --project $projectMetadata --marker $markerPath
+    if ($LASTEXITCODE -ne 0) {
+        $current = $false
+        if ($ValidateOnly) { throw ('Council installed-version validation failed: ' + $versionResult) }
+    }
+}
 if ($current) {
     & $runtimePython -I -m pip check *> $null
     $current = $LASTEXITCODE -eq 0
@@ -92,7 +103,10 @@ if (-not $current) {
         Invoke-Checked $runtimePython @('-I','-m','pip','install','--force-reinstall','--constraint',(Join-Path $engineRoot 'requirements.lock'),$wheel.FullName)
         Invoke-Checked $runtimePython @('-I','-m','pip','check')
         Invoke-Checked $runtimePython @('-I','-m','council','--doctor','--workspace',$WorkspaceRoot,'--council-root',$CouncilRoot)
-        @{ sourceHash=$sourceHash; pythonVersion=$pythonInfo.version; packageVersion='0.2.0'; wheelHash=(Get-FileHash -LiteralPath $wheel.FullName -Algorithm SHA256).Hash } | ConvertTo-Json | Set-Content -LiteralPath $markerPath -Encoding utf8
+        $pythonVersionJson = ConvertTo-Json -InputObject @($pythonInfo.version) -Compress
+        Invoke-Checked $runtimePython @('-I',$markerHelper,'publish','--project',$projectMetadata,'--marker',$markerPath,
+            '--source-hash',$sourceHash,'--wheel-hash',(Get-FileHash -LiteralPath $wheel.FullName -Algorithm SHA256).Hash,
+            '--python-version',$pythonVersionJson,'--checks-passed')
     } finally {
         Assert-LocalPath $buildRoot
         if (Test-Path -LiteralPath $buildRoot) { Remove-Item -LiteralPath $buildRoot -Recurse -Force }

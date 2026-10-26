@@ -11,7 +11,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 
 test('Distribution_InstallsReinstallsAndValidates_NativeOnlyUnderAnotherProfile', async t => {
   const manifest = JSON.parse(await fs.readFile(path.join(root,'manifest.json'),'utf8'));
-  const artifact = manifest.distribution ? root : path.join(JSON.parse(await fs.readFile(path.join(root,'installation.json'),'utf8')).workspaceRoot,'temp/the-council/.council');
+  const artifact = manifest.distribution ? root : path.join(JSON.parse(await fs.readFile(path.join(root,'installation.json'),'utf8')).workspaceRoot,'temp/.council');
   const parent = path.join(root,'work/distribution-tests'); await fs.mkdir(parent,{recursive:true});
   const base = await fs.mkdtemp(path.join(parent,'fixture-'));
   t.after(async () => {
@@ -38,10 +38,10 @@ test('Distribution_InstallsReinstallsAndValidates_NativeOnlyUnderAnotherProfile'
   await assert.rejects(fs.stat(path.join(installed,'memory/active_handoff.md')),{code:'ENOENT'});
   await assert.rejects(fs.stat(path.join(installed,'runtime')),{code:'ENOENT'});
   let aliases = 0;
-  for(const folder of ['.agents','.gemini','.claude']) for(const name of manifest.skills) {
+  for(const folder of ['.agents']) for(const name of manifest.skills) {
     assert.equal((await fs.realpath(path.join(home,folder,'skills',name))).toLowerCase(),path.join(installed,'skills',name).toLowerCase()); aliases++;
   }
-  assert.equal(aliases,72);
+  assert.equal(aliases, manifest.skills.length);
   const before = await fs.readFile(path.join(installed,'source-lock.json'),'utf8');
   await execute('powershell.exe',args,{timeout:60000});
   assert.equal(await fs.readFile(path.join(home,'.codex/config.toml'),'utf8'),config);

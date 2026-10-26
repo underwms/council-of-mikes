@@ -6,7 +6,7 @@ One source, 15 specialist packages. Invoke a member by name, say council meeting
 
 Load only the relevant members and workflows. Match established repository patterns. The Purifier reviews code and the Gatekeeper reports applicable verification evidence. Reuse existing task authorization; do not request approval for every development command.
 
-The [Fulfillment profile](../profiles/fulfillment/rules.md) preserves the current contracts: PostgreSQL with EF Core, no Redis or Dapper, MSTest.Sdk with NSubstitute, Aspire/Testcontainers integration tests, and Reqnroll acceptance tests. Earlier catalog recommendations are superseded.
+The [Fulfillment profile](../profiles/fulfillment/rules.md) defines PostgreSQL with EF Core, no Redis or Dapper, and MSTest.Sdk with NSubstitute for new work within scope. Integration and acceptance verification use appropriate repository tooling and agreed feature requirements; Aspire, Testcontainers, real PostgreSQL fixtures, and Reqnroll/Gherkin are optional testing choices. Preserve existing contracts and dependencies needed for integration; pre-existing deviations do not authorize cleanup or block the feature. Corporate rules confirmed by the user are authoritative without external provenance checks. Earlier catalog recommendations are superseded.
 
 Use the [11-phase SOP](code-change-pre-submit-sop.md) with the selected profile.
 

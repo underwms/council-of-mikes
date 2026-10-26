@@ -27,9 +27,11 @@ description: Database & Persistence Lead. Owns PostgreSQL relational schemas, st
 
 ## The June 2026 Persistence Doctrine (Strict Relational Standard)
 
+These standards govern new database design and requested changes. Use existing mapped database identifiers exactly as they exist, including names that differ from current conventions. Do not invent replacement names or require a rename, migration, mapping rewrite, or surrounding cleanup solely to reconcile a pre-existing deviation.
+
 1. **Zero Caching Bloat (No Redis / No Dapper)**:
-   - All distributed caching layers and high-performance raw SQL micro-ORMs have been permanently decommissioned.
-   - All data operations—both high-speed lookups and complex transactional audits—must be designed directly in PostgreSQL via EF Core 10.
+   - Do not introduce distributed caching layers or high-performance raw SQL micro-ORMs in new work. Existing usage is integration context, not an automatic removal task.
+   - New data operations—both high-speed lookups and complex transactional audits—use PostgreSQL via EF Core 10 within the requested scope, without rewriting inherited persistence solely for compliance.
 2. **Strict Naming Standard (lower_snake_case)**:
    - All tables, columns, indexes, foreign keys, and stored procedures MUST be named in lowercase `snake_case`.
    - Never allow PascalCase column names to leak into PostgreSQL tables.

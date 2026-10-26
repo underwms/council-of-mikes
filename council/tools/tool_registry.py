@@ -3,13 +3,14 @@ from typing import Optional
 
 from council.runner import SubprocessRunner
 from council.tools.file_tools import FileTools
+from council.tools.discovery import validate_read_path
 from council.tools.test_runner import TestSuiteRunner
 from council.tools.validator_bridge import run_workspace_audit
 
 from langchain_core.tools import tool as lc_tool
 
 
-def get_council_tools(workspace_root=None, specialist=None, *, context=None):
+def get_council_tools(workspace_root=None, specialist=None, *, context=None, change_callback=None):
     """Build workspace-bound tools using the graph's explicit runtime context."""
     from council.runtime_context import resolve_context
     context = context or resolve_context(workspace_root)
@@ -17,19 +18,35 @@ def get_council_tools(workspace_root=None, specialist=None, *, context=None):
     runner = SubprocessRunner(context=context)
     test_runner = TestSuiteRunner(runner)
 
+    def fingerprint(rel_path):
+        import hashlib
+        target = file_tools.resolve_path(rel_path)
+        return hashlib.sha256(target.read_bytes()).hexdigest() if target.is_file() else None
+
+    def record_change(rel_path, before):
+        if change_callback:
+            change_callback(rel_path, before, fingerprint(rel_path))
+
     def read_file_fn(rel_path: str, start_line: Optional[int] = None, end_line: Optional[int] = None) -> str:
         """Reads content from a workspace file within optional start_line and end_line bounds."""
+        with validate_read_path(context, rel_path).open('rb') as source:
+            if len(source.read(262_145)) > 262_144:
+                raise ValueError('Workspace file exceeds the 256 KiB read limit')
         return file_tools.read_file(rel_path, start_line=start_line, end_line=end_line)
 
     def write_file_fn(rel_path: str, content: str) -> str:
         """Writes complete content to a file inside the workspace."""
+        before = fingerprint(rel_path)
         file_tools.write_file(rel_path, content)
+        record_change(rel_path, before)
         return f"Successfully wrote {len(content)} characters to {rel_path}"
 
     def patch_file_fn(rel_path: str, old_string: str, new_string: str):
         """Replaces exactly one occurrence of old_string with new_string in a file."""
+        before = fingerprint(rel_path)
         success = file_tools.patch_file(rel_path, old_string, new_string)
         if success:
+            record_change(rel_path, before)
             return f"Successfully patched {rel_path}"
         return {"passed": False, "error": "Patch target missing or original text was absent or not unique"}
 
@@ -79,5 +96,5 @@ def get_council_tools(workspace_root=None, specialist=None, *, context=None):
         return [t_read]
     elif specialist in ("the-coder", "the-curator", "the-purifier", "the-renderer"):
         return [t_read, t_patch, t_write, t_dotnet, t_deno]
-    
+
     return list(all_tools.values())

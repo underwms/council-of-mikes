@@ -12,7 +12,9 @@ class NativeCliTests(unittest.TestCase):
     def test_exact_role_model_is_forwarded(self):
         with patch.dict('os.environ', {'COUNCIL_ORCHESTRATOR_MODEL':'custom-deployment','COUNCIL_ORCHESTRATOR_PROVIDER':'gpt'}), patch('council.config.get_llm') as factory:
             get_llm_for_role('orchestrator')
-            factory.assert_called_once_with('gpt',model='custom-deployment')
+            assert factory.call_args.args == ('gpt',)
+            assert factory.call_args.kwargs['model'] == 'custom-deployment'
+            assert factory.call_args.kwargs['settings']['use_responses_api'] is True
 
     def test_unknown_model_requires_provider(self):
         with patch.dict('os.environ', {'COUNCIL_ORCHESTRATOR_MODEL':'custom-deployment'},clear=True):
@@ -28,11 +30,14 @@ from council.cli import run_council_task, main
 @pytest.fixture
 def cli_runtime(lifecycle, monkeypatch):
     provider = ScriptedProvider(lifecycle.plan)
-    monkeypatch.setattr('council.graph.get_llm_for_role', lambda role: provider)
+    monkeypatch.setattr('council.graph.get_llm_for_role', lambda role, configuration=None, **kwargs: provider)
+    monkeypatch.setattr('council.cli.preflight_credentials', lambda configuration: {'gpt': True, 'gemini': True})
     monkeypatch.setattr('council.cli.uuid.uuid4', lambda: type('Id', (), {'hex':'cli-fixture'})())
     return lifecycle
 
 def invoke_cli(fixture, **kwargs):
+    if not kwargs.get('resume_id') and not kwargs.get('auto_approve'):
+        kwargs.setdefault('approval_mode', 'manual')
     return run_council_task(workspace_root=fixture.workspace, council_root=fixture.context.council_root, **kwargs)
 
 def test_no_input_pauses_even_with_tty(cli_runtime, monkeypatch, capsys):
@@ -102,7 +107,7 @@ def test_cli_resume_refuses_other_workspace(cli_runtime,monkeypatch):
 def test_main_doctor_failed_config_help_and_noinput(cli_runtime,capsys):
     assert main(['--doctor','--workspace',str(cli_runtime.workspace),'--council-root',str(cli_runtime.context.council_root)])==0
     assert main(['--workspace',str(cli_runtime.workspace),'--council-root',str(cli_runtime.context.council_root)])==1
-    assert main(['fixture','--no-input','--workspace',str(cli_runtime.workspace),'--council-root',str(cli_runtime.context.council_root)])==2
+    assert main(['fixture','--approval-mode','manual','--no-input','--workspace',str(cli_runtime.workspace),'--council-root',str(cli_runtime.context.council_root)])==2
     with pytest.raises(SystemExit) as error: main(['--help'])
     assert error.value.code==0
 

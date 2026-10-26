@@ -100,9 +100,9 @@ digraph brainstorming {
 
 **Working in existing codebases:**
 
-- Explore the current structure before proposing changes. Follow existing patterns.
-- Where existing code has problems that affect the work (e.g., a file that's grown too large, unclear boundaries, tangled responsibilities), include targeted improvements as part of the design - the way a good developer improves code they're working in.
-- Don't propose unrelated refactoring. Stay focused on what serves the current goal.
+- Explore the current structure and preserve the existing contracts needed by the feature. Apply selected rules to new code and requested changes.
+- Treat pre-existing deviations, large files, and mixed patterns as integration context. They do not authorize refactoring, migrations, renames, or cleanup. Include restructuring only when requested or necessary to deliver the authorized behavior within scope.
+- Do not add work merely to reconcile inherited code with current rules. Touching a file does not put all its existing code in scope.
 
 ## After the Design
 

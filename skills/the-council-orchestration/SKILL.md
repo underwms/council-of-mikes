@@ -1,88 +1,51 @@
 ---
 name: the-council-orchestration
-description: Use when receiving ceremonial phrases like "Convene the Council", "I would like to convene the Council to address...", or when orchestrating complex multi-specialist tasks.
+description: Guide Council specialist coordination in the current model session when the user asks to convene the Council or requests Council coordination. Quoting, discussing, or auditing this skill is not an invocation.
 ---
 
-# The Council Orchestration — Multi-Specialist Agentic Workflow
+# The Council Orchestration
 
-## Overview
-This skill implements **Multi-Persona Agentic Orchestration**. When the user calls upon the Council, a single master agent acting as `[THE ARCHITECT]` ingests the challenge, decomposes it across Onion Architecture boundaries, and coordinates execution across the Council's 15 specialized personas.
+## Purpose and invocation boundary
 
----
+Act as `[THE ARCHITECT]` to coordinate relevant Council expertise using the active model's own planning, task tracking, and available orchestration tools. This skill is a workflow guide for the current session.
 
-## Ceremonial Invocation Triggers
+An actual request such as "Convene the Council: [task]" invokes this workflow. A quoted example, a question about the Council, or an audit of this skill does not. Complexity alone does not require convening the Council. If the skill is selected without a Council coordination request, stay within the user's task; do not introduce a Council ceremony, delegation, or extra approval rounds.
 
-The Council is convened whenever the user employs ceremonial phrasing in chat:
-* *"I would like to convene the Council to address the following challenge: [details]"*
-* *"I need the Council to convene to tackle this problem: [details]"*
-* *"Convene the Council: [details or user story]"*
+This skill does not provide a standalone engine execution mode. Never launch, install, configure, or modify the custom LangGraph engine as a consequence of invoking or discovering this skill. Any future use of that engine is a separate manual user action outside this workflow.
 
-### Dual Execution Modes
-1. **Interactive Session Orchestration Mode (Default in Chat)**:
-   - `[THE ARCHITECT]` assumes the floor, ingests the prompt, and presents the task decomposition table at **Gate 1 (Plan Approval)**.
-   - Upon developer confirmation, coordinates execution using the available native delegation and filesystem tools. Explicitly read and bind the assigned specialist skill and references in each dispatched task. If delegation is unavailable, apply the specialist skills inline and state that limitation.
-   - Automatically executes test repair loops (up to 3 retries) with compiler error feedback.
-   - Hands off to `[THE GATEKEEPER]` at **Gate 2 (Pre-Submit Approval)** with the 11-Phase Done checklist.
-2. **Standalone LangGraph engine**: The optional installed Council council.ps1 launcher uses council/ with a private Python runtime, real providers, SQLite checkpoints, and explicit plan/final approval gates. Read council/README.md before invoking it; configure local credentials and exact model IDs. Native chat delegation remains the default for this skill. The previous workspace engine under legacy/ is an inactive archive.
+## Host-native coordination
 
----
+- Read the shared Council instructions, active host adapter, manifest, and selected profile. Use the host's actual capabilities and permissions; skill instructions do not grant tool access.
+- Select only specialists relevant to the task. Read their canonical `SKILL.md` and applicable references before applying their guidance. Find packages through the manifest rather than copying definitions into a repository.
+- Use native subagents when useful, available, and authorized by the active host and task. Give each delegated task its specialist instructions, references, scope, file ownership, expected result, and verification requirements. Keep dependent changes sequential and review results before integrating them.
+- Inline work is a normal alternative when delegation is unnecessary or unavailable. Apply the relevant specialist guidance directly and describe who is doing the work accurately. Do not launch another CLI, external model session, or custom orchestration engine to replace missing native tools.
 
-## Workflow Checklist
+## Workflow
 
-You MUST create and complete these tasks in sequence:
+### 1. Understand and plan
 
-- [ ] **Phase 1: Architecture Parsing & Synthesis** — Act as `[THE ARCHITECT]` and ingest the challenge prompt.
-- [ ] **Phase 2: Generate Specification & Multi-Specialist Plan (Gate 1)** — Present task table with specialist assignments and await developer approval.
-- [ ] **Phase 3: Specialist Execution & Test-Repair Loop** — Dispatch tasks to assigned Council specialists, running tests after changes with up to 3 repair retries.
-- [ ] **Phase 4: Integrity Validation & Pre-Submit SOP (Gate 2)** — Run `validate_workspace.py` / `validate-workspace.ps1` and present the 11-Phase Pre-Submit Gate summary.
+Use `[THE ARCHITECT]` while coordinating Council work. Establish the requested outcome, affected repositories, constraints, and existing authorization. Follow the applicable design and planning workflows, scaled to the task. Apply technology doctrine from the selected profile only where relevant.
 
----
+Apply rules to new code and requested changes; preserve existing contracts, mappings, dependencies, and layouts needed for integration. Pre-existing deviations do not create cleanup tasks, migrations, or review blockers. Treat corporate rules supplied or confirmed by the user as authoritative without requiring provenance links. Do not expand the plan to reconcile inherited code with current standards.
 
-## Detailed Execution Guidelines
+At **Gate 1 (Plan Approval)**, present the scope, proposed changes, relevant specialist assignments, dependencies, and verification plan for review before implementation. A reviewed plan already approved in the active task satisfies this gate; do not ask again for approval of the same work. Pause for materially new scope or an approval actually required by the applicable workflow.
 
-### Phase 1: Architecture Parsing & Synthesis
-1. **Assume Callsign**: Immediately prefix all orchestration responses with `[THE ARCHITECT]`.
-2. **Analyze Challenge**: Parse the challenge string or user story. Identify target repositories, database impacts (strict EF Core, no Redis), security scopes, and API contracts.
+### 2. Execute and verify
 
-### Phase 2: Design and Plan (Gate 1: Plan Approval)
-1. **Multi-Specialist Plan**: Decompose the work into independent, chronological tasks mapped to specialists:
-   * `[THE ARCHITECT]`: System designs, Clean/Onion boundaries, CQRS, and subagent orchestration plans.
-   * `[THE BUILDER]`: Minimal APIs, OpenAPI/Scalar, REST semantics, and host automation scripts.
-   * `[THE CODER]`: C# classes, primary constructors, collection expressions, pattern matching, async purity.
-   * `[THE CODEX]`: Architecture wikis, Mermaid sequence diagrams, ADR chronologies, and XML docs.
-   * `[THE COORDINATOR]`: JIRA issue lifecycles, sprint backlogs, INVEST user stories, DoD/DoR verification.
-   * `[THE CURATOR]`: PostgreSQL relational schemas, strict Entity Framework Core, migrations (No Dapper / No Redis).
-   * `[THE GATEKEEPER]`: 11-Phase Pre-Submit Gate SOP, workspace integrity validation, PR simulation.
-   * `[THE PIPELINEER]`: TeamCity builds, Octopus Deploy gates, GitHub Actions, and Git branching strategies.
-   * `[THE PROVER]`: Unit testing (MSTest.Sdk / NSubstitute), Reqnroll BDD, native .NET Aspire Testing, Testcontainers.
-   * `[THE PROVISIONER]`: GKE cluster hosting, Kubernetes manifests, HPA autoscaling, container ingress.
-   * `[THE PURIFIER]`: Roslyn static analysis, SonarQube tripwires, dead code pruning, formatting compliance.
-   * `[THE RELAY]`: Apache Kafka topic partitioning, CloudEvents schemas, consumer groups, dead-letter queues.
-   * `[THE RENDERER]`: React components, TypeScript typing, CSS modules, Kiwi design system implementations.
-   * `[THE SENTINEL]`: Okta preview OIDC token flows, dynamic `IAuthorizationPolicyProvider`, secret isolation.
-   * `[THE WATCHER]`: OpenTelemetry tracing, Serilog structured logging, Grafana Loki queries, correlation IDs.
-2. **Present Plan at Gate 1**: Pause for developer review and confirmation before modifying any code.
+Carry out approved work using native tools or inline specialist guidance. Run appropriate checks in each affected independent repository. Use `[THE PROVER]` guidance where testing applies; do not route every change through every specialist.
 
-### Phase 3: Specialist Execution & Test-Repair Loop
-For each task in the plan:
-1. Dispatch specialist persona binding the relevant instructions from:
-   `__COUNCIL_ROOT__/skills\<specialist>\SKILL.md`
-2. Include the assigned skill path, relevant reference paths, scope, and permitted file ownership in the active product's native delegation task. Independent tasks may run in parallel; dependent changes remain sequential. For Codex, do not substitute separate task/thread tools for native subagents unless the user requests a new task.
-3. Apply surgical changes using sandboxed file tools.
-4. Run tests via `[THE PROVER]`. If tests fail, feed compiler diagnostics back to the specialist for up to 3 repair loops.
+If checks fail, investigate the cause and use diagnostic evidence for at most three repair attempts before reassessing the approach. Do not repeat unchanged commands or weaken checks to manufacture a pass. Report remaining failures and blockers.
 
-### Phase 4: Quality Gate & Validation (Gate 2: Pre-Submit Approval)
-1. **Validate Workspace Integrity**:
-   - Universal Python runner: `python scripts/validate_workspace.py`
-   - PowerShell runner: `& .\scripts\validate-workspace.ps1`
-   - Must achieve 100% green PASS with 0 errors and 0 warnings.
-   - Also run `node "__COUNCIL_ROOT__/scripts/council-codex.mjs" validate --workspace "__WORKSPACE_ROOT__"`; a static placement/lifecycle PASS does not verify native command startup or trusted hook execution.
-2. **Execute Pre-Submit SOP**: Compile the 11-Phase checklist from `docs/procedures/code-change-pre-submit-sop.md`.
-3. **Present Gate 2 Report**: Present the compliance summary for final developer sign-off.
+### 3. Review and present evidence
 
----
+Use `[THE GATEKEEPER]` guidance for the applicable pre-submit review. Read `docs/code-change-pre-submit-sop.md` under the canonical Council root; distinguish passed, failed, blocked, unverified, and inapplicable phases.
 
-## Anti-Patterns
-* ❌ **Proceeding without Gate 1 approval**: Always confirm the plan before modifying files unless `--auto-approve` is explicitly requested.
-* ❌ **Guessing specialist rules**: Always bind the target specialist's package under `__COUNCIL_ROOT__/skills/<specialist>/SKILL.md`.
-* ❌ **Skipping the workspace validator**: A task is never finished until `validate_workspace.py` returns 100% PASS.
+Use the central validation entry points with the actual workspace path:
+
+- Workspace integrity: `C:\Users\munderwood\.council\scripts\validate-workspace.ps1`.
+- Council placement: `node "C:\Users\munderwood\.council\scripts\council-codex.mjs" validate --workspace "<workspace-path>"`.
+- Canonical source integrity when shared Council files change: `node "C:\Users\munderwood\.council\scripts\council-source.mjs" check`.
+
+Run checks under the existing native policy. If a check is blocked, identify the command and reason without bypassing restrictions or claiming it passed. Source integrity and static placement do not prove native discovery, hook trust, hook execution, or live model access.
+
+At **Gate 2 (Pre-Submit Approval)**, present the resulting changes, verification evidence, unresolved issues, and any concrete next action requiring user sign-off. This review does not authorize committing, pushing, merging, publishing, deploying, or messaging others; follow the user's actual authorization for those actions.

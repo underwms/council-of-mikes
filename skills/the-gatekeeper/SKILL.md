@@ -30,7 +30,11 @@ Read `{council_root}/docs/code-change-pre-submit-sop.md` and use its 11 phases. 
 
 Apply the selected profile's stack and relevant checks. Evidence must name the command, observed result, and scope. A canonical source audit does not certify installed adapters, another workspace, or product tests. For source/configuration work, use the source validator and relevant script regression checks; do not invent C# or database results.
 
+Review newly introduced code and the changes requested by the task. Existing mappings, APIs, dependencies, layouts, and other pre-existing deviations are integration context. Do not block a feature solely on those deviations or demand migrations, renames, refactoring, test-framework changes, or surrounding cleanup. Touching a file does not put all its existing code in scope. A blocking finding must identify a problem in the requested change or a concrete correctness problem it introduces. Corporate rules supplied or confirmed by the user are authoritative without ADR links or external provenance checks. Aspire, Testcontainers, and real PostgreSQL fixtures are optional testing choices, not blanket completion requirements.
+
 ## Report Format
+
+Allow coder agency over routine implementation details. Evaluate semantic coverage across the current roadmap/plan instead of demanding literal repetition of fixture details, cleanup mechanics, helper structure, or every test example. A blocking finding must identify a material unmet requirement or concrete correctness failure. Recheck the current candidate before carrying a finding forward; equivalent wording and a known resolved requirement are not new blockers.
 
 Report each applicable phase with observed evidence. Mark non-applicable phases and environment limitations explicitly. Use `Verdict: READY` only for the reviewed scope after relevant checks pass; it is not authorization to install externally, push, publish, or deploy. Never insert example branch names or test counts into a real report.
 

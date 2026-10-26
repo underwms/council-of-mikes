@@ -26,7 +26,7 @@
     "writing-plans"
   ],
   "source": "Shared Council definitions; one canonical installed root",
-  "scope": "user profile; Codex, Gemini CLI, Claude Code",
+  "scope": "user profile; Codex, Gemini CLI",
   "schema_version": 1,
   "name": "The Council",
   "version": "3.0.0-alpha.3",
@@ -71,8 +71,7 @@
   },
   "adapters": {
     "codex": "adapters/codex.json",
-    "gemini": "adapters/gemini.json",
-    "claude": "adapters/claude.json"
+    "gemini": "adapters/gemini.json"
   },
   "execution": {
     "scope": "user",
@@ -102,26 +101,21 @@
     "adapters",
     "scripts",
     "exclusions",
-    "council"
+    "council",
+    "visualizer"
   ],
   "source_files": [
     "manifest.json",
     "README.md",
-    "setup-council.ps1",
-    "docs/catalog.md",
     "docs/code-change-pre-submit-sop.md",
-    "docs/setup.md",
-    "docs/structure.md",
+    "docs/catalog.md",
     "docs/source-contract.md",
-    ".gitignore",
+    "docs/structure.md",
+    "docs/setup.md",
+    "setup-council.ps1",
     "council.ps1",
-    "docs/architecture-flow.md"
-  ],
-  "distribution": {
-    "kind": "lean",
-    "project_cleanup": false,
-    "import_private_memory": false,
-    "platform": "Windows",
-    "path_templates": true
-  }
+    ".gitignore",
+    "docs/architecture-flow.md",
+    "docs/delivery-enhancements.md"
+  ]
 }

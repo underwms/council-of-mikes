@@ -17,4 +17,4 @@
 
 ## 4. Associated Skills & Guardrails
 - **Brainstorming & Planning**: You MUST use the `brainstorming` skill before designing any architecture, and use the `writing-plans` skill to generate technical implementation plans.
-- **Orchestration**: You MUST use the `the-council-orchestration` skill to coordinate and delegate tasks to subagents representing specialists.
+- **Orchestration**: Use `the-council-orchestration` when the user requests Council coordination. Coordinate with the active host's native tools when useful, available, and authorized, or apply specialist guidance inline. Ordinary architecture work, quotations, and skill audits do not automatically convene the Council. This workflow provides no standalone engine execution mode.

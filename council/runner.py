@@ -2,6 +2,8 @@
 import subprocess
 import sys
 from council.runtime_context import RuntimeContext, validate_workspace
+from council.command_policy import has_policy_override
+from council.diagnostics import DiagnosticRuntimeError
 
 
 class SubprocessRunner:
@@ -17,15 +19,24 @@ class SubprocessRunner:
             raise PermissionError('Subprocess working directory must remain within the selected workspace')
         return resolved
 
-    def run(self, command, cwd=None, timeout=120):
+    def run(self, command, cwd=None, timeout=600):
         work_dir = self.resolve_cwd(cwd)
         if not isinstance(command, (list, tuple)) or not command or not all(isinstance(x,str) for x in command):
             raise ValueError('Commands must be nonempty literal argument lists; shell text is unsupported')
+        if has_policy_override(command):
+            raise DiagnosticRuntimeError('VERIFICATION_POLICY_OVERRIDE')
         try:
-            result = subprocess.run(command, cwd=work_dir, shell=False, capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=timeout)
-            return result.returncode, result.stdout, result.stderr
-        except subprocess.TimeoutExpired:
-            return 124, '', 'Command timed out'
+            child = subprocess.Popen(command, cwd=work_dir, shell=False, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='replace')
+            try:
+                out, err = child.communicate(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                from council.cli_process import _kill,cleanup_evidence
+                _kill(child)
+                out, err = child.communicate()
+                cleanup_evidence(child)
+                return 124, out, err + '\nCommand timed out'
+            return child.returncode, out, err
         except OSError as error:
             return 127, '', str(error)
 

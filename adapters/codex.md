@@ -1,6 +1,6 @@
 # codex adapter
 
-Canonical Council: __COUNCIL_ROOT__.
+Canonical Council: C:\Users\munderwood\.council.
 
 Codex loads the profile .codex/AGENTS.md pointer. It does not expand @file imports; explicitly read the shared instructions. Skill discovery uses profile .agents/skills junctions to the canonical root. Use native spawn_agent only when authorized by the Council workflow; normal filesystem reads load skills. Hooks register in profile .codex/hooks.json. Review/trust exact definitions, then verify actual events and native sandbox startup. Permission profiles and .codex/rules policy are distinct from shared Markdown guidance.
 

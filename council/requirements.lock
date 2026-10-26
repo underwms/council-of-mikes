@@ -1,7 +1,6 @@
 # Dependency constraints verified with Python 3.14; runtime dependencies are declared in pyproject.toml.
 aiosqlite==0.22.1
 annotated-types==0.8.0
-anthropic==1.13.0
 anyio==4.15.1
 certifi==2026.7.22
 cffi==2.1.1
@@ -22,7 +21,6 @@ idna==3.20
 jiter==0.17.0
 jsonpatch==1.35
 jsonpointer==3.2.1
-langchain-anthropic==1.7.6
 langchain-core==1.6.10
 langchain-google-genai==4.4.1
 langchain-openai==1.7.1

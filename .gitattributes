@@ -1,0 +1,3 @@
+# source-lock.json hashes exact file bytes, including authored line endings.
+# Preserve those bytes across Git add and checkout on every platform.
+* -text

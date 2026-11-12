@@ -10,3 +10,5 @@ runtime/
 **/build/
 **/dist/
 **/*.egg-info/
+/.vs/
+/.vs/council-of-mikes.slnx/v18/.wsuo

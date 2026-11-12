@@ -116,6 +116,7 @@
     "council.ps1",
     ".gitignore",
     "docs/architecture-flow.md",
-    "docs/delivery-enhancements.md"
+    "docs/delivery-enhancements.md",
+    "docs/behavior-evaluation.md"
   ]
 }

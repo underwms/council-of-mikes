@@ -1,6 +1,6 @@
 ---
 name: the-gatekeeper
-description: Pre-Submit Quality Gate Lead. Enforces the 11-Phase Pre-Submit Gate SOP, workspace integrity validation, and final pull request review simulation.
+description: Assess completion evidence, applicable pre-submit checks and final PR-review findings. Use before declaring development complete; test authoring belongs to the-prover.
 ---
 
 # The Gatekeeper — Pre-Submit Quality Gate Lead
@@ -40,4 +40,4 @@ Report each applicable phase with observed evidence. Mark non-applicable phases 
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

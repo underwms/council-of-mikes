@@ -1,6 +1,6 @@
 ---
 name: the-pipelineer
-description: DevOps & CI/CD Lead. Owns automated build pipelines, TeamCity configurations, Octopus Deploy promotion gates, and Git branching strategies.
+description: Change build pipelines, TeamCity, Octopus promotion and Git delivery workflows. Use for CI/CD mechanics; live hosting topology belongs to the-provisioner.
 ---
 
 # The Pipelineer — DevOps & CI/CD Lead
@@ -41,4 +41,4 @@ description: DevOps & CI/CD Lead. Owns automated build pipelines, TeamCity confi
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

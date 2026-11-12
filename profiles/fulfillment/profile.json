@@ -12,8 +12,8 @@
       "Dapper"
     ],
     "unit_tests": "MSTest.Sdk / NSubstitute",
-    "integration_tests": "Repository tooling and agreed feature verification; no mandatory Aspire, Testcontainers, or real PostgreSQL fixture",
-    "acceptance_tests": "Repository tooling and explicitly agreed feature verification; no mandatory BDD framework",
+    "integration_tests": "FAIR only for feature integration and regression; Aspire, Testcontainers, and real PostgreSQL fixtures are optional supporting choices",
+    "acceptance_tests": "FAIR scenarios using ordinary MSTest methods and agreed feature verification; no BDD framework",
     "frontend": "React / TypeScript / Deno",
     "messaging": "Kafka / CloudEvents"
   },

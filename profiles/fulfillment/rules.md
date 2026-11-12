@@ -42,12 +42,12 @@ Corporate rules supplied or confirmed by the user are authoritative within their
    - Framework: MSTest using modern `MSTest.Sdk`.
    - Mocking: `NSubstitute` is the pod-wide mocking library.
 2. **Integration Testing**:
-   - Select test tooling and fixtures appropriate to the feature's agreed verification requirements and the relevant repository suite.
+   - FAIR is the only standard for feature integration and regression testing. Extend the existing FAIR suites for the agreed feature behavior; do not introduce a parallel feature-testing framework.
    - Aspire, Testcontainers, and real PostgreSQL fixtures are optional. Do not require adopting them, replacing existing fixtures, or migrating a test suite as a blanket completion gate.
    - Describe what the selected tests actually exercise; do not claim real-database or integration evidence from a substitute that does not exercise that behavior.
 3. **Acceptance and Behavioral Testing**:
-   - Use the repository's established test tools and the feature's explicitly agreed verification requirements.
-   - Reqnroll and Gherkin are optional. Do not require a BDD framework, `.feature` files, or a test-framework migration as a condition of feature completion. Use them only when explicitly requested or already established for the relevant suite.
+   - Express feature acceptance and regression scenarios in FAIR using its established test structure.
+   - Use ordinary MSTest scenario methods and meaningful Given/When/Then helpers with explicit Arrange/Act/Assert comments. No BDD framework or generated `.feature` artifacts.
 4. **Pre-Submit Gate (SOP)**:
    - For all code changes, execute the 11-Phase Pre-Submit Gate SOP defined in the central docs/code-change-pre-submit-sop.md.
    - Run the configured workspace checks and shared Council source audit before completion. Report failures and skipped checks accurately.

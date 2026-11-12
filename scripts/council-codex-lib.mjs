@@ -96,7 +96,7 @@ async function model(input) {
     if ((await fs.lstat(sourceLock)).isSymbolicLink()) throw new Error('Source lock must be a canonical file');
     writes.push({ target: path.join(o.councilRoot, 'source-lock.json'), content: await fs.readFile(sourceLock) });
   }
-  for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-memoryforge.mjs', 'council-source.mjs']) {
+  for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-memoryforge.mjs', 'council-source.mjs', 'council-eval.mjs']) {
     const source = path.join(o.scriptRoot, name);
     if (!(await exists(source))) throw new Error('Missing lifecycle script: ' + name);
     writes.push({ target: path.join(o.councilRoot, 'scripts', name), content: await fs.readFile(source) });
@@ -114,7 +114,7 @@ async function model(input) {
   const geminiCompatibility = path.join(o.scriptRoot, 'gemini-compat.mjs');
   if (await exists(geminiCompatibility)) writes.push({ target: path.join(o.councilRoot, 'scripts/gemini-compat.mjs'), content: await fs.readFile(geminiCompatibility) });
 
-  for (const directory of ['docs', 'adapters', 'profiles', 'exclusions', 'project-instructions', 'project-skills', 'legacy', 'scripts/tests', 'council', 'visualizer']) {
+  for (const directory of ['instructions/references', 'docs', 'adapters', 'profiles', 'exclusions', 'project-instructions', 'project-skills', 'legacy', 'scripts/tests', 'council', 'visualizer']) {
     const source = path.join(o.payloadRoot, directory);
     if (await exists(source)) for (const file of await files(source, { includeDist: directory === 'visualizer' })) {
       const content = await fs.readFile(file);
@@ -122,7 +122,7 @@ async function model(input) {
     }
   }
   const sharedPath = path.join(o.councilRoot, 'instructions/shared.md');
-  const scope = 'Council root: ' + o.councilRoot + '\nFor work in ' + o.workspaceRoot + ' or its projects, use the shared Council instructions. Council definitions are central; never install agents or skills inside service repositories.\n';
+  const scope = 'Council root: ' + o.councilRoot + '\nAt the start of every new or resumed session, automatically load the shared Council instructions and this client\'s adapter, then complete the shared startup/context procedure before substantive work. Do not wait for the user to say "onboard". If startup context is missing after compaction or a model change, recover it before continuing. Council startup reads context only; it does not convene the Council or resume an old task.\nFor work in ' + o.workspaceRoot + ' or its projects, use the shared Council instructions. Council definitions are central; never install agents or skills inside service repositories.\n';
   const instructions = [
     { target: path.join(o.homeDir, '.codex/AGENTS.md'), body: scope + 'Read ' + sharedPath + ' and the Codex adapter at ' + path.join(o.councilRoot, 'adapters/codex.md') + ' explicitly; Codex does not expand @file imports.' },
     { target: path.join(o.homeDir, '.gemini/GEMINI.md'), body: scope + 'Read ' + sharedPath + ' and the Gemini adapter at ' + path.join(o.councilRoot, 'adapters/gemini.md') + ' explicitly.' },

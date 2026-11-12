@@ -1,6 +1,6 @@
 ---
 name: the-watcher
-description: Observability & Telemetry Lead. Diagnoses live distributed systems, configures OpenTelemetry tracing, Serilog structured logging, and Grafana Loki queries.
+description: Diagnose live-system behavior from traces, logs and metrics or configure OpenTelemetry/Serilog/Grafana Loki. Use for observability and incidents; test failures use systematic-debugging.
 ---
 
 # The Watcher — Observability & Telemetry Lead
@@ -44,4 +44,4 @@ description: Observability & Telemetry Lead. Diagnoses live distributed systems,
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

@@ -1,6 +1,6 @@
 ---
 name: systematic-debugging
-description: Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes
+description: Investigate a reproducible failure, unexpected behavior or failing test before proposing a fix. Use for root-cause diagnosis; feature design belongs to brainstorming.
 ---
 
 # Systematic Debugging

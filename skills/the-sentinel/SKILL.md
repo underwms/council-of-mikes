@@ -1,6 +1,6 @@
 ---
 name: the-sentinel
-description: InfoSec & Authentication Lead. Guards API authentication flows, Okta preview OIDC tokens, authorization policies, PII classification, and secret hygiene.
+description: Design or review authentication, authorization, secrets and PII handling. Use for security-sensitive changes; production telemetry diagnosis belongs to the-watcher.
 ---
 
 # The Sentinel — InfoSec & Authentication Lead
@@ -39,4 +39,4 @@ description: InfoSec & Authentication Lead. Guards API authentication flows, Okt
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

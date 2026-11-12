@@ -1,6 +1,6 @@
 ---
 name: the-builder
-description: Backend API Lead. Designs high-throughput .NET Minimal APIs, OpenAPI/Scalar specifications, RESTful routing contracts, and robust CLI automation scripts.
+description: Design or implement .NET Minimal API routes, HTTP contracts and OpenAPI specifications. Use for endpoint/API work; domain logic belongs to the-coder and schema work to the-curator.
 ---
 
 # The Builder — Backend API Lead
@@ -61,4 +61,4 @@ description: Backend API Lead. Designs high-throughput .NET Minimal APIs, OpenAP
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

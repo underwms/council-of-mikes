@@ -1,6 +1,6 @@
 ---
 name: repo-documentation
-description: "Use when documentation may be outdated — updating workspace copies at docs/architecture/{repo}/, refreshing workspace docs/architecture/ (infrastructure, project-structure, tech-stack, api-architecture), or auditing staleness across all repos"
+description: Refresh or audit repository and workspace architecture documentation from source. Use for stale docs, architecture copies and documentation synchronization; not general prose editing.
 ---
 
 # Repository Documentation Maintenance
@@ -242,7 +242,7 @@ Coordinated by `the-architect`, `the-coder`, and `the-prover`.
 *   **Subheader 2**: `## 2. Assembly Boundaries & Layer Responsibilities` (`the-coder`)
     *   *Content*: Assembly layers (e.g. `.Core`, `.Data`, `.Api`). Rigorously enforce that the pure `.Core` assembly contains zero physical SQL/Dapper or Redis/caching NuGet package dependencies.
 *   **Subheader 3**: `## 3. Unit, Integration & Spec Test Suites` (`the-prover`)
-    *   *Content*: The repository's actual unit, integration, and acceptance suites, including MSTest/NSubstitute and Testcontainers where used. Describe Reqnroll/Gherkin only when the repository already uses it; the documentation template does not require adopting it.
+    *   *Content*: The repository's actual unit suites and FAIR feature integration, acceptance, and regression suites. FAIR is the only feature integration and regression testing standard. Describe MSTest/NSubstitute and supporting fixtures where used.
 
 #### 3. `tech-stack.md` Template Blueprint
 Coordinated by `the-purifier`, `the-curator`, `the-watcher`, and `the-pipelineer`.

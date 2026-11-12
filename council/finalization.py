@@ -82,16 +82,16 @@ def capture(state, context, relative):
                 entry = {'sha256':sha, 'representation':'non-text'}
             retained['files'][path] = entry
             if len(retained['files']) > 512:
-                raise ValueError('Feature baseline exceeds file budget')
+                raise DiagnosticValueError('FINALIZATION_BASELINE_LIMIT')
         retained['scopes'].append(relative)
         identity = _repository(context,relative)
         if not any(r['root']==identity['root'] for r in retained['repositories']):
             retained['repositories'].append(identity)
         if len(retained['files']) > 512:
-            raise ValueError('Feature baseline exceeds file budget')
+            raise DiagnosticValueError('FINALIZATION_BASELINE_LIMIT')
         serialized = json.dumps(retained,ensure_ascii=True).encode('utf-8')
         if len(serialized)>70*1024*1024:
-            raise ValueError('Feature baseline exceeds byte budget')
+            raise DiagnosticValueError('FINALIZATION_BASELINE_LIMIT')
         descriptor,temporary = tempfile.mkstemp(prefix='baseline-',suffix='.tmp',dir=artifact.parent)
         try:
             with os.fdopen(descriptor,'wb') as output:

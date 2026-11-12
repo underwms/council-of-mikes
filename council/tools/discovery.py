@@ -1,6 +1,7 @@
 """Read-only, bounded repository discovery without following junctions or symlinks."""
 import os
 import stat
+import json
 from pathlib import Path
 
 from langchain_core.tools import tool
@@ -10,7 +11,7 @@ _EXCLUDED = {'.git', '.hg', '.svn', '.council', '.aws', '.agents', '.codex',
              '.gemini', '.claude', '.ssh', 'node_modules', 'bin', 'obj', '.venv',
              'venv', '__pycache__', 'dist', 'build', 'coverage', '.next', '.cache',
              'memory', '.vs', '.idea', '.vscode', '.vscode-shared', '.deno',
-             '.pytest_cache', '.artifacts', 'debug', 'release', 'testresults'}
+             '.pytest_cache', '.artifacts', '.react-router', 'debug', 'release', 'testresults'}
 MAX_FILE_BYTES = 262_144
 MAX_SEARCH_BYTES = 8_388_608
 MAX_VISITED_ENTRIES = 20_000
@@ -24,6 +25,42 @@ def _linked(path):
     return path.is_symlink() or getattr(path, 'is_junction', lambda: False)()
 
 
+def _metadata_file(path):
+    if _linked(path):
+        return False
+    try:
+        return stat.S_ISREG(path.stat().st_mode)
+    except FileNotFoundError:
+        return False
+
+
+def _deno_vendor(path, workspace_root):
+    """Recognize Deno's generated dependency tree, not arbitrary vendor sources."""
+    if not any(part.lower() == 'vendor' for part in path.relative_to(workspace_root).parts):
+        return False
+    for directory in (path, *path.parents):
+        if directory == workspace_root:
+            break
+        if directory.name.lower() != 'vendor':
+            continue
+        if not any(_metadata_file(directory.parent/name) for name in ('deno.json', 'deno.jsonc')):
+            continue
+        manifest = directory/'manifest.json'
+        if not _metadata_file(manifest):
+            continue
+        with manifest.open('rb') as source:
+            data = source.read(MAX_FILE_BYTES + 1)
+        if len(data) > MAX_FILE_BYTES:
+            continue
+        try:
+            value = json.loads(data)
+        except (ValueError, UnicodeError):
+            continue
+        if isinstance(value, dict) and isinstance(value.get('modules'), dict):
+            return True
+    return False
+
+
 def _start(context, relative):
     candidate = Path(relative)
     if _excluded(candidate):
@@ -34,6 +71,8 @@ def _start(context, relative):
         current = current / part
         if _linked(current):
             raise WorkspaceBoundaryError('PATH_LINKED')
+    if _deno_vendor(target, context.workspace_root):
+        raise WorkspaceBoundaryError('PATH_EXCLUDED')
     return target
 
 
@@ -68,6 +107,8 @@ def _walk(context, start, *, visited_entries=None):
         if _excluded(relative) or _linked(path):
             continue
         if not path.resolve().is_relative_to(context.workspace_root):
+            continue
+        if _deno_vendor(path, context.workspace_root):
             continue
         visited[0] += 1
         if visited[0] > MAX_VISITED_ENTRIES:

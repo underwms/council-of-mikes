@@ -113,6 +113,24 @@ export async function auditSource(root = defaultRoot, { checkLock = false } = {}
       } catch (error) { report.errors.push('Invalid adapter resource: ' + id + ': ' + error.message); }
     }
     const snapshot = await sourceSnapshot(root);
+    let textFiles = 0;
+    for (const relative of Object.keys(snapshot)) {
+      if (!/\.(md|json|jsonl|toml|yaml|yml|mjs|cjs|js|ts|tsx|jsx|py|ps1|psm1|txt|html|css|xml|svg|sql|ignore)$/i.test(relative)) continue;
+      textFiles++;
+      let text;
+      try { text = new TextDecoder('utf-8', { fatal: true }).decode(await fs.readFile(await child(root, relative))); }
+      catch (error) {
+        if (!(error instanceof TypeError)) throw error;
+        report.errors.push('Invalid UTF-8: ' + relative);
+        continue;
+      }
+      // High-confidence misdecodings only. Valid accented text and Unicode
+      // punctuation remain supported; negative fixtures should use escapes.
+      if (/\u00e2[\u20ac\u2020]|\u00f0\u0178|\u00c3[\u0080-\u00bf]|\u00ef\u00bf\u00bd|\ufffd/.test(text)) report.errors.push('Possible mojibake or replacement character: ' + relative);
+      const activeDoctrine = /^(instructions|rules|profiles|skills|adapters)\//.test(relative) || ['README.md', 'docs/catalog.md', 'docs/code-change-pre-submit-sop.md'].includes(relative);
+      if (activeDoctrine && /\.(md|json|toml|yaml|yml)$/.test(relative) && new RegExp('req' + 'nroll', 'i').test(text)) report.errors.push('Retired testing framework in active guidance: ' + relative);
+    }
+    report.text = { files: textFiles, strict_utf8: true, mojibake_check: true, retired_framework_check: true };
     const markdown = Object.keys(snapshot).filter(relative => relative.endsWith('.md'));
     const wikilinks = new Set([...manifest.skills, ...markdown.map(relative => path.basename(relative, '.md'))]);
     for (const relative of markdown) {

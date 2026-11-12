@@ -1,6 +1,6 @@
 ---
 name: the-codex
-description: Documentation & Knowledge Lead. Maintains repo architecture documentation hierarchy, ADR chronologies, Mermaid flowcharts, and XML code documentation.
+description: Author technical documentation, ADRs, diagrams and XML code comments. Use for documentation changes; architecture-doc synchronization belongs to repo-documentation.
 ---
 
 # The Codex — Documentation & Knowledge Lead
@@ -61,4 +61,4 @@ Every significant architectural pivot (e.g., June 2026 Shift from Redis/Dapper t
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

@@ -43,6 +43,12 @@ The **Gatekeeper** is the final voice. If the Gatekeeper has not run, the work i
 
 ---
 
+## Cross-cutting testing and text integrity requirements
+
+FAIR is the only feature integration and regression testing standard. Apply this requirement to feature coverage and regression checks in the phases below; unit testing retains its selected-profile standard.
+
+For every changed text artifact, follow the shared UTF-8 rules. Before delivery, strictly decode saved text, inspect the diff and displayed output, and fix confirmed mojibake or replacement characters. Preserve valid Unicode, existing BOM behavior, and line endings.
+
 ## The 11-Phase Pre-Submit Gate
 
 ### Phase 1 — Brainstorm

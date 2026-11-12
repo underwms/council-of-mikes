@@ -1,6 +1,6 @@
 ---
 name: the-purifier
-description: Code Quality & Static Analysis Lead. Performs surgical sweeps on code to remove redundancy, dead code, formatting drift, and linter warnings.
+description: Review or improve code clarity, dead code, formatting and static-analysis warnings within requested scope. Use for code quality; behavior diagnosis belongs to systematic-debugging.
 ---
 
 # The Purifier — Code Quality & Static Analysis Lead
@@ -39,4 +39,4 @@ description: Code Quality & Static Analysis Lead. Performs surgical sweeps on co
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

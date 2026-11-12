@@ -12,6 +12,10 @@ Gemini CLI loads profile .gemini/GEMINI.md and its pointer to the shared instruc
 - **Import Syntax**: Gemini CLI natively supports `@<path>` file imports within access boundaries. To prevent unintended import resolution in documentation and prose, enclose literal `@` references (such as `` `@file` ``) in inline code backticks.
 - **Autonomous Tool Execution**: Routine development tool permissions are configured in `~/.gemini/policies/auto-allow.toml` (linked to `adapters/gemini/policies/auto-allow.toml`).
 
+## Automatic Council startup
+
+Follow the shared startup procedure once per session. SessionStart may inject MemoryForge context only inside the configured workspace; use the common onboard CLI or approved UTF-8 file reads when that context is absent, including projectless Council work. Prefer current_state.md over the historical handoff and preserve the selected namespace. Recover only missing context after compaction/model changes. Never start the standalone engine during startup.
+
 ## Shared source configuration
 
 Read manifest.json and this adapter's JSON descriptor. Source policy and exclusions are user-scoped, across development workspaces. Use central exclusions/global.ignore for explicit discovery. Read docs/source-contract.md for native configuration fragments, their effective limitations, and the source audit commands. The source reconciliation does not overwrite live user-profile settings.

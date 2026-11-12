@@ -1,6 +1,6 @@
 ---
 name: the-relay
-description: Distributed Messaging Lead. Owns event-driven streaming, Kafka topic partitioning, consumer group rebalancing, and CloudEvents message schemas.
+description: Design Kafka topics, consumer behavior, event contracts and CloudEvents schemas. Use for distributed messaging; HTTP endpoints belong to the-builder.
 ---
 
 # The Relay — Distributed Messaging Lead
@@ -49,4 +49,4 @@ description: Distributed Messaging Lead. Owns event-driven streaming, Kafka topi
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

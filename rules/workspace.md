@@ -2,7 +2,7 @@
 
 Read manifest.json and the selected workspace profile. The default is the [Fulfillment profile](../profiles/fulfillment/rules.md), with [corporate architecture guidance](../profiles/fulfillment/corporate-architecture-rules.md).
 
-Current contracts: EF Core/PostgreSQL, no Redis or Dapper, MSTest.Sdk/NSubstitute, and integration/acceptance verification using repository-appropriate tooling and agreed feature requirements. Aspire, Testcontainers, real PostgreSQL fixtures, and Reqnroll/Gherkin are optional testing choices, with no blanket adoption requirement. The profile owns the detailed doctrine; this compatibility entry point does not duplicate it.
+Current contracts: EF Core/PostgreSQL, no Redis or Dapper, MSTest.Sdk/NSubstitute, and FAIR as the only feature integration and regression testing standard. Aspire, Testcontainers, and real PostgreSQL fixtures remain optional supporting fixture choices within FAIR, with no blanket adoption requirement. The profile owns the detailed doctrine; this compatibility entry point does not duplicate it.
 
 Rules govern new code and requested changes. Preserve existing contracts, mappings, dependencies, and layouts needed for integration; pre-existing deviations do not authorize cleanup or create review blockers. Corporate rules confirmed by the user are authoritative without external provenance checks.
 

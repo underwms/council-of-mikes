@@ -1,6 +1,6 @@
 ---
 name: writing-plans
-description: Use when you have a spec or requirements for a multi-step task, before touching code
+description: Turn approved requirements or design into an executable implementation plan with dependencies and verification. Use for multi-step implementation; unresolved design belongs to brainstorming.
 ---
 
 # Writing Plans

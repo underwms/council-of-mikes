@@ -29,4 +29,4 @@ Source Context: Extracted from Domain Architecture (DARCH) ADRs.
 - All code and infrastructure configurations MUST reside in Git source control.
 - Utility libraries MUST be published as versioned internal NuGet/NPM packages following `Crate.<Domain>.<Feature>` naming conventions.
 - Customer-facing applications MUST return human-readable error messages and suppress internal stack details.
-- Requirements SHOULD be expressed using Gherkin syntax (BDD) for customer-focused test validation.
+- Feature integration, acceptance, and regression scenarios MUST use FAIR with ordinary MSTest scenario methods and meaningful Given/When/Then helpers; retain explicit Arrange/Act/Assert comments.

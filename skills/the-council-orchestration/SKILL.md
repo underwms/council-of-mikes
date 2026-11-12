@@ -1,6 +1,6 @@
 ---
 name: the-council-orchestration
-description: Guide Council specialist coordination in the current model session when the user asks to convene the Council or requests Council coordination. Quoting, discussing, or auditing this skill is not an invocation.
+description: Coordinate Council work when the user asks to convene the Council or requests Council coordination. Discussing, quoting or editing this skill does not invoke it; never launches the custom graph.
 ---
 
 # The Council Orchestration
@@ -49,3 +49,4 @@ Use the central validation entry points with the actual workspace path:
 Run checks under the existing native policy. If a check is blocked, identify the command and reason without bypassing restrictions or claiming it passed. Source integrity and static placement do not prove native discovery, hook trust, hook execution, or live model access.
 
 At **Gate 2 (Pre-Submit Approval)**, present the resulting changes, verification evidence, unresolved issues, and any concrete next action requiring user sign-off. This review does not authorize committing, pushing, merging, publishing, deploying, or messaging others; follow the user's actual authorization for those actions.
+

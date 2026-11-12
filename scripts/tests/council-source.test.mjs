@@ -86,6 +86,25 @@ test('source audit rejects bad metadata, path escape, bad adapters, and broken l
   assert((await auditSource(f.root)).errors.some(e => e.includes('escapes')));
 });
 
+test('source audit rejects malformed UTF-8 and corrupted punctuation before locking', async t => {
+  const { auditSource, writeSourceLock } = await import('../council-source.mjs');
+  const f = await fixture(t);
+  await fs.writeFile(path.join(f.root, 'instructions/shared.md'), Buffer.from([0xff, 0x41]));
+  assert.equal((await auditSource(f.root)).status, 'fail');
+  await assert.rejects(writeSourceLock(f.root));
+  await f.write('instructions/shared.md', '# Broken ' + '\u00e2\u20ac\u201d' + ' punctuation\n');
+  assert((await auditSource(f.root)).errors.some(e => /mojibake/i.test(e)));
+  await f.write('instructions/shared.md', '# Valid caf\u00e9 \u2014 \u65e5\u672c\u8a9e\n');
+  assert.equal((await auditSource(f.root)).status, 'pass');
+});
+
+test('active doctrine rejects retired framework while test code may name a negative fixture', async t => {
+  const { auditSource } = await import('../council-source.mjs');
+  const f = await fixture(t);
+  await f.write('skills/example-flow/SKILL.md', '---\nname: example-flow\ndescription: Test work\n---\nUse ' + 'Req' + 'nroll.\n');
+  assert((await auditSource(f.root)).errors.some(e => /retired.*framework/i.test(e)));
+});
+
 test('runtime memory namespaces share across models while separating workspace and session', async t => {
   const { memoryRoot, handleHook, readContext } = await import('../council-memoryforge.mjs');
   const f = await fixture(t);

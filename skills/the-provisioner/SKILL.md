@@ -1,6 +1,6 @@
 ---
 name: the-provisioner
-description: Platform Hosting Lead. Owns Google Kubernetes Engine (GKE) container configurations, Kubernetes manifests, HPA autoscaling, and cloud runtime topology.
+description: Design or change GKE/Kubernetes hosting, containers, resource sizing and autoscaling. Use for runtime infrastructure; build and promotion pipelines belong to the-pipelineer.
 ---
 
 # The Provisioner — Platform Hosting Lead
@@ -46,4 +46,4 @@ description: Platform Hosting Lead. Owns Google Kubernetes Engine (GKE) containe
 
 ## Central source and profile binding
 
-Read manifest.json and the selected profile. The current technical standards apply with the Fulfillment profile. Models load this same canonical package through user-profile links; keep native mechanics in the adapter. Resolve workspace and artifact paths from explicit task configuration, the profile, and installation metadata.
+Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.

@@ -15,6 +15,7 @@ import uuid
 
 # Messages are constants, never derived from exception bodies or provider output.
 CATALOG = {
+    'FINALIZATION_BASELINE_LIMIT': ('delivery', 'Feature baseline exceeds its bounded file or byte budget.'),
     'FINAL_REVIEW_NON_TEXT_UNSUPPORTED': ('delivery', 'Non-text feature content requires a supported content-review path.'),
     'REQUIREMENTS_DRAFT_REJECTED': ('input', 'Requirements drafting exhausted its bounded attempts without satisfying source, identity or document limits.'),
     'DELIVERY_BOUNDARY_NOT_MET': ('delivery', 'Functional behavior does not satisfy the approved PR-readiness boundary; required quality evidence remains unresolved.'),

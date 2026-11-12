@@ -1,5 +1,15 @@
 # Council orchestration engine
 
+## Generated frontend source discovery (0.2.58)
+
+Feature inventories omit generated React Router types and recognized Deno vendor
+dependencies. Deno recognition requires adjacent project metadata and the generated
+vendor manifest; ordinary first-party directories named `vendor` remain visible.
+Configuration and lockfiles stay in the source inventory. Native permission/link
+guards and all file, byte and traversal budgets remain unchanged. Genuine feature
+baseline capacity failures report `FINALIZATION_BASELINE_LIMIT` instead of an
+unclassified internal error.
+
 ## Shared proof command admission (0.2.57)
 
 Plan preflight and proof discovery share the supported literal .NET command

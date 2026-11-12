@@ -5,6 +5,7 @@ Host facts and capabilities come from the running environment. Workspace-specifi
 - Load shared instructions and the active native adapter explicitly. All model discovery aliases reference the same canonical skill packages.
 - User-scope execution policy authorizes routine development without repeated command prompts. Respect platform/administrator restrictions and existing task authorization. Shared Markdown does not itself alter native permissions.
 - On Windows, prefer PowerShell for shell operations. Use native filesystem paths in PowerShell commands, while using the syntax required by JSON, Markdown links, URLs, and specific tools.
+- Text integrity: follow the shared UTF-8 and character-preservation rules for every read/write and subprocess boundary. Verify saved text and displayed output; fix confirmed mojibake before delivery.
 - Searching: use ripgrep (`rg`) when available; fall back to PowerShell `Select-String` and `Get-ChildItem` when `rg` is not installed.
 - Shell commands: avoid unnecessarily complex multi-statement shell commands and unsafe string interpolation in automated tool commands. Keep agent tool invocations focused and inspectable.
 - Directory deletion: verify the resolved target path stays within the named target or workspace; use PowerShell `Remove-Item -LiteralPath` for Windows filesystem operations. Add recursion only when required, and never follow a junction to delete its target.

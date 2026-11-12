@@ -35,6 +35,14 @@ export async function runTests() {
     return options;
   }
   const codexDefaults = 'approval_policy = "on-request"\napprovals_reviewer = "auto_review"\nsandbox_mode = "workspace-write"\n';
+  await test('Install_CarriesOnDemandInstructionReferences_AndBehaviorRunner', async () => {
+    const o = await fixture();
+    await fs.mkdir(path.join(o.payloadRoot,'instructions/references'),{recursive:true});
+    await fs.writeFile(path.join(o.payloadRoot,'instructions/references/development.md'),'Read development details here.\n');
+    await installCouncil(o);
+    assert.equal(await fs.readFile(path.join(o.councilRoot,'instructions/references/development.md'),'utf8'),'Read development details here.\n');
+    assert((await fs.readFile(path.join(o.councilRoot,'scripts/council-eval.mjs'),'utf8')).includes('runEvaluation'));
+  });
   await test('Install_RegistersOnlySupportedNativeClients', async () => {
     const o = await fixture();
     await installCouncil(o);
@@ -306,7 +314,7 @@ export async function runTests() {
   });
   await test('Install_DeploysFullCouncilPayload_AndVerifiesAllPackages', async () => {
     const o = await fixture();
-    o.payloadRoot = path.basename(path.resolve(scriptRoot, '..')) === '.council' ? path.resolve(scriptRoot, '..') : path.resolve(scriptRoot, '../temp/the-council/central');
+    o.payloadRoot = path.resolve(scriptRoot, '..');
     const installed = await installCouncil(o);
     assert.equal(installed.report.skills, 24);
     assert.equal(installed.report.repositories, 1);

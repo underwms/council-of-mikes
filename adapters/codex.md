@@ -4,6 +4,12 @@ Canonical Council: C:\Users\munderwood\.council.
 
 Codex loads the profile .codex/AGENTS.md pointer. It does not expand @file imports; explicitly read the shared instructions. Skill discovery uses profile .agents/skills junctions to the canonical root. Use native spawn_agent only when authorized by the Council workflow; normal filesystem reads load skills. Hooks register in profile .codex/hooks.json. Review/trust exact definitions, then verify actual events and native sandbox startup. Permission profiles and .codex/rules policy are distinct from shared Markdown guidance.
 
+## Automatic Council startup
+
+Follow the shared startup procedure once per session. SessionStart may inject MemoryForge context only inside the configured workspace; use the common onboard CLI or approved UTF-8 file reads when that context is absent, including projectless Council work. Prefer current_state.md over the historical handoff and preserve the selected namespace. Recover only missing context after compaction/model changes. Never start the standalone engine during startup.
+
+For native loading qualification, follow [behavior evaluation](../docs/behavior-evaluation.md). In particular, a nested Windows sandbox can fail at CreateDesktopW before a command starts; classify that host failure separately from skill selection. Keep Codex's native sandbox enabled when using approved host-level test execution. Native structured skill injection and full file-read delivery are distinct evidence paths.
+
 ## Shared source configuration
 
 Read manifest.json and this adapter's JSON descriptor. Source policy and exclusions are user-scoped, across development workspaces. Use central exclusions/global.ignore for explicit discovery. Read docs/source-contract.md for native configuration fragments, their effective limitations, and the source audit commands. The source reconciliation does not overwrite live user-profile settings.

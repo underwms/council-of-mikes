@@ -1,6 +1,6 @@
 ---
 name: using-superpowers
-description: Discover and load applicable Council specialists and workflows before Council development work.
+description: Select relevant Council skills and apply their guidance for a development task. Use for workflow routing; discovering skills does not convene the Council or spawn agents.
 ---
 
 # Using Council Workflows
@@ -14,3 +14,7 @@ Tool names are logical operations: read/edit files, run commands, track tasks, a
 Select brainstorming for new designs, systematic-debugging for investigations, writing-plans for approved multi-step implementation, and verification-before-completion for completion evidence. Use TDD where the selected profile and change require it. Load the applicable specialist contract before domain decisions.
 
 Resolve source paths through manifest.json and runtime paths through the selected profile. Execution policy and exclusions belong at host user scope; instruction text is not a substitute for native permissions configuration.
+
+## Roles and separate agents
+
+Applying a skill inline is the default. A call-sign identifies expertise, not a running process. Before delegating, identify a bounded independent task and the benefit of separate context or parallel execution, confirm authorization and native availability, and assign one owner per changed file. Supply the selected skill and references, scope, expected result and verification contract. Review returned evidence before integration. Do not spawn all Council members, recursively delegate by default, or add a separate model session to simulate missing native tools.

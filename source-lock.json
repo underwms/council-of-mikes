@@ -2,7 +2,7 @@
   "schema_version": 1,
   "version": "3.0.0-alpha.3",
   "files": {
-    ".gitignore": "5ad88e82ab511317b9d256f5d93c675bb474f824c84a5ed902f130b81455e17f",
+    ".gitignore": "5113a2a61e59da423a9b1013b62172aa61502e37560468ecdfa9f7204e056c86",
     "adapters/codex.json": "105173d7dab19586c109418e6da7be75bec4c3c4fcda808fc58ddbf763f32680",
     "adapters/codex.md": "ff5b301e9f0ff29334dcc6f10f50e61b3d19657d22d0aca0f7fcc14a2df1cdb9",
     "adapters/codex/config.toml": "61e5f27cd379b7882ec7ca6fa1635cbf4cf492dad58fc081a988953e7f9e3fd7",

@@ -67,7 +67,10 @@ test('CLI_UsesInstallationMetadata_WhenInvokedWithoutFlags', async () => {
     assert.equal(result.exitCode,0,result.output);
     assert.equal(JSON.parse(result.output).placement.status,'pass');
   } else {
-    await assert.rejects(executeCommand(['validate']),{code:'ENOENT'});
+    // A portable source checkout is not an installed developer profile.
+    const result=await executeCommand(['validate','--payload',root,'--workspace',root,'--home',path.join(root,'work/uninstalled-profile')]);
+    assert.equal(result.exitCode,1);
+    assert.equal(JSON.parse(result.output).placement.status,'fail');
   }
 });
 

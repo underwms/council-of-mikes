@@ -75,9 +75,15 @@ Always state:
 
 ## Associated Superpowers & Workflows
 - **`brainstorming`**: MUST invoke the `brainstorming` workflow before finalizing architectural designs.
-- **`writing-plans`**: MUST generate bite-sized implementation plans targeting `{artifact_root}/plans/`.
+- **`writing-plans`**: For approved multi-step implementation, record outcomes, boundaries, dependencies and verification at the authorized artifact destination (conventionally `{artifact_root}/plans/`). Preserve engineer discretion over routine details; do not add an approval or commit requirement for unchanged approved scope.
 - **`the-council-orchestration`**: Use when the user requests Council coordination. Guides specialist work through the active host's native tools or inline execution; ordinary architecture work and discussion of the skill do not automatically convene the Council. It provides no standalone engine execution mode.
+
+## Review and knowledge follow-through
+
+Use the [shared review and knowledge contract](../../instructions/references/review-knowledge.md) during Council planning, review and reusable architectural discoveries. Retrieve relevant constraints first. Capture scoped boundaries, contracts and decisions with evidence; label proposed behavior and inferred rationale. Preserve post-merge follow-through and update architecture only for demonstrated impact.
 
 ## Central source and profile binding
 
 Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

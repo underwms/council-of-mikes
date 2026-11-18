@@ -49,6 +49,10 @@ FAIR is the only feature integration and regression testing standard. Apply this
 
 For every changed text artifact, follow the shared UTF-8 rules. Before delivery, strictly decode saved text, inspect the diff and displayed output, and fix confirmed mojibake or replacement characters. Preserve valid Unicode, existing BOM behavior, and line endings.
 
+## Revision-bound review and knowledge follow-through
+
+For PR reviews, phases 8/10 and phase 11 follow-through, use the [shared review and knowledge contract](../instructions/references/review-knowledge.md). Its revision-bound findings, observed-evidence limits and candidate/confirmed distinction apply throughout this SOP. Judge the inspected scope and report unresolved gaps; no internal review can guarantee what another reviewer will find. Daily architecture drift detection replaces developer PR reconciliation. Report daily knowledge coverage and pending proposals separately from pre-submit readiness. Do not mark unmerged proposals as current integrated architecture.
+
 ## The 11-Phase Pre-Submit Gate
 
 ### Phase 1 — Brainstorm
@@ -89,7 +93,7 @@ The owning member writes the change. Rules that apply to every member:
 1. Formatting & style (file-scoped namespaces, `var` usage, `.editorconfig` compliance)
 2. Modernization (primary constructors, pattern matching, collection expressions, raw string literals, `is null`)
 3. Dead code & redundancy
-4. Complexity reduction (cognitive complexity ≤ 15 per method)
+4. Complexity reduction (cognitive complexity ≤ 15 per method is the Council default maximum, not an illustrative number; apply within the requested change scope)
 5. Naming & readability
 
 **Tripwires** the Purifier always sweeps for: trailing whitespace, BOMs, mixed line endings, `async` without `await`, missing `Async` suffix, `new HttpClient()`, `DateTime.UtcNow` in workflow code, magic config strings, `throw ex;`, empty catch blocks, string concatenation in log calls, PII in logs.
@@ -134,6 +138,8 @@ For each test, the Prover verifies:
 ---
 
 ### Phase 6 — Coverage Validation
+
+These are acceptance requirements for changed code, distinct from the illustrative test distribution in the Prover skill. The 80% changed-line threshold is the Council default; an applicable repository-specific coverage threshold takes precedence. Apply these checks within the requested change scope, without requiring retroactive coverage or unrelated cleanup of inherited code.
 
 - Coverage on changed lines: **≥ 80%** (or repo-specific threshold).
 - Coverage on changed branches: every new branch hit at least once.
@@ -208,7 +214,7 @@ The Gatekeeper performs a Copilot-style PR review on the current diff, evaluatin
 
 **Do not just run tests in this phase.** This is a reading exercise.
 
-**Exit criteria:** The Gatekeeper can state, in writing, that a Copilot PR review on this diff would surface zero substantive issues.
+**Exit criteria:** The Gatekeeper reports no unresolved substantive findings in the inspected revision and scope, with observed checks and material limitations. This does not predict another reviewer's findings.
 
 ---
 
@@ -218,14 +224,14 @@ The Gatekeeper performs a Copilot-style PR review on the current diff, evaluatin
 
 [[the-codex]] owns this phase. The Gatekeeper audits it.
 
-For every change, walk the documentation surface and update what is now stale:
+For every change, walk the documentation surface and update what is now stale. The selected profile owns documentation routing; follow its destinations and the existing repository layout that it authorizes. The categories below identify what to review, not a requirement to create those paths. Keep workflow specs/plans and private Council state in their separately authorized locations.
 
 #### Repo-level docs (in the changed repo)
 
 - **`README.md`** — setup steps, dependencies, environment variables, build/run/test commands. If any of these changed, the README changes.
-- **`docs/architecture/`** — if the change touches module boundaries, public contracts, message flows, data models, partition keys, or external dependencies, update the relevant architecture snapshot.
-- **`docs/procedures/`** — if a new recurring task was introduced or an existing procedure changed, create or update the SOP.
-- **`docs/decisions/`** — if a non-trivial design choice was made (or a prior choice reversed), record it as a decision / ADR. Include lessons learned.
+- **Service architecture** — if the change touches module boundaries, public contracts, message flows, data models, partition keys, or external dependencies, update the relevant architecture document at the profile-authorized destination.
+- **Service procedures** — if a new recurring task was introduced or an existing procedure changed, create or update the SOP at the profile-authorized destination.
+- **Service decisions** — if a non-trivial design choice was made (or a prior choice reversed), record it as a decision / ADR at the profile-authorized destination. Include lessons learned.
 - **`AGENTS.md` / `copilot-instructions.md`** — if agent-facing conventions, commands, or guardrails changed, update the agent instructions so future sessions inherit them.
 - **`CHANGELOG.md`** — if the repo maintains one, add the entry under the correct version / unreleased section.
 - **XML doc comments** — public types, methods, and parameters that changed signature or contract get their `<summary>`, `<param>`, `<returns>`, and `<exception>` tags updated.

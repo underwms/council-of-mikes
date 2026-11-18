@@ -1,38 +1,36 @@
-# Install The Council on Windows
+# Native Council setup
 
-Requirements: Node.js 20+ and an existing workspace. Native client setup supports Windows PowerShell 5.1+; the optional standalone engine requires PowerShell 7+, Python 3.11+, and package-index access for initial provisioning. Install Codex and Gemini CLI separately if needed. Close active Council engine processes before engine installation or updates.
+This export installs the native Council. The retired engine and viewer are not included. Node.js 20+, Windows PowerShell 5.1+, an existing workspace, and a separately installed client are required.
 
-Extract the entire .council folder, open PowerShell 7 in it, and run:
+## Install
+
+Run from the cloned repository:
 
 ```powershell
 .\setup-council.ps1 -WorkspaceRoot 'D:\Development'
 ```
 
-Use -PythonPath or -NodePath for executables outside PATH. The installer places shared definitions in your profile's .council, creates user skill junctions for both clients, merges managed instruction/hook sections and Codex defaults while preserving unrelated settings, and provisions Python under .council/runtime. Changed native settings have backups under .council/backups. No API keys, private memory, model client applications, Docker, or Rancher Desktop are installed.
+The installer verifies source hashes, renders recipient paths, copies source to `%USERPROFILE%\.council`, merges owned profile sections, and creates skill junctions. Changed native files have backups. Unrelated settings remain in place. `-HomeRoot` and `-NodePath` support explicit locations. `-NativeOnly` is a compatibility switch; native setup is already the default.
 
-For native Codex and Gemini setup without the standalone engine, run from the extracted folder:
+The shared installer writes both Codex and Gemini profile sections. The Gemini adapter is retained compatibility, with separate runtime qualification. Neither model client nor its authentication is installed here.
 
-```powershell
-.\setup-council.ps1 -WorkspaceRoot 'D:\Development' -NativeOnly
-& "$env:USERPROFILE\.council\setup-council.ps1" -WorkspaceRoot 'D:\Development' -NativeOnly -ValidateOnly
-```
+The export disables service-repository cleanup and private-memory import. An existing conflicting installation stops for reconciliation. Use a clean test profile first if you maintain a different Council installation.
 
-NativeOnly skips Python checks, downloads, and runtime provisioning. It installs the shared source, skill links, native defaults, and hooks. Codex's writable roots gain only the recipient Council root; existing roots and networking settings remain. Runtime overrides and managed restrictions still apply.
-
-The installer leaves the user's Gemini CLI installation untouched. The legacy `-SkipGeminiOptimization` argument remains accepted for older setup commands but has no effect. The standalone `scripts/optimize-gemini-cli.ps1` is a historical, version-specific repair tool and is not required by the Council transport; do not use it for routine setup.
-
-Council startup is automatic in both Codex and Gemini CLI: the profile instruction pointer directs the model to load shared guidance and recover MemoryForge context before substantive work. No initial onboard command is required. If native SessionStart context is absent, including in projectless Council chats, the assistant reads it through the common onboard CLI or approved UTF-8 file reads. Startup does not convene the Council or resume saved work. Open a fresh client session after changing profile instructions; verify actual startup separately from static placement.
-
-After installation:
+## Validate
 
 ```powershell
 & "$env:USERPROFILE\.council\setup-council.ps1" -WorkspaceRoot 'D:\Development' -ValidateOnly
-& "$env:USERPROFILE\.council\council.ps1" --doctor
+& "$env:USERPROFILE\.council\scripts\validate-workspace.ps1" -WorkspaceRoot 'D:\Development'
 ```
 
-Repeat installation is supported. Unchanged healthy runtimes are reused without downloads; changed engine files reinstall the wheel even when its version is unchanged. ValidateOnly audits source hashes, native placement, dependencies, and the offline engine. It does not invoke providers or grant native hook trust. Review/trust hooks in each client and verify fresh native startup separately. Conflicting skill or policy directories stop deployment for reconciliation.
+Static validation does not grant hook trust. Review the hooks in the client and open a fresh session. Verify startup, selected task context, paused work, and a small reversible development task.
 
-New engine runs use `gpt-6.1-sol` through the installed Codex CLI with the existing ChatGPT login for every role. The standard run needs only Codex installed and signed in; Gemini and API keys are unnecessary. Multi-model routing is deferred, while historical saved provider settings remain readable. Council records CLI versions for diagnostics and checks required capabilities instead of pinning releases. Autonomous review is the default. New protocol-2 runs preserve bounded inspection evidence and stable findings, allow at most five revisions, and distinguish stalled review, budget exhaustion, user decisions and operational failures. Existing checkpoints retain their recorded policy. Explicit manual mode retains human gates. PowerShell can invoke the private Python executable directly with `-I -m council`; the launcher is optional. Read council/README.md for authentication, model overrides, review policies, workspace selection, and resume behavior. The launcher works from any directory. Engine file tools are workspace-bound; external commands retain your OS permissions. Native Codex permissions and standalone engine review are separate controls.
+Keep workspace and profile directories separate. Managed settings and session permission overrides remain authoritative. Council writable access does not give a projectless chat automatic access to its registered maintenance workspace.
 
-The developer artifact includes regression tests and the active engine source. It excludes private memory, runtime environments, archives, project overrides, and generated build artifacts. It does not import private memory or clean service repositories. The working Council may retain historical assets. Keep these distribution boundaries in manifest.json when updating the artifact; installation behavior is shared code rather than separate installer implementations.
+## Update
 
+Review the release diff and source check. Close work that uses files you will replace. Run setup from the new source. Validate again and review changed native hook definitions when the client requires it. Reinstalling does not import another developer's memory.
+
+Updates do not delete unrelated directories or private history. Files from an older engine installation can remain on disk. They are outside this export and setup does not invoke them.
+
+See the [README](../README.md), [source contract](source-contract.md), and [behavior guide](behavior-evaluation.md) for scope and evidence limits.

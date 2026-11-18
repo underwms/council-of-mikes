@@ -47,3 +47,5 @@ description: Design or change GKE/Kubernetes hosting, containers, resource sizin
 ## Central source and profile binding
 
 Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

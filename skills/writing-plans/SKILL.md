@@ -5,134 +5,68 @@ description: Turn approved requirements or design into an executable implementat
 
 # Writing Plans
 
-## Overview
+Write a plan that another skilled engineer can execute and verify without reconstructing the task. Preserve engineer discretion over routine implementation details. Plan from the approved requirements; return only material unresolved design decisions to brainstorming.
 
-Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
+Announce that this skill is being used. For multi-step work, save the plan at the authorized artifact destination, conventionally {artifact_root}/plans/YYYY-MM-DD-<feature-name>.md. Honor user preferences; keep private Council state in its selected central namespace. Do not require a child-repository write, Git repository or commit to save a plan.
 
-Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
+## Establish scope and boundaries
 
-**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
+- State the goal, approved behavior, constraints, relevant source baseline and acceptance evidence.
+- Identify affected files/components, shared contracts and dependencies. Use exact known paths; when investigation must determine a path, name that bounded discovery task and its expected evidence rather than inventing a file or signature.
+- Order dependent changes. Separate independent pieces only when their ownership and integration evidence are clear. Do not require a new spec or plan per small task.
+- Preserve existing contracts, mappings and infrastructure. Existing deviations or large files do not authorize cleanup, splitting, migration or fixture replacement.
+- Use a worktree only if isolation is useful and available through the active adapter. Do not depend on an absent execution skill or spawn agents merely because a plan has multiple tasks.
 
-**Context:** If isolation is needed, inspect the independent repository state and create a worktree through the active adapter native tools. Do not require an execution skill absent from the installed manifest.
+## Council Paperwork
 
-**Save plans to:** `{artifact_root}/plans/YYYY-MM-DD-<feature-name>.md` (MUST be written to `{artifact_root}/plans/`; NEVER write into a child repository)
-- (User preferences for plan location override this default)
+Use [Council Paperwork](../../instructions/references/paperwork/CONTEXT.md) for assignments and handoffs. An existing plan can serve as an [Internal Council Memo](../../instructions/references/paperwork/internal-council-memo.md) when it provides the shared core. Bind required inputs to exact versions, state authority and output expectations, and identify consumer checks. Do not create a duplicate memo for an adequate plan.
 
-## Scope Check
+## Plan detail
 
-If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
+Each task should describe:
 
-## File Structure
+1. The outcome and affected scope.
+2. Material contract/algorithm decisions and dependencies that must be preserved.
+3. Verification that demonstrates the behavior, including relevant failure/boundary cases and commands when known.
+4. Completion evidence and integration responsibility where work crosses boundaries.
 
-Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
+Scale task size to meaningful, verifiable progress; no universal minute target applies. Use code snippets for exact interfaces, non-obvious algorithms or a decision whose correctness depends on the code. Complete production implementations and every test body are not required in a plan. Routine helper structure, fixture organization and local mechanics belong to the implementer.
 
-- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
-- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
-- Files that change together should live together. Split by responsibility, not by technical layer.
-- In existing codebases, apply rules to new code and requested changes while preserving the contracts, mappings, dependencies, and layouts needed for integration. Pre-existing deviations or large files do not authorize cleanup, splitting, renaming, or migration. Add restructuring only when requested or necessary for the authorized behavior within scope.
+Be precise about material decisions. Empty instructions such as "handle edge cases" do not replace the specific behavior to verify. A bounded investigation can remain a task with an owner, working assumption and exit evidence; it need not block unrelated work or pretend the answer is known.
 
-This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
+## Suggested plan structure
 
-## Bite-Sized Task Granularity
-
-**Each step is one action (2-5 minutes):**
-- "Write the failing test" - step
-- "Run it to make sure it fails" - step
-- "Implement the minimal code to make the test pass" - step
-- "Run the tests and make sure they pass" - step
-- "Commit" - step
-
-## Plan Document Header
-
-**Every plan MUST start with this header:**
-
-```markdown
+~~~markdown
 # [Feature Name] Implementation Plan
 
-> **For agentic workers:** Follow the active adapter and execute checked tasks in dependency order. Use native delegation only when authorized and available; otherwise execute inline. Steps use checkbox (`- [ ]`) syntax for tracking.
+Goal: [observable result]
+Approved scope and constraints: [contracts, boundaries and exclusions]
+Source baseline: [inspected revision/current changes or recorded source identity]
 
-**Goal:** [One sentence describing what this builds]
+## Task 1: [verifiable outcome]
+- [ ] Change: [affected paths/components and material decisions]
+- [ ] Dependencies: [prior tasks/contracts, or none]
+- [ ] Verify: [specific behavior and suitable command/check]
+- [ ] Evidence: [what establishes completion]
 
-**Architecture:** [2-3 sentences about approach]
+## Integration and completion
+[cross-component checks, known limits and required review]
+~~~
 
-**Tech Stack:** [Key technologies/libraries]
+This is a structure, not a requirement to repeat settled context in every task. A concise plan may use prose or a task table when those express the same contract clearly.
 
----
-```
+## Verification and self-review
 
-## Task Structure
+- Check the whole plan against the approved requirements. Every material outcome needs implementation and verification coverage somewhere; equivalent wording is sufficient.
+- Check shared names, types and dependencies for consistency. Do not invent signatures or exact test counts unsupported by source.
+- Apply test-driven-development to executable behavior changes. Documentation-only edits do not require code tests; select checks from the actual changed surface. FAIR remains the feature integration/regression standard.
+- Record real environment limits and prerequisite owners. Do not add generic readiness harnesses or new external configuration as permission-to-start gates without evidence of a concrete gap.
+- Review for scope expansion, contradictory instructions and repeated approval gates. Correct routine drafting errors directly; seek a decision only for a material new issue.
 
-````markdown
-### Task N: [Component Name]
+## Execute within authorization
 
-**Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
+Report the plan location and next concrete task. If implementation is already authorized, continue without another execution-choice approval. Keep the separate Council convening gates when invoked; prior approval of the same reviewed plan satisfies its Gate 1.
 
-- [ ] **Step 1: Write the failing test**
+Execute inline by default. Delegate only when authorized and useful, using native tools with bounded ownership, specialist guidance, expected evidence and integration review. Missing native capabilities are not a reason to launch another CLI or custom engine for delegation.
 
-```python
-def test_specific_behavior():
-    result = function(input)
-    assert result == expected
-```
-
-- [ ] **Step 2: Run test to verify it fails**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
-
-- [ ] **Step 3: Write minimal implementation**
-
-```python
-def function(input):
-    return expected
-```
-
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-````
-
-## No Placeholders
-
-Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
-- "TBD", "TODO", "implement later", "fill in details"
-- "Add appropriate error handling" / "add validation" / "handle edge cases"
-- "Write tests for the above" (without actual test code)
-- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
-- Steps that describe what to do without showing how (code blocks required for code steps)
-- References to types, functions, or methods not defined in any task
-
-## Remember
-- Exact file paths always
-- Complete code in every step — if a step changes code, show the code
-- Exact commands with expected output
-- DRY, YAGNI, TDD, frequent commits
-
-## Self-Review
-
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
-
-**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
-
-**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
-
-**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
-
-If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
-
-## Execution Handoff
-
-After saving the plan, report its path and the next concrete task. If existing authorization covers implementation, continue within that scope without a redundant execution-choice approval. Execute inline unless the user or applicable workflow requests delegation. Bind the installed specialist contract for delegated work and review each result before dependent changes. Use available task tracking and verification checkpoints for inline execution.
-
-Ask about execution mode only when it materially affects scope or constraints. Use the active adapter question tools and permissions. An unavailable tool or missing external workflow does not prevent authorized work that can be completed inline.
+Commit only when explicitly authorized and the destination is Git-tracked. Do not add a commit to every task, switch branches or initialize Git by implication. Preserve existing task status and checkpoint meaningful milestones through handoff guidance.

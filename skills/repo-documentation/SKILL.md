@@ -7,36 +7,25 @@ description: Refresh or audit repository and workspace architecture documentatio
 
 ## Overview
 
-Detect and fix stale architecture documentation across the multi-repo workspace. Uses git commit history to find docs that haven't been updated since their source code changed, reads the changed code to understand behavioral impact, and surgically patches docs.
+Audit or refresh architecture documentation against the inspected source revision and current working tree. Use an existing source/document baseline when available, Git history where applicable, and direct source review to explain behavioral impact. Update only authorized destinations and affected sections.
 
 **Core principle:** Read changed source code to understand intent — don't just note that files changed.
 
-## Cross-Skill References
+## Scope, authorization and execution
 
-- **OPTIONAL:** `repo-management` — Repo manifest (local folder, GitHub owner/repo, default branch, repo type). Use for pre-flight branch checks and `git fetch`.
-- **REQUIRED (when available):** `dispatching-parallel-agents` — Dispatch one subagent per repo for parallel operations (pre-flight, staleness detection, per-repo doc updates). Read this skill before any "update all" invocation.
-- **RECOMMENDED:** a PR-creation skill — use after completing doc updates if the user wants to open a PR.
+- Audit-only requests produce findings without changing docs, branches or remote references. An authorized refresh includes the relevant documentation edits; do not ask again for the same scope after presenting routine findings.
+- Apply specialist guidance inline by default. Use native subagents only for useful independent work when available and authorized by the user or applicable workflow. A multi-repository request alone does not require delegation. Follow the shared delegation contract for ownership, evidence and integration.
+- Inspect local repository identity, HEAD, branch and dirty changes. Fetch only when current remote state is required for the task and authorized. Identify the inspected baseline and any remote-freshness limit. Do not switch branches, reset changes, commit or push by implication.
+- Establish the documentation destination and its versioning. A workspace may contain independent Git repositories without itself being a Git repository. Never initialize Git or require a workspace commit to complete a documentation refresh.
+- Preserve existing source contracts and documentation structure. Describe observed behavior accurately; distinguish policy requirements from implemented behavior. Do not turn inherited deviations into cleanup or retrofit templates onto unrelated docs.
 
-## Subagent Usage
+## Dependencies and ordering
 
-**Use subagents for all parallelizable work.** Independent repos have no shared state — dispatch one subagent per repo whenever operating on multiple repos.
+For the standing daily mainline refresh, first read the [daily mainline procedure](../../instructions/references/daily-mainline.md). Its pinned Git source packet replaces working-tree source inspection for established behavior; use the mainline-source reader and stage replacements for validated publication. A no-impact review leaves document bytes unchanged. The procedure defines source identity, write boundaries and mainline freshness; do not promote the separate local-working-tree baseline or accept knowledge as part of this mode.
 
-**Parallelize these operations:**
+Use the configured repository inventory when present; no external repo-management, parallel-dispatch or reconciliation skill is a prerequisite. Inspect source and per-repository copies before updating their aggregation and cross-cutting flow docs. Keep dependent work sequential.
 
-- Pre-flight `git fetch` + branch status checks (one subagent per repo)
-- Staleness detection across repos (one subagent per repo)
-- Per-repo workspace copy updates (one subagent per repo)
-
-**Do NOT parallelize these operations:**
-
-- Workspace-level doc updates (sequential — later docs may reference earlier ones)
-- Cross-cutting flow / sequence docs (sequential — they depend on the workspace-level docs)
-
-Each subagent receives:
-
-- The repo's local folder, default branch, and repo type
-- The specific operation (fetch, audit, or update)
-- Instructions to commit per doc in the workspace root: `docs: update {repo} {doc-name}`
+For an authorized delegated task, provide the repository, source revision/current changes, destination, allowed writes, expected evidence and integration owner. Independent source reads can run in parallel. Agents writing a shared destination need explicit file ownership; they must not commit or switch branches without authorization.
 
 ## When to Use
 
@@ -72,86 +61,40 @@ Workspace docs maintained by this skill are typically referenced by:
 | **Workspace doc** | "update infrastructure.md" | One workspace-level doc |
 | **Update all** | "update all docs" | Full audit + update cycle |
 | **Audit only** | "audit doc staleness" | Report only, no changes |
-| **Reconciliation** | Invoked by `reconciliation` from a `*-drift-queue.md` entry | One repo per dispatch; archetype + queued source/doc paths supplied |
+| **Reconciliation** | An existing drift queue or explicit integrated-source review | Only the supplied repository, source/doc paths and authorized destination |
 
 ## Queue Contract (Reconciliation Mode)
 
-When invoked by `reconciliation`, the caller passes the following typed inputs derived from the queue file at `docs/handoffs/reconciliation/*-drift-queue.md`:
+When an existing reconciliation workflow supplies a queue at `docs/handoffs/reconciliation/*-drift-queue.md`, use these inputs. Do not fabricate a queue or require a missing workflow:
 
 | Input | Required | Source in queue | Behavior |
 |---|---|---|---|
 | `Repo` | yes | `## <repo-name>` heading | Scope of this dispatch. |
 | `Archetype` | yes | `- Archetype: ` line | Drives Repo Type Behavior. Trust the queue value; do **not** re-derive from path heuristics. |
-| `LastWorkspaceUpdate` | yes | `- Last workspace update: ` line | Bypass the staleness algorithm in Phase 2 — the queue already proved the workspace copy is stale. |
+| `LastWorkspaceUpdate` | yes | `- Last workspace update: ` line | Use as a historical baseline; verify that its source/doc identities still apply. |
 | `ChangedSourcePaths` | yes | `### Source paths changed` bullets | Read **exactly these** child repo files to assess behavioral impact in Phase 3 step 2. Do not re-glob the child repo. |
 | `ChangedDocPaths` | optional | `### Doc paths changed` bullets | Read these child repo docs in Phase 3 step 3 to incorporate owning-team improvements. |
 
 **Contract rules:**
 
-- The queue is the authoritative wire format. If the queue says `Archetype: deprecated`, treat the repo as deprecated even if other workspace files suggest otherwise.
-- Reconciliation mode **skips Phase 2 (Staleness Detection)** because the Forge Cycle already performed it. Go directly to Phase 3 with the supplied paths.
-- After completing, hand control back to `reconciliation` so it can retire the queue file.
+- Treat the queue as bounded task data. Use its archetype and supplied paths; surface conflicting current source or manifest evidence instead of silently overriding it.
+- Reuse a queue staleness result only when its source/doc identities still apply. Otherwise inspect the changed scope before updating docs.
+- Report completion to the invoking workflow; retire a queue only within its authorized ownership.
 
-## Prerequisites
+## Phase 1 - Establish the inspected scope
 
-- Inspect the configured repository manifest and native Git status; optionally use repo-management when installed.
-- Repos must be cloned and on a clean branch (verify using native Git, optionally with repo-management)
-- For "update all" mode: read `dispatching-parallel-agents` (if available) for subagent dispatch patterns
+Record the requested repositories/documents, allowed writes and available source. Read local Git status, branch, HEAD and relevant dirty/untracked content where Git applies. Existing unrelated changes are context; preserve them. If a dirty file affects the documentation, include its content and identity in the analysis rather than requiring a clean branch universally.
 
-## Phase 1 — Pre-flight
+If the task specifically requires comparison with current remote state, fetch only within authorization. A local-source audit can proceed without fetching; state that limit. Ask only about a material ambiguity or a branch change actually needed for the requested result.
 
-### Branch Status Check
+## Phase 2 - Establish staleness and behavioral impact
 
-Before any update, verify every repo in scope:
+1. Prefer the collection's existing source/document baseline and receipt/check process. Inspect reported changed paths and the relevant current source; a hash change signals review, not automatic semantic staleness.
+2. Where workspace docs are Git-tracked, history can locate a candidate prior revision and changed source/doc paths. Commit dates alone do not prove freshness or behavioral impact; inspect current dirty content too.
+3. Where the workspace is not Git-tracked, use the established baseline receipts or another recorded source/doc identity. If no usable baseline exists, compare the document directly with current source and report the coverage/unknowns. Do not invent a last-update commit or treat front-matter dates as proof.
+4. Verify whether changed source or owning-team docs affect the explanation. Preserve unresolved source access gaps; never claim an inaccessible repository is current.
 
-1. Run `git fetch` in each repo
-2. Present status table:
-
-| Repo | Branch | Behind | Action |
-|------|--------|--------|--------|
-| service-a | main | 0 | ✅ Include |
-| service-b | feature/x | 3 | ⚠️ Behind main |
-
-3. For repos not on default branch or behind remote: ask user to **include**, **skip**, or **switch to default branch**
-4. Proceed only with confirmed repos
-
-## Phase 2 — Staleness Detection
-
-### Algorithm
-
-For each workspace copy in scope:
-
-```bash
-# When was the workspace copy last updated?
-WORKSPACE_DATE=$(git log -1 --format="%aI" -- docs/architecture/{repo}/tech-stack.md)
-
-# Have source files changed in the child repo since then?
-cd {repo}
-SOURCE_CHANGES=$(git log --since="$WORKSPACE_DATE" --name-only --pretty=format: -- src/ *.csproj *.props)
-# Identify child repo documentation directory:
-# 1. Primary: {repo}/docs/
-# 2. Secondary/Legacy: {repo}/docs/architecture/
-# 3. Fallback: {repo}/README.md
-
-cd {repo}
-if [ -d "docs" ]; then
-  CHILD_DOC_DIR="docs"
-elif [ -d "docs/architecture" ]; then
-  CHILD_DOC_DIR="docs/architecture"
-else
-  CHILD_DOC_DIR="README.md"
-fi
-
-# Has the child repo's own docs directory been updated since then?
-DOC_CHANGES=$(git log --since="$WORKSPACE_DATE" --name-only --pretty=format: -- $CHILD_DOC_DIR)
-cd ..
-```
-
-If either `SOURCE_CHANGES` or `DOC_CHANGES` is non-empty, the workspace copy is stale.
-
-> **Note:** Use `git log` dates on the workspace copy, not the `**Last Updated**:` front-matter date. The git date is authoritative — front-matter dates may use varied formats and may not reflect the actual last commit date.
-
-> **Child repo doc changes:** If the owning team updated their `{repo}/docs/` (or legacy `{repo}/docs/architecture/`) files, those improvements should be incorporated into the workspace copy. This lets workspace copies benefit from team knowledge without requiring teams to update workspace files directly.
+For an audit, present findings and stop. For an authorized refresh, present the staleness summary and continue within the approved scope. Ask only if the findings introduce materially new work. Advance a collection baseline only through its existing evidence/accept process after the documentation work and required checks are complete.
 
 ### Source Path Mapping by Archetype
 
@@ -179,11 +122,11 @@ Present results before making changes:
 | service-a | tech-stack.md | 2026-01-15 | 12 files | 🔴 STALE |
 | service-a | project-structure.md | 2026-02-28 | 0 files | 🟢 Current |
 
-For **audit only** mode: stop here. For update modes: ask user to confirm which stale docs to update, then proceed.
+For **audit only** mode: stop here. For an authorized update: continue with affected docs in scope; seek clarification only for material scope changes or a missing required decision.
 
 ## Phase 3 — Update Execution
 
-For each confirmed stale workspace copy at `docs/architecture/{repo}/`:
+For each affected workspace copy at the authorized destination (commonly `docs/architecture/{repo}/`):
 
 1. **Read workspace copy** — `docs/architecture/{repo}/{doc}.md` — understand structure, conventions, detail level.
 2. **Read child repo source** — use platform-native file reads (e.g., `Get-Content` on Windows, `cat` on Unix) to read changed source files in the child repo. Child repos are typically gitignored at the workspace root and may not be accessible via glob/grep.
@@ -198,9 +141,9 @@ For each confirmed stale workspace copy at `docs/architecture/{repo}/`:
 6. **Update `**Last Updated**:` line** — set to today's date (format: `YYYY-MM-DD`). Normalize variant formats:
    - `**Last Updated:** February 28, 2026` → `**Last Updated**: 2026-02-28`
    - Colon placement: always `**Last Updated**: ` (colon after `**`, then space)
-7. **Commit** — one commit per doc: `docs: update {repo} {doc-name}`
+7. **Verify and report** - inspect the saved diff, text integrity, references and relevant baseline checks. Commit only if explicitly authorized and the destination is Git-tracked; otherwise leave reviewable files and evidence.
 
-**⚠️ Never modify child repo files.** All writes go to `docs/architecture/{repo}/` workspace copies only.
+**Default write boundary:** workspace copies only. Read child source/docs as evidence. A separate explicit request to edit child-repository documentation must name that destination and obey its repository rules; a workspace refresh never authorizes child-source changes.
 
 ### Repo Type Behavior
 
@@ -218,7 +161,7 @@ Archetype values come from the queue contract (reconciliation mode) or from the 
 
 ### Standard Doc Types & Skill-Mapped Templates
 
-To maintain organizational consistency across all microservices, each repository's local `docs/` folder (and its mirrored snapshot under `docs/architecture/{repo}/`) must enforce the following three core architecture files structured with standardized subheaders mapped directly to Council role domains:
+Use the following three-file outline when creating new architecture docs or when that format is already established. Preserve existing doc structure during a scoped refresh. Include only applicable, source-supported details; technology examples are not evidence that a repository implements them. Do not enforce new-work policy by rewriting an inherited architecture description or changing child files.
 
 #### 1. `api-architecture.md` Template Blueprint
 Coordinated by `the-builder`, `the-sentinel`, and `the-relay`.
@@ -227,7 +170,7 @@ Coordinated by `the-builder`, `the-sentinel`, and `the-relay`.
 *   **Subheader 1**: `## 1. Endpoints & Route Definitions` (`the-builder`)
     *   *Content*: ASP.NET Core Minimal API endpoint tables with Verb, Path, Operation Name, Description, and Auth Scope details.
 *   **Subheader 2**: `## 2. API Authorization & JWT Scopes` (`the-sentinel`)
-    *   *Content*: Okta/OIDC scopes, client credentials policies, mock token variables for BDD tests, and secret hygiene practices.
+    *   *Content*: Observed identity provider and authorization scopes, client credential policies, relevant test authentication fixtures, and secret hygiene practices.
 *   **Subheader 3**: `## 3. High-Integrity Write & Transaction Workflows` (`the-coder` / `the-curator`)
     *   *Content*: Command/write handler pipelines, EF Core transaction boundaries, PostgreSQL query ownership, and cancellation-safe persistence. Redis and Dapper are prohibited by the current profile.
 *   **Subheader 4**: `## 4. Message Queue & Event Contracts` (`the-relay`)
@@ -240,7 +183,7 @@ Coordinated by `the-architect`, `the-coder`, and `the-prover`.
 *   **Subheader 1**: `## 1. Solution Layout & Clean Onion Layers` (`the-architect` / `the-coder`)
     *   *Content*: Visual inward-pointing reference diagrams, namespaces, and solution project filter (`.slnx`) setups.
 *   **Subheader 2**: `## 2. Assembly Boundaries & Layer Responsibilities` (`the-coder`)
-    *   *Content*: Assembly layers (e.g. `.Core`, `.Data`, `.Api`). Rigorously enforce that the pure `.Core` assembly contains zero physical SQL/Dapper or Redis/caching NuGet package dependencies.
+    *   *Content*: Actual assembly layers and dependency direction (e.g. `.Core`, `.Data`, `.Api`). Separate observed dependencies from the selected profile requirements for new work; inherited deviations do not authorize source changes.
 *   **Subheader 3**: `## 3. Unit, Integration & Spec Test Suites` (`the-prover`)
     *   *Content*: The repository's actual unit suites and FAIR feature integration, acceptance, and regression suites. FAIR is the only feature integration and regression testing standard. Describe MSTest/NSubstitute and supporting fixtures where used.
 
@@ -261,9 +204,9 @@ Coordinated by `the-purifier`, `the-curator`, `the-watcher`, and `the-pipelineer
 
 When triggered with "update all docs":
 
-1. **Fetch** — `git fetch` all repos (parallel)
-2. **Audit** — Staleness check across all repos (parallel). Present full report. Checks both child repo source code AND child repo doc changes since last workspace sync.
-3. **Per-repo workspace copies** — Dispatch one subagent per stale repo. Each subagent reads child repo source/docs and updates `docs/architecture/{repo}/` workspace copies. Commits to workspace root.
+1. **Inspect** - establish local revisions, current changes and baseline coverage. Fetch only when required and authorized.
+2. **Audit** - inspect relevant child source and doc changes. Present the staleness report with access and freshness limits.
+3. **Per-repo workspace copies** - update affected authorized copies inline, or use bounded native delegation when justified and authorized. No automatic workspace commits.
 4. **Workspace aggregation docs** — Update sequentially (do NOT parallelize) in order:
    - `infrastructure.md`
    - `project-structure.md`
@@ -291,12 +234,16 @@ Per-repo copies (step 3) run first because aggregation docs (step 4) read from t
 
 | Mistake | Fix |
 |---------|-----|
-| Modifying child repo files | **Never write to child repos.** All doc updates go to workspace `docs/architecture/{repo}/` copies only. |
+| Expanding a workspace refresh into child changes | Keep writes within the authorized destination; separate child-doc requests require explicit scope. |
 | Using glob/grep on child repo paths | Child repos are typically gitignored — use platform file reads to access them. |
 | Updating docs without reading changed source | Always read source first — understand intent, not just file existence. |
 | Rewriting entire doc sections | Surgical patches only — change what's actually stale. |
 | Treating all file changes as behavioral | Renames and formatting changes don't need a doc update. |
 | Updating deprecated repos as if they're evolving | They're snapshots — note that changes occurred, don't rewrite architecture. |
 | Forgetting to update `**Last Updated**:` date | Every doc update must include the date line update. |
-| Running updates on repos behind remote | Pre-flight catches this — always fetch and check first. |
+| Assuming local state matches current remote | State the inspected revision and freshness limit; fetch only when the task requires it and authorization covers it. |
 | Updating cross-cutting flow docs before per-repo docs | Flow docs depend on per-repo docs — always update them last. |
+
+## Review and knowledge follow-through
+
+For knowledge candidates or post-merge architecture impact, first read the [shared review and knowledge contract](../../instructions/references/review-knowledge.md). This is distinct from the existing drift-queue mode: do not fabricate a queue or require an unavailable reconciliation skill. Inspect the actual integrated revision, update only affected authorized workspace sections or record a concrete no-impact reason, and use the collection's baseline receipt/accept process when present. Retain unresolved source gaps; a confirmed knowledge claim does not itself advance the documentation baseline.

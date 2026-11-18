@@ -1,74 +1,22 @@
 ---
 name: handoff
-description: Save a checkpoint or progress summary and maintain current MemoryForge state, durable preferences and historical milestones. Use for checkin, handoff or save-progress requests.
+description: Save a checkpoint or progress summary and maintain selected task state, durable preferences and historical milestones. Use for checkin, handoff, save-progress or contextual pause/pin requests.
 ---
 
-# Handoff - Session Memory Management
+# Handoff - selected task memory
 
-## Overview
-This skill governs the generation of incremental checkpoint summaries and final developer handoffs to prevent context loss and maintain token efficiency between supported client sessions.
+Read the [startup and task-selection contract](../../instructions/references/startup-context.md) for identity, selection, status and storage. Use the [review and knowledge contract](../../instructions/references/review-knowledge.md) for candidate evidence and daily knowledge follow-through.
 
----
+Use [Council Paperwork](../../instructions/references/paperwork/CONTEXT.md) for role handoffs. The selected task snapshot remains the canonical startup summary; a memo must not become a competing current-state record. Link exact artifact versions, evidence, blockers and the next responsible role. Saved memos do not authorize resumed work.
 
-## 1. Local Cache Target Path
-When generating a handoff or session checkpoint, the AI MUST write the summary exclusively to:
-- **Local Workstation Cache (Read explicitly at session onboarding)**:
-  `C:\Users\munderwood\.council/memory/active_handoff.md`
+At a meaningful milestone or explicit checkpoint, save a concise summary: date, objective, current status, verified results and evidence paths, limitations, pending work and next actions. Keep separately stopped work explicit. Capture pending PR record paths, reviewed revisions, triggers and owners. Saved history is not permission to resume.
 
----
+For a registered task, write a complete private record (id, title, summary, state and project fields) and use tasks save. The catalogue snapshot is its canonical startup summary, at most 5,000 UTF-8 bytes. Bind the current observed chat ID when the user selects that task. If Start fresh led to meaningful work, save a new task and bind it; do not re-use an unrelated old task. For an explicitly selected workspace/session namespace, maintain current_state.md there instead; preserve existing active_handoff.md and append verified history. Do not default to the legacy global handoff or another session's state.
 
-## Current state and durable memory
+Keep stable user-confirmed preferences in the shared preferences.md, with task-specific detail in task state. Store private scratch/evidence in the selected namespace; never in service repositories. Record semantic milestones rather than one model-authored line for every tool action. Generic native lifecycle hooks remain separate and cannot infer test success or write semantic state.
 
-Maintain current_state.md in the selected private MemoryForge namespace at meaningful task milestones and explicit checkpoints. Keep it concise (about one page, within 5,000 UTF-8 bytes): updated date, current user objective, active/stopped status, verified results with evidence pointers, unresolved items, and relevant next steps. Separate older paused tasks from the current objective. Preserve existing active_handoff.md and append-only history; do not silently overwrite another selected session's state. Never infer permission to resume from saved notes.
+When the user says pause/park/put aside, checkpoint first and explicitly mark paused with the reason. In this user's agreed conversational usage, "pin it" checkpoints/pauses work when that intent is clear. Explicit sidebar pinning only changes visibility; ask if ambiguous. A saved checkpoint does not otherwise change status. App closure, chat switching and inactivity do not pause. Selecting a paused task restores context only; explicit resume is required before continuing it.
 
-Store stable user-confirmed preferences in preferences.md. Keep one-off task outcomes in the backlog and historical handoff. Startup reads current state and bounded preferences first; retrieve older history only when relevant. Lifecycle hooks do not generate or overwrite the semantic summary. When a task completes, update the state to say so rather than leaving an obsolete active objective.
+Read back the saved record/summary and verify the intended namespace, task status, binding and evidence. Run checks appropriate to changed artifacts before reporting success; do not claim application, hook-runtime or workspace qualification from a successful write. If storage is unavailable, report the specific gap without writing private state into a repository or silently switching namespace.
 
-## 2. When to Trigger
-*   Whenever the user asks to "checkin," "checkpoint," or "do a progress update."
-*   At the end of a session before closing the CLI terminal.
-*   Upon completing a major milestone (e.g., refactoring a solution, writing tests, passing validation).
-
----
-
-## 3. Dynamic Session Heartbeat (Rolling Log)
-To guard against abrupt CLI terminal closures (such as clicking the `[X]` button), the AI should maintain a background **Rolling Session Heartbeat** file:
-*   **Path**: `C:\Users\munderwood\.council/memory/active_session_backlog.md`
-*   **Action**: Every time a file is modified, a test runs, or an API is successfully validated, the AI MUST write a single chronological line describing the action to this file.
-*   **Onboarding Integration**: At automatic session startup, read this backlog file to reconstruct the session progress.
-
----
-
-## 4. Checkpoint Standard Format
-The generated `active_handoff.md` file MUST adhere strictly to the following structure:
-
-```markdown
-# Active Developer Handoff & Session State
-**Last Updated**: YYYY-MM-DD
-**Current Target Objective**: [Summary of the main objective]
-
----
-
-## 1. Summary of Completed Work (Session Victories)
-- [Chronological bullet points of completed files, tests, and configurations]
-
-## 2. Current Project State & Core Metrics
-*   **Repository status**: [Clean/Dirty, Branch Name]
-*   **Testing Status**: [Unit, Integration, and Validation statuses]
-*   **Environment Integrity**: [Pass/Fail from validate-workspace.ps1]
-
-## 3. Next Session Dev Targets
-1.  [Step 1 to continue immediately]
-2.  [Step 2]
-```
-
----
-
-## 5. Write Verification
-Read back the saved handoff to confirm the intended content. Run the workspace validator directly and the Codex audit; report their actual results. A prior PASS or a successful write does not establish current environment health.
-
-## 6. Model lifecycle integration
-All products share one private cache and handler. Read the active adapter: Codex uses SessionStart/Stop/Interrupt/PostToolUse, Gemini uses SessionStart/AfterAgent, with client-specific schemas. SessionStart loads bounded current state, preferences and recent semantic milestones, with historical handoff fallback. Heartbeats record lifecycle events and confirmed generic tool outcomes; they do not infer a semantic checkpoint or a test result from assistant prose.
-
-Write the handoff yourself using the format above. Record concise milestones when their facts are known. If the cache is not writable under the current permission profile, report that limitation and do not save private state into a repository. Do not bypass the protected path through another tool.
-
-For manual recovery with a working native shell, use `node "C:\Users\munderwood\.council/scripts/council-codex.mjs" onboard --workspace "C:\Users\munderwood\workspace_root"`. Do not parse Codex private databases or treat its transcript format as a stable API.
+Follow the [shared Council instructions](../../instructions/shared.md) and active adapter. Use native thread tools for actual sidebar operations only when requested; task status operations do not pin, archive or message a chat.

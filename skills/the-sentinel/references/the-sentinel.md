@@ -12,4 +12,4 @@
 - Does **NOT** diagnose live issues from traces alone (hands off to [[the-watcher]]).
 
 ## 3. Enterprise Standards
-- Refer and defer to cnb-auth-spec for Okta configurations, client credentials flows, and PII protection rules.
+- Consult the workspace cnb-auth-spec for its dated source collection and relevant flow. Read the cited scope and compare with the affected repository/package version; broad historical wording such as "all authentication" does not override the corporate associate-authentication rule or establish current deployment. Preserve user-confirmed policy, separate source observations from policy, and surface material unresolved differences rather than inventing a migration or external prerequisite.

@@ -1,6 +1,9 @@
-# User policy for autonomous tool execution across sessions
+# User-layer policy for broad autonomous tool approval across sessions
+# This is not a sensitivity or read-only filter. Tool permission is separate
+# from task authorization, higher-priority policy and native/OS safeguards.
+# No modes are specified below; the rules participate in every approval mode.
 
-# 1. Global baseline allow for non-sensitive tools
+# 1. Wildcard baseline allow for built-in and MCP tools
 [[rule]]
 toolName = "*"
 decision = "allow"

@@ -18,6 +18,6 @@ Use each independent repository's directory for builds, tests, and Git commands.
 
 ## Council lifecycle and validation
 
-Use `node "C:\Users\munderwood\.council/scripts/council-codex.mjs" onboard` for bounded cache recovery and `validate` for the Codex static audit when the native shell works. Run the required PowerShell workspace validator separately. A hook definition requires Codex trust review and real runtime verification.
+Use `node "__COUNCIL_ROOT__/scripts/council-codex.mjs" onboard` for bounded cache recovery and `validate` for the Codex static audit when the native shell works. Run the required PowerShell workspace validator separately. A hook definition requires Codex trust review and real runtime verification.
 
 Skill metadata enables discovery; full instructions require a file read. Node filesystem tools may read permitted files and test JavaScript modules directly. They must not spawn a shell to bypass blocked native command execution or write protected paths. Read central `rules/workspace.md` under the configured Council root; it supplies guidance rather than Codex executable policy. Question-tool availability and clickable file-reference syntax are defined in the central Codex adapter.

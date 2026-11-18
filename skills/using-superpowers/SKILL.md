@@ -18,3 +18,5 @@ Resolve source paths through manifest.json and runtime paths through the selecte
 ## Roles and separate agents
 
 Applying a skill inline is the default. A call-sign identifies expertise, not a running process. Before delegating, identify a bounded independent task and the benefit of separate context or parallel execution, confirm authorization and native availability, and assign one owner per changed file. Supply the selected skill and references, scope, expected result and verification contract. Review returned evidence before integration. Do not spawn all Council members, recursively delegate by default, or add a separate model session to simulate missing native tools.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

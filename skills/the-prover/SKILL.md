@@ -33,11 +33,17 @@ Rules govern new tests and requested changes. Existing test frameworks, fixtures
 
 Trust established infrastructure as the working baseline unless the requested change puts it in doubt or a relevant failure is observed. Test the requested behavior and affected dependencies. Do not build generic DI, migration or database create/read/delete harnesses as permission-to-start gates for unrelated changes. A necessary fixture supports meaningful feature tests; its routine setup belongs to the engineer and does not automatically create a new external prerequisite. Retain real execution evidence, explicit limitations and permission boundaries.
 
+The distribution below is an illustration, not a required test-count ratio or acceptance quota. Choose the test mix from the requested behavior, risks and existing suite.
+
 ```text
-       /      /  \      10% E2E / Load Tests (k6, Playwright)
-     /----    /      \    20% Integration Tests (fixtures appropriate to the behavior)
-   /--------  /          \  70% Unit Tests (MSTest.Sdk + NSubstitute, sub-millisecond execution)
- /------------```
+        10% E2E / Load Tests (k6, Playwright)
+      20% Integration Tests (appropriate supporting fixtures)
+    70% Unit Tests (MSTest.Sdk + NSubstitute)
+```
+
+Keep unit tests fast and isolated. Sub-millisecond execution is an illustrative aspiration, not a universal per-test timing requirement. A performance acceptance gate needs an explicitly agreed operation, metric and test environment.
+
+The explicit changed-code coverage and complexity requirements are defined in the [pre-submit SOP](../../docs/code-change-pre-submit-sop.md), phases 6 and 3 respectively. The illustration does not replace those gates or the scoped-change rules.
 
 ### 1. Unit Testing Rules (MSTest.Sdk + NSubstitute)
 - **Framework Standard**: Use `MSTest.Sdk` for new .NET unit-test work within scope. Existing xUnit/NUnit suites remain integration context; this rule does not require migrating them.
@@ -62,6 +68,12 @@ Trust established infrastructure as the working baseline unless the requested ch
 - ❌ **The Sleepy Test**: Using `Thread.Sleep()` or `Task.Delay()` instead of deterministic polling conditions.
 - ❌ **The Silent Assertion**: Tests that assert boolean flags without meaningful failure diagnostic messages.
 
+## Review and knowledge follow-through
+
+When reviewing test adequacy or capturing reusable testing discoveries, read the [shared review and knowledge contract](../../instructions/references/review-knowledge.md). Preserve the asserted behavior, tested revision/diff, command/result, fixture and dependency scope, and limitations. Distinguish designed scenarios from actual failures and passes; test names and mocks are not proof of unexercised behavior. Capture consequential constraints as candidates, not every test recipe. Reconcile against the actual merged tests/source and reassess historical result applicability; never convert an old pass into current verification.
+
 ## Central source and profile binding
 
 Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

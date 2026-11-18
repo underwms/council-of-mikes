@@ -61,14 +61,32 @@ async function files(root, { includeDist = false } = {}) {
   return result;
 }
 
+export async function discoverWorkspaceRepositories(workspaceRoot) {
+  const inventoryPath = path.join(workspaceRoot, 'workspace-repositories.json');
+  if (await exists(inventoryPath)) {
+    const inventory = JSON.parse(await fs.readFile(inventoryPath, 'utf8'));
+    if (inventory.schema_version !== 1 || !Array.isArray(inventory.repositories)) throw new Error('Invalid workspace repository inventory');
+    const root = await fs.realpath(workspaceRoot), repos = [], names = new Set(), paths = new Set();
+    for (const entry of inventory.repositories) {
+      if (typeof entry.name !== 'string' || !/^[-\w.]+$/.test(entry.name) || names.has(entry.name.toLowerCase()) || typeof entry.path !== 'string' || !entry.path || path.isAbsolute(entry.path) || entry.path.replaceAll('\\', '/').split('/').includes('..')) throw new Error('Invalid or duplicate workspace repository path');
+      const repo = path.resolve(workspaceRoot, entry.path), relative = path.relative(root, await fs.realpath(repo));
+      if (!relative || relative.startsWith('..') || path.isAbsolute(relative) || paths.has(repo.toLowerCase()) || !(await exists(path.join(repo, '.git')))) throw new Error('Repository outside workspace scope or missing Git metadata');
+      names.add(entry.name.toLowerCase()); paths.add(repo.toLowerCase()); repos.push(repo);
+    }
+    return repos;
+  }
+  const repos = [];
+  for (const entry of await fs.readdir(workspaceRoot, { withFileTypes: true })) {
+    if (entry.isDirectory() && await exists(path.join(workspaceRoot, entry.name, '.git'))) repos.push(path.join(workspaceRoot, entry.name));
+  }
+  return repos;
+}
+
 async function model(input) {
   const o = options(input);
   const manifest = JSON.parse(await fs.readFile(path.join(o.payloadRoot, 'manifest.json'), 'utf8'));
   if (!Array.isArray(manifest.skills) || !manifest.skills.length || new Set(manifest.skills).size !== manifest.skills.length || manifest.skills.some(name => typeof name !== 'string' || !/^[a-z0-9][a-z0-9-]*$/.test(name))) throw new Error('Invalid Council skill manifest');
-  const repos = [];
-  for (const entry of await fs.readdir(o.workspaceRoot, { withFileTypes: true })) {
-    if (entry.isDirectory() && await exists(path.join(o.workspaceRoot, entry.name, '.git'))) repos.push(path.join(o.workspaceRoot, entry.name));
-  }
+  const repos = await discoverWorkspaceRepositories(o.workspaceRoot);
   const render = text => text.replaceAll('__WORKSPACE_ROOT__', o.workspaceRoot).replaceAll('__COUNCIL_ROOT__', o.councilRoot);
   const renderJSON = value => typeof value === 'string' ? render(value) : Array.isArray(value) ? value.map(renderJSON) : value && typeof value === 'object' ? Object.fromEntries(Object.entries(value).map(([key, item]) => [key, renderJSON(item)])) : value;
   const renderContent = (file, content) => file.endsWith('.md') ? Buffer.from(render(content.toString('utf8'))) : file.endsWith('.json') ? Buffer.from(JSON.stringify(renderJSON(JSON.parse(content.toString('utf8'))), null, 2) + '\n') : content;
@@ -96,12 +114,12 @@ async function model(input) {
     if ((await fs.lstat(sourceLock)).isSymbolicLink()) throw new Error('Source lock must be a canonical file');
     writes.push({ target: path.join(o.councilRoot, 'source-lock.json'), content: await fs.readFile(sourceLock) });
   }
-  for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-memoryforge.mjs', 'council-source.mjs', 'council-eval.mjs']) {
+  for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-reply-standard.mjs', 'council-memoryforge.mjs', 'council-task-context.mjs', 'council-source.mjs', 'council-eval.mjs', 'council-icm.mjs', 'council-daily.mjs', 'council-mainline.mjs', 'council-proposals.mjs', 'council-propagation.mjs']) {
     const source = path.join(o.scriptRoot, name);
     if (!(await exists(source))) throw new Error('Missing lifecycle script: ' + name);
     writes.push({ target: path.join(o.councilRoot, 'scripts', name), content: await fs.readFile(source) });
   }
-  for (const name of ['setup-council.ps1', 'council.ps1', '.gitignore']) {
+  for (const name of ['setup-council.ps1', 'council.ps1', '.gitignore', '.gitattributes']) {
     const source = path.join(o.payloadRoot, name);
     if (await exists(source)) writes.push({ target: path.join(o.councilRoot, name), content: await fs.readFile(source) });
   }
@@ -114,7 +132,7 @@ async function model(input) {
   const geminiCompatibility = path.join(o.scriptRoot, 'gemini-compat.mjs');
   if (await exists(geminiCompatibility)) writes.push({ target: path.join(o.councilRoot, 'scripts/gemini-compat.mjs'), content: await fs.readFile(geminiCompatibility) });
 
-  for (const directory of ['instructions/references', 'docs', 'adapters', 'profiles', 'exclusions', 'project-instructions', 'project-skills', 'legacy', 'scripts/tests', 'council', 'visualizer']) {
+  for (const directory of ['instructions/references', 'instructions/memoryforge', 'docs', 'adapters', 'profiles', 'exclusions', 'project-instructions', 'project-skills', 'legacy', 'scripts/tests', 'council', 'visualizer']) {
     const source = path.join(o.payloadRoot, directory);
     if (await exists(source)) for (const file of await files(source, { includeDist: directory === 'visualizer' })) {
       const content = await fs.readFile(file);
@@ -176,16 +194,44 @@ export function buildHooks(input) {
   const commandWindows = 'powershell.exe -NoProfile -NonInteractive -Command "& ' + argumentsList.map(psArgument).join(' ') + '"';
   if (actor === 'gemini') {
     const handler = { type: 'command', command: os.platform() === 'win32' ? commandWindows : command, timeout: 3000, name: owner(o) };
-    return { hooks: { SessionStart: [{ hooks: [{ ...handler }] }], AfterAgent: [{ hooks: [{ ...handler }] }] } };
+    return mergeReplyHooks({ hooks: { SessionStart: [{ hooks: [{ ...handler }] }], AfterAgent: [{ hooks: [{ ...handler }] }] } }, o);
   }
   // Allow for Windows shell startup and bounded MemoryForge lock contention.
   const handler = { type: 'command', command, commandWindows, timeout: 10, statusMessage: owner(o) };
-  return { hooks: {
-    SessionStart: [{ matcher: 'startup|resume|clear|compact', hooks: [{ ...handler, additionalContextLimit: 12000 }] }],
+  return mergeReplyHooks({ hooks: {
+    SessionStart: [{ matcher: 'startup|resume|clear|compact|fork', hooks: [{ ...handler, additionalContextLimit: 12000 }] }],
+    SubagentStart: [{ hooks: [{ ...handler, additionalContextLimit: 12000 }] }],
     Stop: [{ hooks: [{ ...handler }] }],
     Interrupt: [{ hooks: [{ ...handler, timeout: 3 }] }],
     PostToolUse: [{ matcher: '^(Bash|exec_command|apply_patch)$', hooks: [{ ...handler }] }]
-  } };
+  } }, o);
+}
+
+const replyOwner = 'Council Reply Standard';
+const isOwnedHook = (handler, o) => handler.statusMessage === owner(o) || handler.name === owner(o) || handler.statusMessage === replyOwner || handler.name === replyOwner;
+
+export function mergeReplyHooks(existing, input) {
+  if (!existing || typeof existing !== 'object' || Array.isArray(existing) || (existing.hooks !== undefined && (!existing.hooks || typeof existing.hooks !== 'object' || Array.isArray(existing.hooks)))) throw new Error('Invalid existing hooks configuration');
+  const o = options(input);
+  const client = input.actor || 'codex';
+  if (!['codex', 'gemini'].includes(client)) throw new Error('Unknown Council model adapter');
+  if (!o.nodePath) throw new Error('Node executable path is required for hook installation');
+  const args = [o.nodePath, path.join(o.councilRoot, 'scripts/council-reply-standard.mjs'), '--client', client];
+  const command = args.map(quote).join(' ');
+  const windows = 'powershell.exe -NoProfile -NonInteractive -Command "& ' + args.map(value => "'" + value.replaceAll("'", "''") + "'").join(' ') + '"';
+  const handler = client === 'codex'
+    ? { type: 'command', command, commandWindows: windows, timeout: 10, statusMessage: replyOwner }
+    : { type: 'command', command: os.platform() === 'win32' ? windows : command, timeout: 3000, name: replyOwner };
+  const merged = structuredClone(existing);
+  merged.hooks ||= {};
+  for (const [event, groups] of Object.entries(merged.hooks)) {
+    if (!Array.isArray(groups) || groups.some(group => !Array.isArray(group?.hooks))) throw new Error('Invalid existing hook groups: ' + event);
+    merged.hooks[event] = groups.map(group => ({ ...group, hooks: group.hooks.filter(h => h.statusMessage !== replyOwner && h.name !== replyOwner) })).filter(group => group.hooks.length);
+  }
+  for (const event of client === 'codex' ? ['UserPromptSubmit', 'Stop'] : ['BeforeAgent', 'AfterAgent']) {
+    merged.hooks[event] = [...(merged.hooks[event] || []), { hooks: [{ ...handler }] }];
+  }
+  return merged;
 }
 
 function mergeHooks(existing, expected, o) {
@@ -195,7 +241,7 @@ function mergeHooks(existing, expected, o) {
   merged.hooks ||= {};
   for (const [event, groups] of Object.entries(merged.hooks)) {
     if (!Array.isArray(groups) || groups.some(group => !group || !Array.isArray(group.hooks))) throw new Error('Invalid existing hook groups: ' + event);
-    merged.hooks[event] = groups.map(group => ({ ...group, hooks: group.hooks.filter(h => h.statusMessage !== owner(o) && h.name !== owner(o) && !(o.actor === 'gemini' && h.name === 'memoryforge-heartbeat')) })).filter(group => group.hooks.length);
+    merged.hooks[event] = groups.map(group => ({ ...group, hooks: group.hooks.filter(h => !isOwnedHook(h, o) && !(o.actor === 'gemini' && h.name === 'memoryforge-heartbeat')) })).filter(group => group.hooks.length);
   }
   for (const [event, groups] of Object.entries(expected.hooks)) merged.hooks[event] = [...(merged.hooks[event] || []), ...groups];
   return merged;
@@ -455,13 +501,11 @@ export async function validateCouncil(input = {}) {
       const settings = actor === 'codex' ? '.codex/hooks.json' : '.' + actor + '/settings.json';
       const actual = parseConfiguration(await fs.readFile(path.join(o.homeDir, settings), 'utf8'), actor + ' hooks');
       for (const [event, groups] of Object.entries(expected.hooks)) {
-        const handlers = (actual.hooks?.[event] || []).flatMap(group => group.hooks || []).filter(h => h.statusMessage === owner(o) || h.name === owner(o));
-        if (handlers.length !== 1 || JSON.stringify(handlers[0]) !== JSON.stringify(groups[0].hooks[0])) lifecycle.errors.push('Missing/stale ' + actor + ' Council hook: ' + event);
-        const ownedGroups = (actual.hooks?.[event] || []).filter(group => group.hooks?.some(h => h.statusMessage === owner(o) || h.name === owner(o)));
-        if (ownedGroups.length === 1 && ownedGroups[0].matcher !== groups[0].matcher) lifecycle.errors.push('Stale ' + actor + ' hook matcher: ' + event);
+        const ownedGroups = (actual.hooks?.[event] || []).map(group => ({ ...group, hooks: (group.hooks || []).filter(h => isOwnedHook(h, o)) })).filter(group => group.hooks.length);
+        if (JSON.stringify(ownedGroups) !== JSON.stringify(groups)) lifecycle.errors.push('Missing/stale ' + actor + ' Council hook or matcher: ' + event);
       }
     }
-    for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-memoryforge.mjs', 'council-source.mjs']) if (!(await exists(path.join(o.councilRoot, 'scripts', name)))) lifecycle.errors.push('Missing lifecycle script: ' + name);
+    for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-reply-standard.mjs', 'council-memoryforge.mjs', 'council-source.mjs']) if (!(await exists(path.join(o.councilRoot, 'scripts', name)))) lifecycle.errors.push('Missing lifecycle script: ' + name);
     if (!(await exists(memoryRoot(o.homeDir, o.username)))) lifecycle.errors.push('MemoryForge directory absent');
     lifecycle.status = lifecycle.errors.length ? 'fail' : 'configured';
   } catch (error) { lifecycle.status = error.code === 'ENOENT' ? 'absent' : 'fail'; lifecycle.errors.push(error.code === 'ENOENT' ? 'Codex lifecycle configuration is absent' : error.message); }
@@ -517,7 +561,7 @@ export async function installCouncil(input = {}) {
     if (await exists(policy) && (!(await fs.lstat(policy)).isSymbolicLink() || (await fs.realpath(policy)).toLowerCase() !== path.resolve(o.councilRoot, 'adapters/gemini/policies').toLowerCase())) throw new Error('Existing Gemini policy directory requires separate reconciliation');
   }
   await preflight(m);
-  for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-memoryforge.mjs', 'council-source.mjs']) {
+  for (const name of ['council-codex.mjs', 'council-codex-lib.mjs', 'council-codex-config.mjs', 'council-reply-standard.mjs', 'council-memoryforge.mjs', 'council-source.mjs']) {
     if (!(await exists(path.join(o.scriptRoot, name)))) throw new Error('Missing lifecycle script: ' + name);
   }
   if (!o.nodePath || !(await exists(o.nodePath)) || !(await fs.stat(o.nodePath)).isFile()) throw new Error('Node executable is missing');

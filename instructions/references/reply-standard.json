@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "name": "Council reply standard",
+  "standard": "ASD-STE100",
+  "scope": "Advisory subset for conversational replies; not a full STE compliance assessment",
+  "guidance": [
+    "Always use ASD-STE100 Simplified Technical English when replying to the user.",
+    "Use short, direct sentences. Use active voice when possible. Give each sentence one main idea.",
+    "Use simple words with consistent meanings. Use the same technical name for the same item.",
+    "Prefer use for utilize, to for in order to, before for prior to, after for subsequent to, and if for in the event that.",
+    "Keep descriptive sentences to 25 words and procedural sentences to 20 words when possible.",
+    "Give instructions in the order of the work. State the action and its result clearly.",
+    "Preserve exact code, commands, paths, identifiers, URLs and quoted source text. Apply these writing rules to the surrounding explanation.",
+    "Follow the user's requested format and scope. Keep technical facts and necessary detail accurate.",
+    "For status reports and decision requests, state the current status or decision and the required next action before supporting details. Preserve conditions and uncertainty. If status is unknown, say so. Do not invent a next action or approval. Explanations and open discussions do not require this status-report order.",
+    "Review your reply before sending it. Use the previous reply assessment to correct recurring issues.",
+    "The automatic score checks only sentence length and a small word-choice list. It cannot certify full ASD-STE100 compliance. Do not claim that it does."
+  ],
+  "checks": {
+    "sentence_words": 25,
+    "procedure_words": 20,
+    "penalty_per_finding": 5,
+    "word_choices": [
+      {
+        "phrase": "utilize",
+        "replacement": "use"
+      },
+      {
+        "phrase": "in order to",
+        "replacement": "to"
+      },
+      {
+        "phrase": "prior to",
+        "replacement": "before"
+      },
+      {
+        "phrase": "subsequent to",
+        "replacement": "after"
+      },
+      {
+        "phrase": "in the event that",
+        "replacement": "if"
+      }
+    ]
+  }
+}

@@ -25,11 +25,11 @@
     "verification-before-completion",
     "writing-plans"
   ],
-  "source": "Shared Council definitions; one canonical installed root",
+  "source": "Portable native Council source; personal state is created only after installation",
   "scope": "user profile; Codex, Gemini CLI",
   "schema_version": 1,
   "name": "The Council",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "default_profile": "fulfillment",
   "specialists": [
     "the-architect",
@@ -79,10 +79,8 @@
     "respect_existing_authorization": true
   },
   "engine": {
-    "status": "bundled",
-    "runtime": "python",
-    "path": "council",
-    "real_execution": true
+    "status": "retired",
+    "included": false
   },
   "memory": {
     "root": "memory",
@@ -91,7 +89,9 @@
       "legacy-shared",
       "workspace-session"
     ],
-    "session_scope": "explicit opt-in; all models use the same workspace/session identity"
+    "session_scope": "explicit opt-in; all models use the same workspace/session identity",
+    "startup_policy": "stable context plus explicit per-client/chat task selection",
+    "task_catalogue": "memory/task-context.json"
   },
   "source_roots": [
     "skills",
@@ -99,24 +99,30 @@
     "rules",
     "profiles",
     "adapters",
-    "scripts",
     "exclusions",
-    "council",
-    "visualizer"
+    "scripts"
   ],
   "source_files": [
     "manifest.json",
     "README.md",
-    "docs/code-change-pre-submit-sop.md",
-    "docs/catalog.md",
-    "docs/source-contract.md",
-    "docs/structure.md",
-    "docs/setup.md",
     "setup-council.ps1",
-    "council.ps1",
     ".gitignore",
+    ".gitattributes",
+    "docs/catalog.md",
+    "docs/setup.md",
+    "docs/structure.md",
+    "docs/source-contract.md",
+    "docs/code-change-pre-submit-sop.md",
+    "docs/behavior-evaluation.md",
     "docs/architecture-flow.md",
-    "docs/delivery-enhancements.md",
-    "docs/behavior-evaluation.md"
-  ]
+    "docs/delivery-enhancements.md"
+  ],
+  "distribution": {
+    "schema_version": 1,
+    "kind": "native-only",
+    "project_cleanup": false,
+    "import_private_memory": false,
+    "private_state_included": false,
+    "retired_poc_included": false
+  }
 }

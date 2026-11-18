@@ -57,6 +57,12 @@ Feature: Rate Matrix Write Mode Lock
 
 The template expresses human-readable acceptance criteria. Implement executable feature integration and regression coverage in FAIR using ordinary MSTest methods; do not generate `.feature` artifacts or introduce a BDD framework.
 
+## Review and knowledge follow-through
+
+For story work that discovers reusable domain rules or feeds PR review, use the [shared review and knowledge contract](../../instructions/references/review-knowledge.md). Distinguish proposed criteria, agreed policy and implemented behavior. Capture consequential constraints with evidence and scope; retain daily workflow coverage gaps, pending proposals, ownership and next actions. Do not turn each story into a durable note or send tracker updates without authorization.
+
 ## Central source and profile binding
 
 Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

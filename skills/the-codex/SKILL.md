@@ -27,7 +27,7 @@ description: Author technical documentation, ADRs, diagrams and XML code comment
 
 ## Centralized Documentation Hierarchy Standard
 
-Documentation is strictly bifurcated between workspace governance and child repositories:
+The selected profile owns documentation routing, including service procedures and ADRs in its authorized child-repository layout. The hierarchy below shows the standard architecture documents; it does not restrict the profile-authorized additions. Keep workspace governance, workflow specs/plans and private state at their separately authorized destinations:
 
 ```text
 workspace_root├── docs\                                               <-- Cross-Cutting Governance & Architecture
@@ -35,7 +35,7 @@ workspace_root├── docs\                                               <-- 
 │   ├── procedures\                                     <-- Pre-Submit SOP, user story templates
 │   └── superpowers\                                    <-- Design specs and implementation plans
 └── {PROJECT}\                                          <-- Child Repositories
-    └── docs\                                           <-- Service-Specific Wiki (Canonical Trio ONLY)
+    └── docs\                                           <-- Service-Specific Architecture (profile owns routing)
         ├── api-architecture.md                         <-- Endpoints, DTOs, and downstream integration contracts
         ├── project-structure.md                        <-- Assembly boundaries, folder layout, layer responsibilities
         └── tech-stack.md                               <-- Language, ORM, framework versions, and dependencies
@@ -59,6 +59,16 @@ Every significant architectural pivot (e.g., June 2026 Shift from Redis/Dapper t
 - **Style Rules**: Always use semantic participant aliases and clear directional arrows (`->>`, `-->>`).
 - **Clean Markdown Blocks**: Fence all diagrams inside ````mermaid```` blocks with zero syntax warnings.
 
+## Council Paperwork
+
+For a role assignment or returned artifact, follow [Council Paperwork](../../instructions/references/paperwork/CONTEXT.md) and the [Internal Council Memo](../../instructions/references/paperwork/internal-council-memo.md). Reuse the deliverable's existing task record. State exact input/output versions, evidence, uncertainty and next action. Do not duplicate a document in its memo or imply a separate reviewer performed inline work.
+
+## Review and knowledge follow-through
+
+For durable claims or post-merge documentation, use the [shared review and knowledge contract](../../instructions/references/review-knowledge.md). Keep proposals separate from confirmed source behavior, link evidence and correction history, and assess architecture impact before updating only affected authorized documents. Keep private candidate/evidence records outside service repositories and distributable guidance.
+
 ## Central source and profile binding
 
 Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

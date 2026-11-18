@@ -35,7 +35,7 @@ description: Design or implement .NET Minimal API routes, HTTP contracts and Ope
 | **`204 No Content`** | Action Completed | Successful update or deletion with zero response body. |
 | **`400 Bad Request`** | Syntactic Client Error | Malformed JSON, unparseable query parameters, missing required headers. |
 | **`401 Unauthorized`** | Missing/Invalid Token | Bearer token is missing, expired, or signature validation failed. |
-| **`403 Forbidden`** | Insufficient Scopes | Authenticated caller lacks required scope (e.g. `RequireWrite` on read token). |
+| **`403 Forbidden`** | Insufficient Scopes | Authenticated caller lacks the endpoint's required scope. |
 | **`404 Not Found`** | Missing Resource | Entity ID does not exist in the database. |
 | **`409 Conflict`** | State Conflict | Concurrency conflict, duplicate unique business key, or conflicting draft snapshot. |
 | **`422 Unprocessable`** | Semantic Validation Failure | Well-formed JSON failing business domain rules (e.g. rate breaks not 1-cent contiguous). |
@@ -47,10 +47,12 @@ description: Design or implement .NET Minimal API routes, HTTP contracts and Ope
 ## Minimal API Architecture Standards (.NET 10)
 
 1. **Route Grouping**:
+   - Before choosing a policy, inspect the affected repository's authentication package/version, registration, endpoint scopes and policy-provider contract. Follow the selected profile and the Sentinel guidance for server selection and policy-name format. Do not add a generic `RequireWrite` policy to make this example work.
+   - `<actual-policy-name>` below is a placeholder. Replace it with the policy verified for the actual endpoint before using the example.
    ```csharp
    var admin = app.MapGroup("/v1/admin")
        .WithTags("Admin")
-       .RequireAuthorization("RequireWrite");
+       .RequireAuthorization("<actual-policy-name>");
    ```
 2. **Scalar OpenAPI Integration**:
    - Expose raw OpenAPI document at `/openapi/{documentName}.json`.
@@ -62,3 +64,5 @@ description: Design or implement .NET Minimal API routes, HTTP contracts and Ope
 ## Central source and profile binding
 
 Follow the [shared Council contract](../../instructions/shared.md) already loaded for this session. Read selected profile details and native adapter mechanics only when relevant to this task.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

@@ -1,8 +1,8 @@
 # Sourcing & Fulfillment Pod Architecture Rules (Tier 2)
 
-> **Authority:** Fulfillment and Rate Engine Pod Architectural Governance  
+> **Profile:** Opinionated Fulfillment example; adapt for your organization.
 > **Workspace Scope:** `workspace_root\` (Cross-cutting microservices: `orderapi`, `inventoryservice`, `warehouseapi`, `paymentservice`, etc.)  
-> **Pod Lead:** Pod Architectural Lead
+> **Owner:** The organization that adopts this profile.
 
 ## Applicability to feature work
 
@@ -70,9 +70,10 @@ Corporate rules supplied or confirmed by the user are authoritative within their
 ## 5. Security & Secret Hygiene
 
 1. **Authentication Architecture**:
-   - APIs use Okta preview OpenID Connect (OIDC) token flows.
-   - Scope authorization is governed dynamically via `IAuthorizationPolicyProvider`.
-   - Local Fallback: Set `"UseSecrets": false` at the root of `appsettings.Development.json` for local containerized development to prevent invalid GCP Secret Manager connection attempts.
+   - APIs follow the corporate Okta/OIDC pattern using the authority, audience and credentials for the target environment. Preview/QA settings are environment-specific, not a universal production default. Preserve inherited contracts under the applicability rules above.
+   - Associate authentication follows Microsoft Entra ID as specified in the corporate rules. Associate sessions and application-to-API client credentials are separate boundaries; do not infer a provider conflict or migrate either flow merely because both appear in one application.
+   - Verify the actual authentication package/version, registration and policy contract. Use the endpoint scopes and policy format from that application. Do not invent generic RequireRead/RequireWrite policies to match an example.
+   - Local development uses the repository-supported secret-loading path and configuration key. Inspect the application before choosing a setting. Secret loading, token acquisition and development authorization bypass are separate controls. Local settings do not authorize bypassing QA/production authentication.
 2. **Secret & PII Redaction**:
    - Never log, commit, or display secrets, API credentials, passwords, or customer PII.
 
@@ -88,7 +89,7 @@ Every file created, modified, or persisted across this workstation and workspace
    - **Prohibition**: NEVER save specs or plans into child repositories (`{PROJECT}/docs/superpowers/` is strictly prohibited). All design specs and implementation plans belong exclusively to the workspace-level governance layer.
 
 2. **Project Documentation vs Workspace Documentation**:
-   - **Microservice Internal Docs**: `{PROJECT}/docs/` contains ONLY `api-architecture.md`, `project-structure.md`, `tech-stack.md`, and `README.md`.
+   - **Microservice Internal Docs**: Keep service architecture in `{PROJECT}/docs/api-architecture.md`, `project-structure.md`, and `tech-stack.md`, with `README.md` as needed. Service-specific recurring procedures and significant decisions also belong in the child repository: use its existing authorized documentation layout, or `{PROJECT}/docs/procedures/` and `{PROJECT}/docs/decisions/` when no such layout exists. This profile owns destination selection for these documents. These additions do not permit workflow specs/plans or private Council state in child repositories.
    - **Workspace Cross-Cutting Docs**: `workspace_root/docs/architecture/` contains pod-wide standards (`corporate-architecture-rules.md`, `council-v2-documentation.md`, `tech-stack.md`, etc.).
    - **Prohibition**: Never place microservice-internal documentation into `workspace_root/docs/`, and never place cross-cutting corporate architecture or superpower workflows into `{PROJECT}/docs/`.
 

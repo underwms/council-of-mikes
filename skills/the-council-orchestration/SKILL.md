@@ -20,6 +20,18 @@ This skill does not provide a standalone engine execution mode. Never launch, in
 - Use native subagents when useful, available, and authorized by the active host and task. Give each delegated task its specialist instructions, references, scope, file ownership, expected result, and verification requirements. Keep dependent changes sequential and review results before integrating them.
 - Inline work is a normal alternative when delegation is unnecessary or unavailable. Apply the relevant specialist guidance directly and describe who is doing the work accurately. Do not launch another CLI, external model session, or custom orchestration engine to replace missing native tools.
 
+## Worker context boundary
+
+For an isolated assignment, start a fresh native worker without inherited chat history. Supply the task identity, role, current authority, allowed changes, exact versioned inputs, expected saved output and consumer checks. Required host instructions remain present.
+
+Use the [worker startup contract](../../instructions/references/startup-context.md#delegated-worker-startup). A worker reads stable preferences and the knowledge index through native worker context or onboard --startup-mode worker. It must not use generic onboard, open a task-choice menu, restore unrelated task state or run daily maintenance. Required namespace evidence is an explicit assignment input.
+
+Use a new native worker for a new isolated assignment. A bounded follow-up within the same assignment retains that worker context and is not a fresh-context sample. A reviewer receives the saved result and required source evidence. Record missing or stale inputs before dependent work. No declaration proves universal context absence or token savings.
+
+## Council Paperwork
+
+Use the [shared paperwork standard](../../instructions/references/paperwork/CONTEXT.md) for role assignments, decisions, findings and handoffs. An [Internal Council Memo](../../instructions/references/paperwork/internal-council-memo.md) can be part of the existing plan or review artifact. Declare versioned inputs, applicable rules, allowed changes, expected output and consumer checks. Use [MemForge ICM Forms](../../instructions/references/paperwork/memforge-icm-forms.md) for ICM work. Do not duplicate existing records or treat a memo as approval, delegation authority or a new execution boundary.
+
 ## Workflow
 
 ### 1. Understand and plan
@@ -42,11 +54,16 @@ Use `[THE GATEKEEPER]` guidance for the applicable pre-submit review. Read `docs
 
 Use the central validation entry points with the actual workspace path:
 
-- Workspace integrity: `C:\Users\munderwood\.council\scripts\validate-workspace.ps1`.
-- Council placement: `node "C:\Users\munderwood\.council\scripts\council-codex.mjs" validate --workspace "<workspace-path>"`.
-- Canonical source integrity when shared Council files change: `node "C:\Users\munderwood\.council\scripts\council-source.mjs" check`.
+- Workspace integrity: `__COUNCIL_ROOT__\scripts\validate-workspace.ps1`.
+- Council placement: `node "__COUNCIL_ROOT__\scripts\council-codex.mjs" validate --workspace "<workspace-path>"`.
+- Canonical source integrity when shared Council files change: `node "__COUNCIL_ROOT__\scripts\council-source.mjs" check`.
 
 Run checks under the existing native policy. If a check is blocked, identify the command and reason without bypassing restrictions or claiming it passed. Source integrity and static placement do not prove native discovery, hook trust, hook execution, or live model access.
 
 At **Gate 2 (Pre-Submit Approval)**, present the resulting changes, verification evidence, unresolved issues, and any concrete next action requiring user sign-off. This review does not authorize committing, pushing, merging, publishing, deploying, or messaging others; follow the user's actual authorization for those actions.
 
+## Review and knowledge follow-through
+
+During planning, retrieve relevant constraints using the [shared review and knowledge contract](../../instructions/references/review-knowledge.md). During execution/review, retain only reusable, evidence-backed candidates. Gate 2 reports daily knowledge coverage and pending proposals separately from readiness. Daily architecture drift detection replaces developer PR reconciliation. Preserve evidence paths, reviewed revisions, coverage gaps, owners and next actions in private task state. Convening does not start a watcher or the custom engine.
+
+Before repository/domain work, follow the [ICM knowledge-use contract](../../instructions/references/knowledge-use.md): route to the applicable collection, open relevant notes and evidence, and preserve status/freshness qualifications. Use it inline and include its scope and paths in any authorized delegated assignment.

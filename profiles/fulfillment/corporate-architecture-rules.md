@@ -1,6 +1,6 @@
-# Corporate Architecture Rules & Governance Guidelines
+# Example Organization Architecture Rules
 
-Source Context: Extracted from Domain Architecture (DARCH) ADRs.
+This is an example policy profile. It is not a statement of another organization's approved architecture. Review and adapt it before adoption.
 
 ## 1. API Design & Versioning
 - MUST include major version in API endpoint paths: `/base-url/v1/endpoint`.
@@ -27,6 +27,6 @@ Source Context: Extracted from Domain Architecture (DARCH) ADRs.
 
 ## 4. Code Standards & Reusability
 - All code and infrastructure configurations MUST reside in Git source control.
-- Utility libraries MUST be published as versioned internal NuGet/NPM packages following `Crate.<Domain>.<Feature>` naming conventions.
+- Utility libraries MUST be published as versioned internal NuGet/NPM packages following `Company.<Domain>.<Feature>` naming conventions.
 - Customer-facing applications MUST return human-readable error messages and suppress internal stack details.
 - Feature integration, acceptance, and regression scenarios MUST use FAIR with ordinary MSTest scenario methods and meaningful Given/When/Then helpers; retain explicit Arrange/Act/Assert comments.

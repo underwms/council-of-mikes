@@ -37,11 +37,16 @@ export async function runTests() {
   const codexDefaults = 'approval_policy = "on-request"\napprovals_reviewer = "auto_review"\nsandbox_mode = "workspace-write"\n';
   await test('Install_CarriesOnDemandInstructionReferences_AndBehaviorRunner', async () => {
     const o = await fixture();
+    await fs.mkdir(path.join(o.payloadRoot,'instructions/memoryforge/stages/01-screen'),{recursive:true});
+    await fs.writeFile(path.join(o.payloadRoot,'instructions/memoryforge/stages/01-screen/CONTEXT.md'),'# Independent screening contract\n');
     await fs.mkdir(path.join(o.payloadRoot,'instructions/references'),{recursive:true});
     await fs.writeFile(path.join(o.payloadRoot,'instructions/references/development.md'),'Read development details here.\n');
     await installCouncil(o);
+    assert.equal(await fs.readFile(path.join(o.councilRoot,'instructions/memoryforge/stages/01-screen/CONTEXT.md'),'utf8'),'# Independent screening contract\n');
+    assert((await fs.readFile(path.join(o.councilRoot,'scripts/council-daily.mjs'),'utf8')).includes('recordDailyScreening'));
     assert.equal(await fs.readFile(path.join(o.councilRoot,'instructions/references/development.md'),'utf8'),'Read development details here.\n');
     assert((await fs.readFile(path.join(o.councilRoot,'scripts/council-eval.mjs'),'utf8')).includes('runEvaluation'));
+    assert((await fs.readFile(path.join(o.councilRoot,'scripts/council-task-context.mjs'),'utf8')).includes('saveTask'));
   });
   await test('Install_RegistersOnlySupportedNativeClients', async () => {
     const o = await fixture();
@@ -240,7 +245,8 @@ export async function runTests() {
     assert(context.includes('Existing milestone'));
     const output = await handleHook({ hook_event_name: 'SessionStart', cwd: o.workspaceRoot, source: 'startup' }, o);
     assert.equal(output.hookSpecificOutput.hookEventName, 'SessionStart');
-    assert(output.hookSpecificOutput.additionalContext.includes('Existing milestone'));
+    assert(!output.hookSpecificOutput.additionalContext.includes('Existing milestone'));
+    assert(output.hookSpecificOutput.additionalContext.includes('Start fresh'));
   });
   await test('Onboard_BoundsLargeHandoffAndBacklog', async () => {
     const o = await fixture(); const dir = memoryRoot(o.homeDir, o.username);
@@ -277,10 +283,24 @@ export async function runTests() {
     assert(log.includes('Shell command completed (exit 0)'));
     assert(!log.includes('PRIVATE'));
   });
+  await test('Validate_DetectsMissingReplyHook_AndInstallRepairsWithoutDuplicates', async () => {
+    const o = await fixture();
+    await installCouncil(o);
+    const file = path.join(o.homeDir, '.codex/hooks.json');
+    const settings = JSON.parse(await fs.readFile(file, 'utf8'));
+    assert(settings.hooks.UserPromptSubmit[0].hooks[0].command.includes('council-reply-standard.mjs'));
+    settings.hooks.UserPromptSubmit = [];
+    await fs.writeFile(file, JSON.stringify(settings));
+    assert.equal((await validateCouncil(o)).lifecycle.status, 'fail');
+    await installCouncil(o);
+    assert.equal((await validateCouncil(o)).lifecycle.status, 'configured');
+    assert.equal((await installCouncil(o)).changed.length, 0);
+    assert((await fs.readFile(path.join(o.councilRoot, 'scripts/council-reply-standard.mjs'), 'utf8')).includes('handleReplyHook'));
+  });
   await test('HookConfig_DoesNotRegisterApprovalOrBlockingHandlers', async () => {
     const o = await fixture(); const config = buildHooks({ ...o, nodePath: 'C:/Program Files/nodejs/node.exe' });
-    assert.deepEqual(Object.keys(config.hooks).sort(), ['Interrupt', 'PostToolUse', 'SessionStart', 'Stop']);
-    for (const event of ['SessionStart', 'Stop', 'PostToolUse']) assert.equal(config.hooks[event][0].hooks[0].timeout, 10);
+    assert.deepEqual(Object.keys(config.hooks).sort(), ['Interrupt', 'PostToolUse', 'SessionStart', 'Stop', 'SubagentStart', 'UserPromptSubmit']);
+    for (const event of ['SessionStart', 'SubagentStart', 'Stop', 'PostToolUse']) assert.equal(config.hooks[event][0].hooks[0].timeout, 10);
     assert.equal(config.hooks.Interrupt[0].hooks[0].timeout, 3);
     for (const groups of Object.values(config.hooks)) for (const g of groups) for (const h of g.hooks) { assert.equal(h.type, 'command'); assert(h.commandWindows.startsWith('powershell.exe ')); assert(h.commandWindows.includes("& 'C:/Program Files/nodejs/node.exe'")); }
   });
